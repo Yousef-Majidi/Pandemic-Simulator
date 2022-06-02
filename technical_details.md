@@ -3,7 +3,11 @@
 
 - Game engine: Unity V.2021.3.X
 - IDE: Visual Studio Code
-- Save state: Utilize Binary file formatter to save game progress and make custom save files.
+- Save state methods: 
+  - <b>JsonUnity</b> is the Unity Engine's built-in API for serailizing and deserializing JSON data. The JSON data will be saved on a file on the user's machine. 
+  - Binary Tools like BinaryFormatter
+  - Text Tools such as EasySave or JSON.Net
+  - *Note: The final decision on which system to implement is still being discussed*
 - Asset Types: 
   - Buildings
     - Houses
@@ -12,7 +16,7 @@
     - School
     - Hospitals
   - NPC
-  - Environment
+  - Environment:
     - Trees
     - Rocks
     - Parked cars
