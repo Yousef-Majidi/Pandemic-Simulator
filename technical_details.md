@@ -3,7 +3,7 @@
 
 - Game engine: Unity V.2021.3.X
 - IDE: Visual Studio Code
-- Save state: Suhail
+- Save state: Utuilize Binary file formatter to save game progress and make custom save files.
 - Asset Types: 
   - Buildings:
     - Houses
