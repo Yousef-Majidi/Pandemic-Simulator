@@ -22,6 +22,7 @@
   - [Free3D](https://free3d.com/)
   - [CGTrader](https://www.cgtrader.com/free-3d-models)
   - [TurboSquid](https://www.turbosquid.com/Search/3D-Models/free)
+  - *Note: All sources provide the types of assets required for this project. The decision on which source to use for each asset will be made at a future date*
 - Research material: 
   - [CDC](https://www.cdc.gov/)
   - [Public Health Agency of Canada](https://www.canada.ca/en/public-health.html)
