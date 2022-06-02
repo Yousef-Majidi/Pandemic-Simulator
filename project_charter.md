@@ -3,7 +3,7 @@
 
 ## Introduction 
 
-- Project name: pandemic sim
+- Project name: TBD
 - Current version: 0.0
 - Date: 01-june-2022
 - Sponsor: n/a
