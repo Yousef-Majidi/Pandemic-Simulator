@@ -4,7 +4,7 @@
 ## Introduction 
 
 - Project name: pandemic sim
-- Current version: 1.0
+- Current version: 0.0
 - Date: 01-june-2022
 - Sponsor: n/a
 - Project manager: Yousef 
