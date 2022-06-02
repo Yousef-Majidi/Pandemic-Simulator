@@ -3,9 +3,9 @@
 
 - Game engine: Unity V.2021.3.X
 - IDE: Visual Studio Code
-- Save state: Utuilize Binary file formatter to save game progress and make custom save files.
+- Save state: Utilize Binary file formatter to save game progress and make custom save files.
 - Asset Types: 
-  - Buildings:
+  - Buildings
     - Houses
     - Offices
     - Shops
