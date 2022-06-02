@@ -1,10 +1,23 @@
 
 # Technical Details
 
-- Game engine: Unity V2021.3.X
+- Game engine: Unity V.2021.3.X
 - IDE: Visual Studio Code
-- Database: TBD
-- Assets:
+- Save state: Suhail
+- Asset Types: 
+  - Buildings:
+    - Houses
+    - Offices
+    - Shops
+    - School
+    - Hospitals
+  - NPC
+  - Environment
+    - Trees
+    - Rocks
+    - Parked cars
+    - Roads    
+- Asset Source:
   - [Unity Assets Store](https://assetstore.unity.com/)
   - [Free3D](https://free3d.com/)
   - [CGTrader](https://www.cgtrader.com/free-3d-models)
