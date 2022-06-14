@@ -24,7 +24,7 @@ The main challenge of the game is to manage the viral spread and the overall hap
 This project aims to create a pandemic simulation game where you take control of a city's government and make decisions to defend your community against an evolving virus.
 
 ## Milestones
-1. Decide which method to be utilized for implementing saving the game state [ ]
+1. [ ] Decide which method to be utilized for implementing saving the game state
 2. Define a list of all classes and their interactions with each other [ ]
 3. Define a list of decisions the players can make within the game [ ]
 4. Design a general layout of the UI and the panels the user can interact with. This includes the decision tab and the statistics tab [ ]
