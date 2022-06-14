@@ -2,7 +2,7 @@
 # Technical Details
 
 - Game engine: Unity V.2021.3.X
-- IDE: Visual Studio Code
+- IDE: Visual Studio
 - Save state methods: 
   - <b>JsonUnity</b> is the Unity Engine's built-in API for serailizing and deserializing JSON data. The JSON data will be saved on a file on the user's machine. 
   - Binary Tools like BinaryFormatter
