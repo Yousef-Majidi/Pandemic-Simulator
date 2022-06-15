@@ -1,4 +1,4 @@
-### Opening the stat Window(Ian)
+# Opening the stat Window(Ian)
 ## Actor(Player)
 The player playing the game
 ## Pre-conditions
