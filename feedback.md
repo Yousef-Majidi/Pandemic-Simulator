@@ -20,3 +20,7 @@ Write more about how different components act. For example, you might want to le
 - **Opening The Decisions Window (Yousef)** - Well done. This is not a complete use case, though. A complete use case would be for the user to make a decision. This would add a few steps to this process. -2 (8/10)
 - **Saving game progress (Suhail)** - Well done. There should be a bit more info about how the saving is done. I.e., does Unity create a file, what type of data gets stored, etc. -2 (8/10)
 - **Opening the stat Window(Ian)** - Perfect 10/10
+
+
+### Milestones and Deliverables 10/10
+- Really great structure! Don't forget to add the happiness meter!
