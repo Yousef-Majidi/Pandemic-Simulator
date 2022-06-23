@@ -10,7 +10,7 @@ Everytime the virus is spread, it will have the exact same multipliers, except w
 
 The player in this simulation is playing the role of _The Mayor_ of this town and can make certain decisions. These decisions will include, mandatory mask wearing, curfew, quarantine and other public health measures.
 Each of these decisions will affect the spread in unique ways. However, each decision is associated with a cost of `Action Points` (perhaps represented as `Budget` or `Political Power`) and the number of `AP` the player spends on each decision will determine the severity of the action in fighting the spread.
-The data from this simulation will be presented to the user in the form of graphs and tables.
+The data from this simulation will be presented to the user in the form of graphs and tables. The game also features an economy mechanism. Each citizen has a happiness attribute that is affected by their overall health and also some decisions that the player enacts. The average happiness of the entire population will determine the rate at which the player's action points will regenerate. 
 
 The goal is to make a fun, interactive simulation that can also be used as an educational tool to showcase the spread of a viral desease, and at the same time, the effects of public health measures that we all have had to live with for the past two years. 
 
