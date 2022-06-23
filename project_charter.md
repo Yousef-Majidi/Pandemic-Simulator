@@ -1,7 +1,7 @@
 
 # Project Charter
 
-## Introduction 
+## 1. Introduction 
 
 - Project name: TBD
 - Current version: 0.1
@@ -9,7 +9,7 @@
 - Sponsor: n/a
 - Project manager: Yousef 
 
-### Summary: 
+### 1.1 Summary: 
 
 The game is presented in an isometric view where the player can see their city and NPCs (Non Playable Characters) moving around the environment. The city will consist of different types of buildings that have different uses. The NPCs will interact with the buildings based on their needs.
 
@@ -19,11 +19,12 @@ The decisions that the player can make, will each have a negative and a positive
 
 The main challenge of the game is to manage the viral spread and the overall happiness of the town. If the spread is unchecked, citizens will get sick, hospitals will overflow with capacity, and citizens will start to expire. If the overall happiness reaches 0, the citizens will impeach you and you lose the game. These are two lose conditions of the game. The win condition is when the player successfully eliminates the virus by enacting decisions. 
 
-## Overview 
+## 2. Overview 
 
 This project aims to create a pandemic simulation game where you take control of a city's government and make decisions to defend your community against an evolving virus.
 
-## Milestones
+## 3. Milestones
+
 - [ ] Decide which method to be utilized for implementing saving the game state
 - [ ] Define a list of all classes and their interactions with each other
 - [ ] Define a list of decisions the players can make within the game
@@ -42,7 +43,8 @@ This project aims to create a pandemic simulation game where you take control of
 - [ ] Introduce the stat tab which includes graphs and tables from the simulation (beta 2)
 - [ ] Final touch ups, debugs, etc.
 
-## Deliverables
+## 4. Deliverables
+
 - [ ] Alpha 1: Working prototype with basic functionalities. This version will not have the stat bar, the decision panel, or the virus spread. 
 - [ ] Alpha 2: Virus spread and hospitals implemented
 - [ ] Alpha 3: Economy system is implemented
@@ -50,3 +52,26 @@ This project aims to create a pandemic simulation game where you take control of
 - [ ] Beta 1: Core mechanics and final design implemented. All buildings included + environmental assets.
 - [ ] Beta 2: Balancing and optimizing. Also includes stat graphs and tables
 - [ ] v1.0: first release
+
+## 5. Risks, Assumptions, and Constraints
+
+### 5.1 Risks
+
+- Unity version 2021.3.X could lose Long Term Support during development
+- The selected assets could become paid or change their license (open souce)
+- Assets are completely third-party, so animations and textures could be subject to scrutiny 
+- Visual Studio Code C# extension could lose support for Unity projects
+
+### 5.2 Assumptions
+
+- The player knows to use WASD keys to move the camera around
+- The player is using the x64 bit version of windows 10 or above
+- The player’s system has enough space to install the game as well as keep the save files
+- The player’s system meets the minimum requirements to run the game
+- All team members are familiar with the Unity environment and the C# language
+- The game will be ready to launch before April 2024
+
+### 5.3 Constraints
+
+- The game will only be developed for Windows platform
+- C# is the only language supported natively by the Unity engine
