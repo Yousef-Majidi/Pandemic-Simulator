@@ -24,3 +24,16 @@ Write more about how different components act. For example, you might want to le
 
 ### Milestones and Deliverables 10/10
 - Really great structure! Don't forget to add the happiness meter!
+
+## Task 4
+
+### Risks, Assumptions, and Constraints (5/5)
+Perfect!
+
+### README.md (5/5)
+All required changes properly done.
+
+### Use Cases
+- **Changing game settings (Suhail)** - Perfect! (10/10)
+- **Loading a save from the game (Ian)** - Perfect (10/10) - For the first alternate flow, shouldn't the player have an option to save or not their current game?
+- **Opening Individual Stats Window (Yousef)** - Perfect (10/10) - Always spell out the first time you use an acronym like a Non Playable Character (NPC).
