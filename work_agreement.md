@@ -1,20 +1,25 @@
+
 # PROJECT WORKING AGREEMENT
 
 ## PREFERED FORM OF CONTACT & AVAILIBILTY
-Discord and everyone should be available for at least 4 hours a day during a sprint, 
-if a group member cannot respond to another group member that member should inform the group of this 
+
+Prefered form of contact is Discord. During the sprints, members are expected to respond within `three` hours to team communications.
+If a group member is unavailable to respond within the agreed time frame, they are expected to respond as soon as possible to notify the team about the earliest they are available.
+Before the start of each sprint, each member is to submit their availability during the sprint, `three` days before the sprint by the latest.  
+
 
 ## MEETING SCHEDULES
-During sprints the group will conduct a group meeting at least 2 times a week so the group knows where all members are at with work
+
+During sprints the group will conduct a meeting at least 2 times a week so members can update each other on the progress of their tasks.
 
 ## PROGRAMING PRACTICES
-We will make this project using OOP standards and use comments for each class constructed 
+
+The group will follow the Object Oriented Programming and C# naming conventions, as well using documentation methods to clarify classes and their functionalities.
 
 ## HOW TO MERGE 
-Each group member will create a separate branch of the main branch for each task they take on,
-once they finish this task, they will merge that branch into the main and if there are merge conflicts,
-they will contact the group so that the merge is successful
+
+Each group member will create a separate branch from the main branch for each task they take on. Once they finish their task, they will create a pull request which will be reviewed, and `ONLY approved` and merged by any of the other two members, after all members have reviewed any merge conflicts.
 
 ## WHEN A MEMBER MISSES A MEETING
-If a group member is constantly unavailable or misses meetings on a consistent basis with no 
-And this behavior does not change when we as group discuss this, we will contact our professor and see what can be done about this
+
+Team members are expected to notify the group in case of unavailabilities that are known ahead of time, and in cases of emergencies leading to missing a meeting, they are expected to notify the group as soon as possible and it is their responsibility to catch up on any missed discussions. 
