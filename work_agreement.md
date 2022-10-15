@@ -7,6 +7,8 @@ Prefered form of contact is Discord. During the sprints, members are expected to
 If a group member is unavailable to respond within the agreed time frame, they are expected to respond as soon as possible to notify the team about the earliest they are available.
 Before the start of each sprint, each member is to submit their availability during the sprint, `three` days before the sprint by the latest.  
 
+Members should be available from at least `12pm to 6pm` on weekdays
+
 
 ## MEETING SCHEDULES
 
@@ -19,6 +21,8 @@ The group will follow the Object Oriented Programming and C# naming conventions,
 ## HOW TO MERGE 
 
 Each group member will create a separate branch from the main branch for each task they take on. Once they finish their task, they will create a pull request which will be reviewed, and `ONLY approved` and merged by any of the other two members, after all members have reviewed any merge conflicts.
+
+All merges must occure during `the day before a deadline`
 
 ## WHEN A MEMBER MISSES A MEETING
 
