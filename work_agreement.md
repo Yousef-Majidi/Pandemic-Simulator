@@ -23,3 +23,4 @@ Each group member will create a separate branch from the main branch for each ta
 ## WHEN A MEMBER MISSES A MEETING
 
 Team members are expected to notify the group in case of unavailabilities that are known ahead of time, and in cases of emergencies leading to missing a meeting, they are expected to notify the group as soon as possible and it is their responsibility to catch up on any missed discussions. 
+If this pattern of behavior does not change then the other group members will contact the professor and seek out action
