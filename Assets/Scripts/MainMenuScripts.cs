@@ -5,20 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuScripts : MonoBehaviour{
 
+
     public Animator transition;
+    void Start(){
+        Scene scene = SceneManager.GetActiveScene();
+        Debug.Log("Active scene is " + scene.name);
+    }
 
     public void Close(){
         Application.Quit();
         Debug.Log("Game is exiting");
     }
 
-    IEnumerator wait(string name){
-        transition.SetTrigger("Start");
-        yield return new WaitForSeconds(1);
-        changeScene(name);
+    public void ChangeSceneWTransition(string name){
+
+        StartCoroutine(LoadLevel(name));
     }
 
-    public void changeScene(string name){
+    IEnumerator LoadLevel(string name){
+        transition.SetTrigger("Start");
+        yield return new WaitForSeconds(1);
         SceneManager.LoadScene(name);
         Debug.Log("Scene is changing to " + name);
     }
