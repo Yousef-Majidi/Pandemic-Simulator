@@ -20,14 +20,10 @@ public class FlyCamera : MonoBehaviour
     private void SetCursorState()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             Cursor.lockState = _wantedMode = CursorLockMode.None;
-        }
 
         if (Input.GetMouseButtonDown(0))
-        {
             _wantedMode = CursorLockMode.Locked;
-        }
 
         // Apply cursor state
         Cursor.lockState = _wantedMode;
@@ -35,13 +31,11 @@ public class FlyCamera : MonoBehaviour
         Cursor.visible = (CursorLockMode.Locked != _wantedMode);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         SetCursorState();
@@ -49,44 +43,45 @@ public class FlyCamera : MonoBehaviour
         if (Cursor.visible)
             return;
 
-        Vector3 deltaPosition = Vector3.zero;
+        {   // Camera Movement
+            Vector3 deltaPosition = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.W))
-            deltaPosition += transform.forward;
+            if (Input.GetKey(KeyCode.W))
+                deltaPosition += transform.forward;
 
-        if (Input.GetKey(KeyCode.S))
-            deltaPosition -= transform.forward;
+            if (Input.GetKey(KeyCode.S))
+                deltaPosition -= transform.forward;
 
-        if (Input.GetKey(KeyCode.A))
-            deltaPosition -= transform.right;
+            if (Input.GetKey(KeyCode.A))
+                deltaPosition -= transform.right;
 
-        if (Input.GetKey(KeyCode.D))
-            deltaPosition += transform.right;
+            if (Input.GetKey(KeyCode.D))
+                deltaPosition += transform.right;
 
-        if (Input.GetKey(KeyCode.Q))
-            deltaPosition -= transform.up;
+            if (Input.GetKey(KeyCode.Q))
+                deltaPosition -= transform.up;
 
-        if (Input.GetKey(KeyCode.E))
-            deltaPosition += transform.up;
+            if (Input.GetKey(KeyCode.E))
+                deltaPosition += transform.up;
+            
+            // apply deltaPosition as rigidBody velocity
+            _rigidBody.velocity = deltaPosition * _movementSpeed * Time.deltaTime;
 
-        // set rigid body force
-        _rigidBody.velocity = deltaPosition * _movementSpeed;
+        }
 
-        
-        // Pitch
-        transform.rotation *= Quaternion.AngleAxis(
-            -Input.GetAxis("Mouse Y") * _mouseSense,
-            Vector3.right
-        );
+        {   // Camera Rotation
+            // Pitch
+            transform.rotation *= Quaternion.AngleAxis(
+                -Input.GetAxis("Mouse Y") * _mouseSense,
+                Vector3.right
+            );
 
-        // Paw
-        transform.rotation = Quaternion.Euler(
-            transform.eulerAngles.x,
-            transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
-            transform.eulerAngles.z
-        );
-
-        // set rigidbody rotation to the camera rotation
-        _rigidBody.rotation = transform.rotation;
+            // Paw
+            transform.rotation = Quaternion.Euler(
+                transform.eulerAngles.x,
+                transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
+                transform.eulerAngles.z
+            );
+        }
     }
 }
