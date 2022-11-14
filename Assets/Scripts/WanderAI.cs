@@ -6,9 +6,16 @@ using UnityEngine.AI
 
 public class WanderAI : MonoBehaviour
 {
-    // TODO: Serialize the public objects
-    public float _moveSpeed = 3f;
-    public float _rotSpeed = 100f;
+   
+    [SerializeField]
+    [Tooltip("Character Movement Speed")]
+    private float _moveSpeed = 3f;
+
+    [Space]
+
+    [SerializeField]
+    [Tooltip("Character Rotation Speed")]
+    private float _rotSpeed = 100f;
 
     private bool _isWandering = false;
     private bool _isRotatingLeft = false;
@@ -18,24 +25,24 @@ public class WanderAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isWandering == false)
+        if (_isWandering == false)
         {
             StartCoroutine(Wander());
         }
-        if (isRotatingRight == true)
+        if (_isRotatingRight == true)
         {
             gameObject.GetComponent<Animator>().Play("idle");
-            transform.Rotate(transform.up * Time.deltaTime * rotSpeed);
+            transform.Rotate(transform.up * Time.deltaTime * _rotSpeed);
         }
-        if (isRotatingLeft == true)
+        if (_isRotatingLeft == true)
         {
             gameObject.GetComponent<Animator>().Play("idle");
-            transform.Rotate(transform.up * Time.deltaTime * -rotSpeed);
+            transform.Rotate(transform.up * Time.deltaTime * -(_rotSpeed));
         }
-        if (isWalking == true)
+        if (_isWalking == true)
         {
             gameObject.GetComponent<Animator>().Play("waalk");
-            transform.position += transform.forward * moveSpeed * Time.deltaTime;
+            transform.position += transform.forward * _moveSpeed * Time.deltaTime;
         }
     }
 
@@ -47,25 +54,25 @@ public class WanderAI : MonoBehaviour
         int walkWait = Random.Range(1, 5);
         int walkTime = Random.Range(1, 6);
 
-        isWandering = true;
+        _isWandering = true;
 
         yield return new WaitForSeconds(walkWait);
-        isWalking = true;
+        _isWalking = true;
         yield return new WaitForSeconds(walkTime);
-        isWalking = false;
+        _isWalking = false;
         yield return new WaitForSeconds(rotateWait);
         if (rotateLorR == 1)
         {
-            isRotatingRight = true;
+            _isRotatingRight = true;
             yield return new WaitForSeconds(rotTime);
-            isRotatingRight = false;
+            _isRotatingRight = false;
         }
         if (rotateLorR == 2)
         {
-            isRotatingLeft = true;
+            _isRotatingLeft = true;
             yield return new WaitForSeconds(rotTime);
-            isRotatingLeft = false;
+            _isRotatingLeft = false;
         }
-        isWandering = false;
+        _isWandering = false;
     }
 }
