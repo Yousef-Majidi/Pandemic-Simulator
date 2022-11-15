@@ -1,39 +1,95 @@
 fileFormatVersion: 2
 guid: f5d4d1a7dadc5a84d910c492d947ca4f
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Body
-    100002: BottomEyeCover
-    100004: Crown
-    100006: EyeBall
-    100008: EyeCTRL
-    100010: Head
-    100012: Side_L
-    100014: Side_R
-    100016: Slime
-    100018: Spine01
-    100020: UpperEyeCover
-    100022: //RootNode
-    400000: Body
-    400002: BottomEyeCover
-    400004: Crown
-    400006: EyeBall
-    400008: EyeCTRL
-    400010: Head
-    400012: Side_L
-    400014: Side_R
-    400016: Slime
-    400018: Spine01
-    400020: UpperEyeCover
-    400022: //RootNode
-    4300000: Slime
-    7400000: WalkFWD
-    9500000: //RootNode
-    13700000: Slime
+  serializedVersion: 21300
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Body
+  - first:
+      1: 100002
+    second: BottomEyeCover
+  - first:
+      1: 100004
+    second: Crown
+  - first:
+      1: 100006
+    second: EyeBall
+  - first:
+      1: 100008
+    second: EyeCTRL
+  - first:
+      1: 100010
+    second: Head
+  - first:
+      1: 100012
+    second: Side_L
+  - first:
+      1: 100014
+    second: Side_R
+  - first:
+      1: 100016
+    second: Slime
+  - first:
+      1: 100018
+    second: Spine01
+  - first:
+      1: 100020
+    second: UpperEyeCover
+  - first:
+      1: 100022
+    second: //RootNode
+  - first:
+      4: 400000
+    second: Body
+  - first:
+      4: 400002
+    second: BottomEyeCover
+  - first:
+      4: 400004
+    second: Crown
+  - first:
+      4: 400006
+    second: EyeBall
+  - first:
+      4: 400008
+    second: EyeCTRL
+  - first:
+      4: 400010
+    second: Head
+  - first:
+      4: 400012
+    second: Side_L
+  - first:
+      4: 400014
+    second: Side_R
+  - first:
+      4: 400016
+    second: Slime
+  - first:
+      4: 400018
+    second: Spine01
+  - first:
+      4: 400020
+    second: UpperEyeCover
+  - first:
+      4: 400022
+    second: //RootNode
+  - first:
+      43: 4300000
+    second: Slime
+  - first:
+      74: 7400000
+    second: WalkFWD
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Slime
   externalObjects: {}
   materials:
-    importMaterials: 0
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -42,6 +98,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -62,6 +119,7 @@ ModelImporter:
     - serializedVersion: 16
       name: WalkFWD
       takeName: Take 001
+      internalID: 0
       firstFrame: 0
       lastFrame: 30
       wrapMode: 0
@@ -71,7 +129,7 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
-      loopBlend: 0
+      loopBlend: 1
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
@@ -118,25 +176,34 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 0
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
     indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -145,10 +212,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -158,13 +225,18 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
