@@ -22,7 +22,7 @@ public class FlyCamera : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             Cursor.lockState = _wantedMode = CursorLockMode.None;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.M))
             _wantedMode = CursorLockMode.Locked;
 
         // Apply cursor state

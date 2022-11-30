@@ -24,6 +24,7 @@ public class MainMenuScripts : MonoBehaviour{
 
     IEnumerator LoadLevel(string name){
         transition.SetTrigger("Start");
+        Time.timeScale = 1f;
         yield return new WaitForSeconds(1);
         SceneManager.LoadScene(name);
         Debug.Log("Scene is changing to " + name);
