@@ -851,6 +851,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: land_Piece (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 91538488395343364, guid: a1cc5d1e76c4ac140977e767ae7f184b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 724768832251821246, guid: a1cc5d1e76c4ac140977e767ae7f184b, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -17424,7 +17428,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &363106672
 MonoBehaviour:
   m_ObjectHideFlags: 0

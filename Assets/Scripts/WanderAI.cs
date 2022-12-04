@@ -38,7 +38,7 @@ public class WanderAI : MonoBehaviour
         }
         if (_isRotatingLeft == true)
         {
-            gameObject.GetComponent<Animator>().Play("IdleNormal");
+            gameObject.GetComponent<Animator>().Play("IdleNormal"); 
             transform.Rotate(transform.up * Time.deltaTime * -(_rotSpeed));
         }
         if (_isWalking == true)
