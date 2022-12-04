@@ -1,12 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI
-;
 
 public class WanderAI : MonoBehaviour
 {
-   
+
     [SerializeField]
     [Tooltip("Character Movement Speed")]
     private float _moveSpeed = 3f;
@@ -22,6 +19,11 @@ public class WanderAI : MonoBehaviour
     private bool _isRotatingRight = false;
     private bool _isWalking = false;
 
+    public bool IsWalking()
+    {
+        return _isWalking;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -31,17 +33,17 @@ public class WanderAI : MonoBehaviour
         }
         if (_isRotatingRight == true)
         {
-            gameObject.GetComponent<Animator>().Play("idle");
+            gameObject.GetComponent<Animator>().Play("IdleNormal");
             transform.Rotate(transform.up * Time.deltaTime * _rotSpeed);
         }
         if (_isRotatingLeft == true)
         {
-            gameObject.GetComponent<Animator>().Play("idle");
+            gameObject.GetComponent<Animator>().Play("IdleNormal"); 
             transform.Rotate(transform.up * Time.deltaTime * -(_rotSpeed));
         }
         if (_isWalking == true)
         {
-            gameObject.GetComponent<Animator>().Play("waalk");
+            gameObject.GetComponent<Animator>().Play("WalkFWD");
             transform.position += transform.forward * _moveSpeed * Time.deltaTime;
         }
     }
