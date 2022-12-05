@@ -8,7 +8,7 @@
 - Most promised issues were done. Only missing pathfinding and obstacles for NPC.
 
 ### Documentation (5/10)
-- After fixing issues, make sure to created properly documented PRs to get the code all in one branch. If done by 21/11, can recoup all marks.
+- After fixing issues, make sure to created properly documented PRs to get the code all in one branch. If done by 21/11, can recoup all marks. Done.
 - The issues that were created were well documented.
 
 ## Sprint 2
