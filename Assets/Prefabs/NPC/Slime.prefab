@@ -46,6 +46,8 @@ GameObject:
   - component: {fileID: 2760634166118250960}
   - component: {fileID: 4666327886307416118}
   - component: {fileID: -629374245802335955}
+  - component: {fileID: 6417148005511664849}
+  - component: {fileID: 3675344584884477040}
   m_Layer: 0
   m_Name: Slime
   m_TagString: NPC
@@ -105,12 +107,8 @@ MonoBehaviour:
   _targetIndex: 0
   _minDist: 0.5
   _moveSpeed: 3
-  _rotSpeed: 5
+  _rotSpeed: 10
   _waypoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
 --- !u!54 &4666327886307416118
@@ -149,6 +147,32 @@ MonoBehaviour:
   _touchRate: 1
   _staminaDecayRate: 0.5
   _healthDecayRate: 0.5
+--- !u!135 &6417148005511664849
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090219386143568}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.6, z: 0}
+--- !u!135 &3675344584884477040
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090219386143568}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0.7, z: 0}
 --- !u!1 &1159745215084782
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,8 +463,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4491811072490378}
-  - component: {fileID: 6791418702219837693}
-  - component: {fileID: 4322451393246813340}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -464,32 +486,6 @@ Transform:
   m_Father: {fileID: 4885079432260988}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6791418702219837693
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658137753716596}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: -0.33, y: 0.08, z: 0}
---- !u!135 &4322451393246813340
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658137753716596}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: -0.33, y: 0.08, z: 0}
 --- !u!1 &1906605117107250
 GameObject:
   m_ObjectHideFlags: 0
