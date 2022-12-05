@@ -105,7 +105,7 @@ MonoBehaviour:
   _targetIndex: 0
   _minDist: 0.5
   _moveSpeed: 3
-  _rotSpeed: 100
+  _rotSpeed: 5
   _waypoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -145,8 +145,8 @@ MonoBehaviour:
   _health: 100
   _stamina: 100
   _happiness: 100
-  _coughRate: 0.5
-  _touchRate: 0.5
+  _coughRate: 1
+  _touchRate: 1
   _staminaDecayRate: 0.5
   _healthDecayRate: 0.5
 --- !u!1 &1159745215084782
