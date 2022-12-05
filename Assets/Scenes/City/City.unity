@@ -46180,6 +46180,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 82458771}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 1677626165}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 1669825890}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[3]
+      value: 
+      objectReference: {fileID: 578253437}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[4]
+      value: 
+      objectReference: {fileID: 1549235334}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[5]
+      value: 
+      objectReference: {fileID: 950471647}
     - target: {fileID: 4666327886307416118, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
       propertyPath: m_Constraints
       value: 112
@@ -67498,6 +67522,34 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[0]
+      value: 
+      objectReference: {fileID: 82458771}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[1]
+      value: 
+      objectReference: {fileID: 1677626165}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[2]
+      value: 
+      objectReference: {fileID: 1669825890}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[3]
+      value: 
+      objectReference: {fileID: 578253437}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[4]
+      value: 
+      objectReference: {fileID: 1549235334}
+    - target: {fileID: 2760634166118250960, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
+      propertyPath: _waypoints.Array.data[5]
+      value: 
+      objectReference: {fileID: 950471647}
     - target: {fileID: 4666327886307416118, guid: a817c29ea6847604bb2c6c51d9a74bf1, type: 3}
       propertyPath: m_Constraints
       value: 112
