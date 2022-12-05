@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.Media;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
@@ -74,9 +75,10 @@ public class NPC : MonoBehaviour
         // if collision tag is NPC
         if (collision.gameObject.CompareTag("NPC"))
         {
+            Debug.Log("Collision with NPC");
             NPC npc = collision.gameObject.GetComponent<NPC>();
             if (npc.IsInfected())
-                if (Random.Range(0f, 1f) < npc.GetCoughRate())
+                if (Random.Range(0f, 1f) < npc.GetTouchRate())
                     _isInfected = true;
         }
     }
@@ -87,9 +89,10 @@ public class NPC : MonoBehaviour
         // if collision tag is NPC
         if (other.gameObject.CompareTag("NPC"))
         {
+            Debug.Log("NPC: OnTriggerEnter");
             NPC npc = other.gameObject.GetComponent<NPC>();
-            if (npc.IsInfected())
-                if (Random.Range(0f, 1f) < npc.GetTouchRate())
+            if (npc.IsInfected() && npc != null)
+                if (Random.Range(0f, 1f) < npc.GetCoughRate())
                     _isInfected = true;
         }
     }

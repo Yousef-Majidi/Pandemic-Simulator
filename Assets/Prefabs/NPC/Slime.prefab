@@ -80,7 +80,7 @@ Animator:
   m_GameObject: {fileID: 1090219386143568}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 1f499d0eded7a4245b0c36149a43da4f, type: 3}
-  m_Controller: {fileID: 9100000, guid: fb53b4d3a4f06844c90da7297e9082de, type: 2}
+  m_Controller: {fileID: 9100000, guid: e633d1d47fe1d90449bbf86b1e0a5f2b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -102,8 +102,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3474ac6ca2d11241abb554a025896de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetIndex: 0
+  _minDist: 0.5
   _moveSpeed: 3
-  _rotSpeed: 100
+  _rotSpeed: 5
+  _waypoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!54 &4666327886307416118
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -136,8 +145,8 @@ MonoBehaviour:
   _health: 100
   _stamina: 100
   _happiness: 100
-  _coughRate: 0.5
-  _touchRate: 0.5
+  _coughRate: 1
+  _touchRate: 1
   _staminaDecayRate: 0.5
   _healthDecayRate: 0.5
 --- !u!1 &1159745215084782
