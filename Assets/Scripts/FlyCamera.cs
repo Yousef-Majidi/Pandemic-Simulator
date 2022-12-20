@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlyCamera : MonoBehaviour
@@ -19,31 +17,30 @@ public class FlyCamera : MonoBehaviour
 
     private void SetCursorState()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Cursor.lockState = _wantedMode = CursorLockMode.None;
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+            _wantedMode = CursorLockMode.None;
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.Mouse1))
             _wantedMode = CursorLockMode.Locked;
 
         // Apply cursor state
         Cursor.lockState = _wantedMode;
         // Hide cursor when locking
-        Cursor.visible = (CursorLockMode.Locked != _wantedMode);
+        Cursor.visible = (_wantedMode != CursorLockMode.Locked);
     }
 
-    void Start()
+    void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        SetCursorState();
+        if (Time.timeScale == 1) // game is not paused
+        {
+            SetCursorState();
 
-        if (Cursor.visible)
-            return;
-
-        {   // Camera Movement
+            // camera movement
             Vector3 deltaPosition = Vector3.zero;
 
             if (Input.GetKey(KeyCode.W))
@@ -63,25 +60,26 @@ public class FlyCamera : MonoBehaviour
 
             if (Input.GetKey(KeyCode.E))
                 deltaPosition += transform.up;
-            
+
             // apply deltaPosition as rigidBody velocity
-            _rigidBody.velocity = deltaPosition * _movementSpeed * Time.deltaTime;
+            _rigidBody.velocity = _movementSpeed * Time.deltaTime * deltaPosition;
 
-        }
+            // camera rotation - only when right mouse button is pressed
+            if (_wantedMode == CursorLockMode.Locked)
+            {
+                // Pitch
+                transform.rotation *= Quaternion.AngleAxis(
+                    -Input.GetAxis("Mouse Y") * _mouseSense,
+                    Vector3.right
+                );
 
-        {   // Camera Rotation
-            // Pitch
-            transform.rotation *= Quaternion.AngleAxis(
-                -Input.GetAxis("Mouse Y") * _mouseSense,
-                Vector3.right
-            );
-
-            // Paw
-            transform.rotation = Quaternion.Euler(
-                transform.eulerAngles.x,
-                transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
-                transform.eulerAngles.z
-            );
+                // Yaw
+                transform.rotation = Quaternion.Euler(
+                    transform.eulerAngles.x,
+                    transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
+                    transform.eulerAngles.z
+                );
+            }
         }
     }
 }
