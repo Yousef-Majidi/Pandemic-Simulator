@@ -20,7 +20,6 @@ public class NavMesh : MonoBehaviour
     private void SetAnimation()
     {
         // if agent is moving
-
         if (_agent.velocity.magnitude > 0)
         {
             _animator.SetBool("isWalking", true);

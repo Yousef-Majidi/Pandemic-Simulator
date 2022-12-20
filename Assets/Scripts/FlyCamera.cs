@@ -3,8 +3,17 @@ using UnityEngine;
 public class FlyCamera : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Camera movement speed")]
-    private float _movementSpeed = 10f;
+    [Tooltip("Camera base movement speed")]
+    private float _baseSpeed = 10f;
+
+    [SerializeField]
+    [Tooltip("Camera boost speed")]
+    private float _boostSpeed = 0f;
+
+    [SerializeField]
+    [Tooltip("Camera move speed")]
+    private float _moveSpeed = 10f;
+
 
     [Space]
 
@@ -29,9 +38,62 @@ public class FlyCamera : MonoBehaviour
         Cursor.visible = (_wantedMode != CursorLockMode.Locked);
     }
 
+    private void Boost()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+            _moveSpeed = _boostSpeed;
+        else
+            _moveSpeed = _baseSpeed;
+    }
+
+    private void CameraMovement()
+    {
+        Vector3 deltaPosition = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W))
+            deltaPosition += transform.forward;
+
+        if (Input.GetKey(KeyCode.S))
+            deltaPosition -= transform.forward;
+
+        if (Input.GetKey(KeyCode.A))
+            deltaPosition -= transform.right;
+
+        if (Input.GetKey(KeyCode.D))
+            deltaPosition += transform.right;
+
+        if (Input.GetKey(KeyCode.Q))
+            deltaPosition -= transform.up;
+
+        if (Input.GetKey(KeyCode.E))
+            deltaPosition += transform.up;
+
+        _rigidBody.velocity = _moveSpeed * Time.deltaTime * deltaPosition;
+    }
+
+    private void CameraRotation()
+    {
+        if (_wantedMode == CursorLockMode.Locked)
+        {
+            // Pitch
+            transform.rotation *= Quaternion.AngleAxis(
+                -Input.GetAxis("Mouse Y") * _mouseSense,
+                Vector3.right
+            );
+
+            // Yaw
+            transform.rotation = Quaternion.Euler(
+                transform.eulerAngles.x,
+                transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
+                transform.eulerAngles.z
+            );
+        }
+    }
+
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _boostSpeed = _baseSpeed * 3;
     }
 
     void Update()
@@ -39,47 +101,9 @@ public class FlyCamera : MonoBehaviour
         if (Time.timeScale == 1) // game is not paused
         {
             SetCursorState();
-
-            // camera movement
-            Vector3 deltaPosition = Vector3.zero;
-
-            if (Input.GetKey(KeyCode.W))
-                deltaPosition += transform.forward;
-
-            if (Input.GetKey(KeyCode.S))
-                deltaPosition -= transform.forward;
-
-            if (Input.GetKey(KeyCode.A))
-                deltaPosition -= transform.right;
-
-            if (Input.GetKey(KeyCode.D))
-                deltaPosition += transform.right;
-
-            if (Input.GetKey(KeyCode.Q))
-                deltaPosition -= transform.up;
-
-            if (Input.GetKey(KeyCode.E))
-                deltaPosition += transform.up;
-
-            // apply deltaPosition as rigidBody velocity
-            _rigidBody.velocity = _movementSpeed * Time.deltaTime * deltaPosition;
-
-            // camera rotation - only when right mouse button is pressed
-            if (_wantedMode == CursorLockMode.Locked)
-            {
-                // Pitch
-                transform.rotation *= Quaternion.AngleAxis(
-                    -Input.GetAxis("Mouse Y") * _mouseSense,
-                    Vector3.right
-                );
-
-                // Yaw
-                transform.rotation = Quaternion.Euler(
-                    transform.eulerAngles.x,
-                    transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
-                    transform.eulerAngles.z
-                );
-            }
+            Boost();
+            CameraMovement();
+            CameraRotation();
         }
     }
 }
