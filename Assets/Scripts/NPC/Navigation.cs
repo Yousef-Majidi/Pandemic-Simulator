@@ -12,14 +12,19 @@ public class Navigation : MonoBehaviour
     private NavMeshAgent _agent;
     private Animator _animator;
 
-    public void SetDestination()
+    public void SetDestination(Transform newDest)
     {
+        _destination = newDest;
         _agent.destination = _destination.position;
+    }
+
+    public Transform GetDestination()
+    {
+        return _destination;
     }
 
     private void SetAnimation()
     {
-        // if agent is moving
         if (_agent.velocity.magnitude > 0)
         {
             _animator.SetBool("isWalking", true);
@@ -36,7 +41,7 @@ public class Navigation : MonoBehaviour
 
     private void Update()
     {
-        SetDestination();
+        SetDestination(_destination);
         SetAnimation();
     }
 }

@@ -540,6 +540,8 @@ MonoBehaviour:
   _touchRate: 0.5
   _staminaDecayRate: 0.5
   _healthDecayRate: 0.5
+  _healthyAsset: {fileID: 1919012471076396}
+  _infectedAsset: {fileID: 1774625739149480, guid: 38efdaadbfe1d624bbee439cb02e7661, type: 3}
 --- !u!1 &1989916952965676
 GameObject:
   m_ObjectHideFlags: 0

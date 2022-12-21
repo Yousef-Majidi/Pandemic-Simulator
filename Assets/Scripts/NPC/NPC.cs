@@ -6,9 +6,15 @@ using UnityEngine.AI;
 
 public class NPC : MonoBehaviour
 {
+    enum AssetType
+    {
+        Healthy,
+        Infected
+    }
+
     [SerializeField]
     [Tooltip("Character Infection Status")]
-    private bool _isInfected = false;
+    private bool _isInfected;
 
     [SerializeField]
     [Tooltip("Character Health")]
@@ -42,9 +48,67 @@ public class NPC : MonoBehaviour
     [Tooltip("Character Health Decay Rate")]
     private float _healthDecayRate = 0.5f;
 
+    [Space]
+
+    [Header("Prefab assets that will be used to change the NPC's appearance")]
+
+    [SerializeField]
+    private GameObject _healthyAsset;
+
+    [SerializeField]
+    private GameObject _infectedAsset;
+
+    [SerializeField]
+    private AssetType _assetType;
+
     private float _triggerCounter;
     private NavMeshAgent _agent;
     // private Virus _virus = null;                      <-- To be implemented...
+
+    private void ChangeAsset()
+    {
+        if (_isInfected && _assetType == AssetType.Healthy)
+        {
+            Debug.Log("Changing to infected asset");
+            _assetType = AssetType.Infected;
+            GameObject newAsset = Instantiate(_infectedAsset, transform.position, transform.rotation);
+            newAsset.transform.parent = transform.parent;
+            CopyTo(newAsset);
+            Destroy(gameObject);
+            Debug.Log("Destorying: " + gameObject.name);
+            return;
+        }
+
+        if (!_isInfected && _assetType == AssetType.Infected)
+        {
+            Debug.Log("Changing to healthy asset");
+            _assetType = AssetType.Healthy;
+            GameObject newAsset = Instantiate(_healthyAsset, transform.position, transform.rotation);
+            newAsset.transform.parent = transform.parent;
+            CopyTo(newAsset);
+            Destroy(gameObject);
+            Debug.Log("Destorying: " + gameObject.name);
+            return;
+        }
+    }
+
+    private void CopyTo(GameObject other)
+    {
+        NPC otherNpc = other.GetComponent<NPC>();
+        otherNpc._isInfected = _isInfected;
+        otherNpc._health = _health;
+        otherNpc._stamina = _stamina;
+        otherNpc._assetType = _assetType;
+        otherNpc._coughRate = _coughRate;
+        otherNpc._touchRate = _touchRate;
+        otherNpc._happiness = _happiness;
+        otherNpc._staminaDecayRate = _staminaDecayRate;
+        otherNpc._healthDecayRate = _healthDecayRate;
+        otherNpc._triggerCounter = _triggerCounter;
+        otherNpc._agent = _agent;
+        var currentDestination = gameObject.GetComponent<Navigation>().GetDestination();
+        other.GetComponent<Navigation>().SetDestination(currentDestination);
+    }
 
     public bool IsInfected()
     {
@@ -71,12 +135,13 @@ public class NPC : MonoBehaviour
         return _stamina;
     }
 
-    private void SetStamina()
+    public void SetStamina()
     {
-        _stamina -= _staminaDecayRate * Time.deltaTime;
+        if (_agent.velocity.magnitude > 0)
+            _stamina -= _staminaDecayRate * Time.deltaTime;
     }
 
-    private void SetHealth()
+    public void SetHealth()
     {
         if (_isInfected)
             _health -= _healthDecayRate * Time.deltaTime;
@@ -85,7 +150,6 @@ public class NPC : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // if in the vecinity of an infected NPC, there is a chance of infection
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("NPC"))
@@ -93,15 +157,11 @@ public class NPC : MonoBehaviour
             ++_triggerCounter;
             NPC npc = other.gameObject.GetComponent<NPC>();
             if (_triggerCounter == 4 && npc.IsInfected())
-            {
                 if (Random.Range(0f, 1f) < npc.GetTouchRate())
                     _isInfected = true;
-            }
-            else if (npc.IsInfected())
-            {
-                if (Random.Range(0f, 1f) < npc.GetCoughRate())
-                    _isInfected = true;
-            }
+                else if (npc.IsInfected())
+                    if (Random.Range(0f, 1f) < npc.GetCoughRate())
+                        _isInfected = true;
         }
     }
 
@@ -126,6 +186,7 @@ public class NPC : MonoBehaviour
     {
         SetStamina();
         SetHealth();
+        ChangeAsset();
     }
 
 
