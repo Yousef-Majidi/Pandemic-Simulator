@@ -71,6 +71,20 @@ public class NPC : MonoBehaviour
         return _stamina;
     }
 
+    private void SetStamina()
+    {
+        _stamina -= _staminaDecayRate * Time.deltaTime;
+    }
+
+    private void SetHealth()
+    {
+        if (_isInfected)
+            _health -= _healthDecayRate * Time.deltaTime;
+
+        if (_health <= 0)
+            Destroy(gameObject);
+    }
+
     // if in the vecinity of an infected NPC, there is a chance of infection
     private void OnTriggerEnter(Collider other)
     {
@@ -78,19 +92,15 @@ public class NPC : MonoBehaviour
         {
             ++_triggerCounter;
             NPC npc = other.gameObject.GetComponent<NPC>();
-            if (_triggerCounter == 4)
+            if (_triggerCounter == 4 && npc.IsInfected())
             {
-                Debug.Log(gameObject.name + ": physical touch - counter: " + _triggerCounter);
-                if (npc.IsInfected())
-                    if (Random.Range(0f, 1f) < npc.GetTouchRate())
-                        _isInfected = true;
+                if (Random.Range(0f, 1f) < npc.GetTouchRate())
+                    _isInfected = true;
             }
-            else
+            else if (npc.IsInfected())
             {
-                Debug.Log(gameObject.name + ": vicinity trigger - counter: " + _triggerCounter);
-                if (npc.IsInfected() && npc != null)
-                    if (Random.Range(0f, 1f) < npc.GetCoughRate())
-                        _isInfected = true;
+                if (Random.Range(0f, 1f) < npc.GetCoughRate())
+                    _isInfected = true;
             }
         }
     }
@@ -103,7 +113,6 @@ public class NPC : MonoBehaviour
                 _triggerCounter = 0;
             else if (_triggerCounter > 0)
                 --_triggerCounter;
-            Debug.Log(gameObject.name + ": trigger exit - counter: " + _triggerCounter);
         }
     }
 
@@ -115,17 +124,8 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        // if walking, decrease stamina by _staminaDecayRate
-        if (_agent.velocity.magnitude > 0)
-            _stamina -= _staminaDecayRate * Time.deltaTime;
-
-        // if infected, reduce health by _healthDecayRate
-        if (_isInfected)
-            _health -= _healthDecayRate * Time.deltaTime;
-
-        // if health is 0, destroy the NPC
-        if (_health <= 0)
-            Destroy(gameObject);
+        SetStamina();
+        SetHealth();
     }
 
 
