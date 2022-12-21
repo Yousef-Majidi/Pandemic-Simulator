@@ -13,6 +13,10 @@ public class NPC : MonoBehaviour
     }
 
     [SerializeField]
+    [Tooltip("Current Asset Type")]
+    private AssetType _assetType;
+
+    [SerializeField]
     [Tooltip("Character Infection Status")]
     private bool _isInfected;
 
@@ -30,35 +34,29 @@ public class NPC : MonoBehaviour
 
     [Space]
 
-    [Header("Prefab assets that will be used to change the NPC's appearance")]
+    [SerializeField]
+    private AssetChanger _assetChanger;
 
     [SerializeField]
-    private GameObject _healthyAsset;
-
-    [SerializeField]
-    private GameObject _infectedAsset;
-
-    [SerializeField]
-    private AssetType _assetType;
+    private Virus _virus;
 
     private float _triggerCounter;
     private NavMeshAgent _agent;
 
-    [SerializeField]
-    private Virus _virus;
 
     public bool IsInfected { get => _isInfected; set => _isInfected = value; }
     public float Health { get => _health; set => _health = value; }
     public float Stamina { get => _stamina; set => _stamina = value; }
     public float Happiness { get => _happiness; set => _happiness = value; }
 
-    private void UpdateAsset()
+    private void CheckInfection()
     {
         if (_isInfected && _assetType == AssetType.Healthy)
         {
-            _assetType = AssetType.Infected;
-            GameObject newAsset = Instantiate(_infectedAsset, transform.position, transform.rotation);
+            Debug.Log("Infected with Healthy Asset");
+            GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
+            _assetType = AssetType.Infected;
             CopyTo(newAsset);
             if (Random.Range(0f, 1f) < _virus.MutationChance)
             {
@@ -73,9 +71,10 @@ public class NPC : MonoBehaviour
 
         if (!_isInfected && _assetType == AssetType.Infected)
         {
-            _assetType = AssetType.Healthy;
-            GameObject newAsset = Instantiate(_healthyAsset, transform.position, transform.rotation);
+            Debug.Log("Healthy with Infected Asset");
+            GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
+            _assetType = AssetType.Healthy;
             CopyTo(newAsset);
             Destroy(gameObject);
             return;
@@ -88,6 +87,7 @@ public class NPC : MonoBehaviour
         otherNpc._isInfected = _isInfected;
         otherNpc._health = _health;
         otherNpc._stamina = _stamina;
+        otherNpc._assetChanger = _assetChanger;
         otherNpc._assetType = _assetType;
         otherNpc._happiness = _happiness;
         otherNpc._triggerCounter = _triggerCounter;
@@ -120,11 +120,13 @@ public class NPC : MonoBehaviour
             ++_triggerCounter;
             NPC npc = other.gameObject.GetComponent<NPC>();
             if (_triggerCounter == 4 && npc.IsInfected)
+            {
                 if (Random.Range(0f, 1f) < npc._virus.TouchRate)
                     _isInfected = true;
-                else if (npc.IsInfected)
-                    if (Random.Range(0f, 1f) < npc._virus.CoughRate)
-                        _isInfected = true;
+            }
+            else if (npc.IsInfected)
+                if (Random.Range(0f, 1f) < npc._virus.CoughRate)
+                    _isInfected = true;
         }
     }
 
@@ -142,6 +144,7 @@ public class NPC : MonoBehaviour
     void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
         InvokeRepeating(nameof(WriteToLogFile), 2f, 2f);
     }
 
@@ -149,7 +152,7 @@ public class NPC : MonoBehaviour
     {
         UpdateStamina();
         UpdateHealth();
-        UpdateAsset();
+        CheckInfection();
     }
 
 

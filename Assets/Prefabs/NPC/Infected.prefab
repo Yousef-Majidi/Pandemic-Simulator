@@ -941,17 +941,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba3ccba4ab67ef441b6cd039a8dbc5c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _assetType: 1
   _isInfected: 1
   _health: 100
   _stamina: 100
   _happiness: 100
-  _coughRate: 0.5
-  _touchRate: 0.5
-  _staminaDecayRate: 0.5
-  _healthDecayRate: 0.5
-  _healthyAsset: {fileID: 1919012471076396, guid: 55776efecb0cd134ea5f418c2f97a705, type: 3}
-  _infectedAsset: {fileID: 1774625739149480}
-  _assetType: 1
+  _assetChanger: {fileID: 11400000, guid: bc5ce5eeda57f71499af48444a398c10, type: 2}
   _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
 --- !u!1 &1822049695589022
 GameObject:

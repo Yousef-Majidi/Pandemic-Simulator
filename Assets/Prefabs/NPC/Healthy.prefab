@@ -536,13 +536,7 @@ MonoBehaviour:
   _health: 100
   _stamina: 100
   _happiness: 100
-  _coughRate: 0.5
-  _touchRate: 0.5
-  _staminaDecayRate: 0.5
-  _healthDecayRate: 0.5
-  _healthyAsset: {fileID: 1919012471076396}
-  _infectedAsset: {fileID: 1774625739149480, guid: 38efdaadbfe1d624bbee439cb02e7661, type: 3}
-  _assetType: 0
+  _assetChanger: {fileID: 11400000, guid: bc5ce5eeda57f71499af48444a398c10, type: 2}
   _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
 --- !u!1 &1989916952965676
 GameObject:
