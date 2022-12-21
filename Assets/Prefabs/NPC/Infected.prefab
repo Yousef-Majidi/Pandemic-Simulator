@@ -952,6 +952,7 @@ MonoBehaviour:
   _healthyAsset: {fileID: 1919012471076396, guid: 55776efecb0cd134ea5f418c2f97a705, type: 3}
   _infectedAsset: {fileID: 1774625739149480}
   _assetType: 1
+  _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
 --- !u!1 &1822049695589022
 GameObject:
   m_ObjectHideFlags: 0
