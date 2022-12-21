@@ -2,6 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.Media;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NPC : MonoBehaviour
 {
@@ -23,8 +24,8 @@ public class NPC : MonoBehaviour
 
     [Space]
 
-    [Header("The following attributes will removed and retrieved from the Virus class when it is implemented")]
-    
+    [Header("The following attributes will be removed and retrieved from the Virus class when it is implemented")]
+
     [SerializeField]
     [Tooltip("Character Cough Rate: Chance of spreading infection by being near another NPC")]
     private float _coughRate = 0.5f;
@@ -41,7 +42,7 @@ public class NPC : MonoBehaviour
     [Tooltip("Character Health Decay Rate")]
     private float _healthDecayRate = 0.5f;
 
-    private WanderAI _wanderAi;
+    private NavMeshAgent _agent;
     // private Virus _virus = null;                      <-- To be implemented...
 
     public bool IsInfected()
@@ -68,15 +69,15 @@ public class NPC : MonoBehaviour
     {
         return _stamina;
     }
-    
+
     // if touching an infected NPC, there is a chance of infection
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision other)
     {
+        Debug.Log("Collision with NPC");
         // if collision tag is NPC
-        if (collision.gameObject.CompareTag("NPC"))
+        if (other.gameObject.CompareTag("NPC"))
         {
-            Debug.Log("Collision with NPC");
-            NPC npc = collision.gameObject.GetComponent<NPC>();
+            NPC npc = other.gameObject.GetComponent<NPC>();
             if (npc.IsInfected())
                 if (Random.Range(0f, 1f) < npc.GetTouchRate())
                     _isInfected = true;
@@ -96,17 +97,17 @@ public class NPC : MonoBehaviour
                     _isInfected = true;
         }
     }
-    
-    void Start()
+
+    void Awake()
     {
-        _wanderAi = GetComponent<WanderAI>();
+        _agent = GetComponent<NavMeshAgent>();
         InvokeRepeating(nameof(WriteToLogFile), 2f, 2f);
     }
 
     void Update()
     {
         // if walking, decrease stamina by _staminaDecayRate
-        if (_wanderAi.IsWalking())
+        if (_agent.velocity.magnitude > 0)
             _stamina -= _staminaDecayRate * Time.deltaTime;
 
         // if infected, reduce health by _healthDecayRate
@@ -128,6 +129,4 @@ public class NPC : MonoBehaviour
         using (System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true))
             logFile.WriteLine(message);
     }
-    
-
 }
