@@ -53,7 +53,6 @@ public class NPC : MonoBehaviour
     {
         if (_isInfected && _assetType == AssetType.Healthy)
         {
-            Debug.Log("Infected with Healthy Asset");
             GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Infected;
@@ -63,7 +62,6 @@ public class NPC : MonoBehaviour
                 Virus newVirus = ScriptableObject.CreateInstance<Virus>();
                 newVirus.Mutate();
                 _virus = newVirus;
-                Debug.Log("After mutation: Cough Rate: " + newVirus.CoughRate + " - Touch Rate: " + newVirus.TouchRate + " - Stamina Decay Rate: " + newVirus.StaminaDecayRate + " - Health Decay Rate: " + newVirus.HealthDecayRate + " - Mutation Chance: " + newVirus.MutationChance);
             }
             Destroy(gameObject);
             return;
@@ -71,11 +69,11 @@ public class NPC : MonoBehaviour
 
         if (!_isInfected && _assetType == AssetType.Infected)
         {
-            Debug.Log("Healthy with Infected Asset");
             GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Healthy;
             CopyTo(newAsset);
+            // TODO: the virus should be set to null at this point
             Destroy(gameObject);
             return;
         }
@@ -93,10 +91,8 @@ public class NPC : MonoBehaviour
         otherNpc._triggerCounter = _triggerCounter;
         otherNpc._virus = _virus;
         var currentDestination = gameObject.GetComponent<Navigation>().GetDestination();
-        other.GetComponent<Navigation>().SetDestination(currentDestination);
+        otherNpc.GetComponent<Navigation>().UpdateDestination(currentDestination);
     }
-
-
 
     private void UpdateStamina()
     {
@@ -134,6 +130,7 @@ public class NPC : MonoBehaviour
     {
         if (other.gameObject.CompareTag("NPC"))
         {
+            // TODO: potential bug here
             if (_triggerCounter == 4)
                 _triggerCounter = 0;
             else if (_triggerCounter > 0)

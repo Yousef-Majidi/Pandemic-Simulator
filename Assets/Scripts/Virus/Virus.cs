@@ -58,12 +58,10 @@ public class Virus : ScriptableObject
 
     public void Mutate()
     {
-        Debug.Log("Mutating");
         _coughRate = Random.Range(0f, 1f);
         _touchRate = Random.Range(0f, 1f);
         _staminaDecayRate = Random.Range(0f, 1f);
         _healthDecayRate = Random.Range(0f, 1f);
-        // _mutationChance = Random.Range(0.01f, 0.2); disabled for testing and debuging
-        Debug.Log("New values: " + _coughRate + " - " + _touchRate + " - " + _staminaDecayRate + " - " + _healthDecayRate + " - " + _mutationChance);
+        _mutationChance = Random.Range(0.01f, 0.2f);
     }
 }

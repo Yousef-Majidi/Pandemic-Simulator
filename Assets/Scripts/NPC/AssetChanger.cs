@@ -15,17 +15,13 @@ public class AssetChanger : ScriptableObject
     {
         if (infected)
         {
-            Debug.Log("Updating to Healthy");
             GameObject asset = Instantiate(_infectedAsset, position, rotation);
             return asset;
         }
         else
         {
-            Debug.Log("Updating to Infected");
             GameObject asset = Instantiate(_healthyAsset, position, rotation);
             return asset;
         }
-
     }
-
 }
