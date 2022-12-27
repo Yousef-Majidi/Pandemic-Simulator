@@ -2,37 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PauseMenu : MonoBehaviour{
-    public static bool GameIsPaused = false;
-    public GameObject pauseMenuUI;
+public class PauseMenu : MonoBehaviour
+{
+    [SerializeField]
+    private static bool _gameIsPaused = false;
 
-    void Start(){
-        pauseMenuUI.SetActive(false);
-    }
-
-
-
-    // Update is called once per frame
-    void Update(){
-        if(Input.GetKeyDown(KeyCode.Tab)){
-            if(GameIsPaused){
-                Resume();
-            }else{
-                Pause();
-            }
-        }
-        
-    }
-
-    public void Resume(){
-        pauseMenuUI.SetActive(false);
+    [SerializeField]
+    private GameObject _pauseMenuUI;
+    public void Resume()
+    {
+        _pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
-        GameIsPaused = false;
+        _gameIsPaused = false;
     }
 
-    public void Pause(){
-        pauseMenuUI.SetActive(true);
+    public void Pause()
+    {
+        _pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
-        GameIsPaused = true;
+        _gameIsPaused = true;
+    }
+
+    void Awake()
+    {
+        _pauseMenuUI.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            if (_gameIsPaused)
+                Resume();
+            else
+                Pause();
     }
 }

@@ -1,12 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlyCamera : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Camera movement speed")]
-    private float _movementSpeed = 10f;
+    [Tooltip("Camera base movement speed")]
+    private float _baseSpeed = 10f;
+
+    [SerializeField]
+    [Tooltip("Camera boost speed")]
+    private float _boostSpeed = 0f;
+
+    [SerializeField]
+    [Tooltip("Camera move speed")]
+    private float _moveSpeed = 10f;
+
 
     [Space]
 
@@ -19,69 +26,84 @@ public class FlyCamera : MonoBehaviour
 
     private void SetCursorState()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Cursor.lockState = _wantedMode = CursorLockMode.None;
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+            _wantedMode = CursorLockMode.None;
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.Mouse1))
             _wantedMode = CursorLockMode.Locked;
 
         // Apply cursor state
         Cursor.lockState = _wantedMode;
         // Hide cursor when locking
-        Cursor.visible = (CursorLockMode.Locked != _wantedMode);
+        Cursor.visible = (_wantedMode != CursorLockMode.Locked);
     }
 
-    void Start()
+    private void Boost()
     {
-        _rigidBody = GetComponent<Rigidbody>();
+        if (Input.GetKey(KeyCode.LeftShift))
+            _moveSpeed = _boostSpeed;
+        else
+            _moveSpeed = _baseSpeed;
     }
 
-    void Update()
+    private void CameraMovement()
     {
-        SetCursorState();
+        Vector3 deltaPosition = Vector3.zero;
 
-        if (Cursor.visible)
-            return;
+        if (Input.GetKey(KeyCode.W))
+            deltaPosition += transform.forward;
 
-        {   // Camera Movement
-            Vector3 deltaPosition = Vector3.zero;
+        if (Input.GetKey(KeyCode.S))
+            deltaPosition -= transform.forward;
 
-            if (Input.GetKey(KeyCode.W))
-                deltaPosition += transform.forward;
+        if (Input.GetKey(KeyCode.A))
+            deltaPosition -= transform.right;
 
-            if (Input.GetKey(KeyCode.S))
-                deltaPosition -= transform.forward;
+        if (Input.GetKey(KeyCode.D))
+            deltaPosition += transform.right;
 
-            if (Input.GetKey(KeyCode.A))
-                deltaPosition -= transform.right;
+        if (Input.GetKey(KeyCode.Q))
+            deltaPosition -= transform.up;
 
-            if (Input.GetKey(KeyCode.D))
-                deltaPosition += transform.right;
+        if (Input.GetKey(KeyCode.E))
+            deltaPosition += transform.up;
 
-            if (Input.GetKey(KeyCode.Q))
-                deltaPosition -= transform.up;
+        _rigidBody.velocity = _moveSpeed * Time.deltaTime * deltaPosition;
+    }
 
-            if (Input.GetKey(KeyCode.E))
-                deltaPosition += transform.up;
-            
-            // apply deltaPosition as rigidBody velocity
-            _rigidBody.velocity = deltaPosition * _movementSpeed * Time.deltaTime;
-
-        }
-
-        {   // Camera Rotation
+    private void CameraRotation()
+    {
+        if (_wantedMode == CursorLockMode.Locked)
+        {
             // Pitch
             transform.rotation *= Quaternion.AngleAxis(
                 -Input.GetAxis("Mouse Y") * _mouseSense,
                 Vector3.right
             );
 
-            // Paw
+            // Yaw
             transform.rotation = Quaternion.Euler(
                 transform.eulerAngles.x,
                 transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
                 transform.eulerAngles.z
             );
+        }
+    }
+
+    void Awake()
+    {
+        _rigidBody = GetComponent<Rigidbody>();
+        _boostSpeed = _baseSpeed * 3;
+    }
+
+    void Update()
+    {
+        if (Time.timeScale == 1) // game is not paused
+        {
+            SetCursorState();
+            Boost();
+            CameraMovement();
+            CameraRotation();
         }
     }
 }

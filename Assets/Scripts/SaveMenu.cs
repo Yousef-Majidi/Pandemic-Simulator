@@ -2,24 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveMenu : MonoBehaviour{
-    public static bool SaveMenuIsOpen = false;
-    public GameObject SaveMenuUI;
-    
-    //on start, set the save menu to be closed
-    void Start(){
-        SaveMenuUI.SetActive(false);
-    }
+public class SaveMenu : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject _saveMenuUI;
 
-    public void open(){
-        SaveMenuUI.SetActive(true);
+    public void open()
+    {
+        _saveMenuUI.SetActive(true);
         Time.timeScale = 0f;
-        SaveMenuIsOpen = true;
     }
 
-    public void close(){
-        SaveMenuUI.SetActive(false);
+    public void close()
+    {
+        _saveMenuUI.SetActive(false);
         Time.timeScale = 1f;
-        SaveMenuIsOpen = false;
     }
+
+    void Awake()
+    {
+        _saveMenuUI.SetActive(false);
+    }
+
+
 }
