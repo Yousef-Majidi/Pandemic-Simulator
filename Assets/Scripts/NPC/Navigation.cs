@@ -12,7 +12,7 @@ public class Navigation : MonoBehaviour
     private NavMeshAgent _agent;
     private Animator _animator;
 
-    public void SetDestination(Transform newDest)
+    public void UpdateDestination(Transform newDest)
     {
         _destination = newDest;
         _agent.destination = _destination.position;
@@ -23,7 +23,7 @@ public class Navigation : MonoBehaviour
         return _destination;
     }
 
-    private void SetAnimation()
+    private void UpdateAnimation()
     {
         if (_agent.velocity.magnitude > 0)
         {
@@ -41,7 +41,7 @@ public class Navigation : MonoBehaviour
 
     private void Update()
     {
-        SetDestination(_destination);
-        SetAnimation();
+        UpdateDestination(_destination);
+        UpdateAnimation();
     }
 }
