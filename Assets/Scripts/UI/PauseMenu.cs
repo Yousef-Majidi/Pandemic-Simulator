@@ -28,12 +28,21 @@ public class PauseMenu : MonoBehaviour
         _pauseMenuUI.SetActive(false);
     }
 
+    // take screenshot
+    public void TakeScreenshot()
+    {
+        ScreenCapture.CaptureScreenshot(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
+        UnityEditor.AssetDatabase.Refresh();
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             if (_gameIsPaused)
                 Resume();
-            else
+            else{
+                TakeScreenshot();
                 Pause();
+            }
     }
 }
