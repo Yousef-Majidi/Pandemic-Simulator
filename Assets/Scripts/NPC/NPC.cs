@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Media;
@@ -32,6 +33,10 @@ public class NPC : MonoBehaviour
     [Tooltip("Character Happiness")]
     private float _happiness = 100f;
 
+    [SerializeField]
+    [Tooltip("Character Happiness Decay Rate")]
+    private float _happinessDecayRate = 0f;
+
     [Space]
 
     [SerializeField]
@@ -43,11 +48,14 @@ public class NPC : MonoBehaviour
     private float _triggerCounter;
     private NavMeshAgent _agent;
 
+    private bool _isHappinessDecayActive;
+
 
     public bool IsInfected { get => _isInfected; set => _isInfected = value; }
     public float Health { get => _health; set => _health = value; }
     public float Stamina { get => _stamina; set => _stamina = value; }
     public float Happiness { get => _happiness; set => _happiness = value; }
+    public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
 
     private void CheckInfection()
     {
@@ -57,7 +65,7 @@ public class NPC : MonoBehaviour
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Infected;
             CopyTo(newAsset);
-            if (Random.Range(0f, 1f) < _virus.MutationChance)
+            if (UnityEngine.Random.Range(0f, 1f) < _virus.MutationChance)
             {
                 Virus newVirus = ScriptableObject.CreateInstance<Virus>();
                 newVirus.Mutate();
@@ -73,7 +81,7 @@ public class NPC : MonoBehaviour
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Healthy;
             CopyTo(newAsset);
-            // TODO: the virus should be set to null at this point
+            // newAsset.GetComponent<NPC>()._virus = null;
             Destroy(gameObject);
             return;
         }
@@ -97,16 +105,43 @@ public class NPC : MonoBehaviour
     private void UpdateStamina()
     {
         if (_agent.velocity.magnitude > 0)
+        {
             _stamina -= _virus.StaminaDecayRate * Time.deltaTime;
+        }
     }
 
     private void UpdateHealth()
     {
         if (_isInfected)
+        {
             _health -= _virus.HealthDecayRate * Time.deltaTime;
+        }
 
         if (_health <= 0)
+        {
             Destroy(gameObject);
+        }
+    }
+
+    private void UpdateHappiness()
+    {
+        UpdateHappinessDecayRate();
+        _happiness -= _happinessDecayRate * Time.deltaTime;
+        Debug.Log("Current Happiness: " + _happiness + " - Decay Rate: " + _happinessDecayRate);
+    }
+
+    private void UpdateHappinessDecayRate()
+    {
+        if (_health < 25 && !_isHappinessDecayActive)
+        {
+            _happinessDecayRate += 1f;
+            _isHappinessDecayActive = true;
+        }
+        else if (_health >= 25 && _isHappinessDecayActive)
+        {
+            _happinessDecayRate -= 1f;
+            _isHappinessDecayActive = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -117,12 +152,16 @@ public class NPC : MonoBehaviour
             NPC npc = other.gameObject.GetComponent<NPC>();
             if (_triggerCounter == 4 && npc.IsInfected)
             {
-                if (Random.Range(0f, 1f) < npc._virus.TouchRate)
+                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.TouchRate)
+                {
                     _isInfected = true;
+                }
             }
             else if (npc.IsInfected)
-                if (Random.Range(0f, 1f) < npc._virus.CoughRate)
+                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.CoughRate)
+                {
                     _isInfected = true;
+                }
         }
     }
 
@@ -132,9 +171,13 @@ public class NPC : MonoBehaviour
         {
             // TODO: potential bug here
             if (_triggerCounter == 4)
+            {
                 _triggerCounter = 0;
+            }
             else if (_triggerCounter > 0)
+            {
                 --_triggerCounter;
+            }
         }
     }
 
@@ -150,6 +193,7 @@ public class NPC : MonoBehaviour
         UpdateStamina();
         UpdateHealth();
         CheckInfection();
+        UpdateHappiness();
     }
 
 
@@ -159,7 +203,7 @@ public class NPC : MonoBehaviour
         string path = "Logs/log.txt";
         string message = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -- Name: " + gameObject.name + ", Health: " + _health + ", Stamina: " + _stamina + ", is Infected: " + _isInfected + ", Cough Rate: " + _virus.CoughRate + " Touch Rate: " + _virus.TouchRate + ", Stamina Decay Rate: " + _virus.StaminaDecayRate + ", Health Decay Rate: " + _virus.HealthDecayRate + "\n";
 
-        using (System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true))
-            logFile.WriteLine(message);
+        using System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true);
+        logFile.WriteLine(message);
     }
 }
