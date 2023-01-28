@@ -64,12 +64,7 @@ public class NPC : MonoBehaviour
             GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Infected;
-            // _virus = ScriptableObject.CreateInstance<Virus>();
             CopyTo(newAsset);
-            //if (UnityEngine.Random.Range(0f, 1f) < _virus.MutationChance)
-            //{
-            //    _virus.Mutate();
-            //}
             Destroy(gameObject);
             return;
         }
@@ -105,7 +100,7 @@ public class NPC : MonoBehaviour
     {
         if (_agent.velocity.magnitude > 0)
         {
-            float decayRate = _virus ? _virus.StaminaDecayRate : 1f;
+            float decayRate = _virus ? _virus.StaminaDecayRate : 0.2f;
             _stamina -= decayRate * Time.deltaTime;
         }
     }
