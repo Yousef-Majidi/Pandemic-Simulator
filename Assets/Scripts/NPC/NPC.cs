@@ -64,13 +64,12 @@ public class NPC : MonoBehaviour
             GameObject newAsset = _assetChanger.UpdateAsset(_isInfected, transform.position, transform.rotation);
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Infected;
+            // _virus = ScriptableObject.CreateInstance<Virus>();
             CopyTo(newAsset);
-            if (UnityEngine.Random.Range(0f, 1f) < _virus.MutationChance)
-            {
-                Virus newVirus = ScriptableObject.CreateInstance<Virus>();
-                newVirus.Mutate();
-                _virus = newVirus;
-            }
+            //if (UnityEngine.Random.Range(0f, 1f) < _virus.MutationChance)
+            //{
+            //    _virus.Mutate();
+            //}
             Destroy(gameObject);
             return;
         }
@@ -81,7 +80,7 @@ public class NPC : MonoBehaviour
             newAsset.transform.parent = transform.parent;
             _assetType = AssetType.Healthy;
             CopyTo(newAsset);
-            // newAsset.GetComponent<NPC>()._virus = null;
+            newAsset.GetComponent<NPC>()._virus = null;
             Destroy(gameObject);
             return;
         }
@@ -106,13 +105,14 @@ public class NPC : MonoBehaviour
     {
         if (_agent.velocity.magnitude > 0)
         {
-            _stamina -= _virus.StaminaDecayRate * Time.deltaTime;
+            float decayRate = _virus ? _virus.StaminaDecayRate : 1f;
+            _stamina -= decayRate * Time.deltaTime;
         }
     }
 
     private void UpdateHealth()
     {
-        if (_isInfected)
+        if (_isInfected && _virus)
         {
             _health -= _virus.HealthDecayRate * Time.deltaTime;
         }
@@ -146,22 +146,30 @@ public class NPC : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("NPC"))
+        if (other.gameObject.CompareTag("NPC") && !_isInfected)
         {
             ++_triggerCounter;
             NPC npc = other.gameObject.GetComponent<NPC>();
-            if (_triggerCounter == 4 && npc.IsInfected)
+            if (_triggerCounter == 4 && npc.IsInfected && npc._virus && UnityEngine.Random.Range(0f, 1f) < npc._virus.TouchRate)
             {
-                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.TouchRate)
+                _isInfected = true;
+            }
+            else if (npc.IsInfected && npc._virus && UnityEngine.Random.Range(0f, 1f) < npc._virus.CoughRate)
+            {
+                _isInfected = true;
+            }
+            if (_isInfected && npc._virus)
+            {
+                _virus = ScriptableObject.CreateInstance<Virus>();
+                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.MutationChance)
                 {
-                    _isInfected = true;
+                    _virus.Mutate();
+                }
+                else
+                {
+                    _virus.Copy(npc._virus);
                 }
             }
-            else if (npc.IsInfected)
-                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.CoughRate)
-                {
-                    _isInfected = true;
-                }
         }
     }
 
@@ -185,7 +193,7 @@ public class NPC : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
-        InvokeRepeating(nameof(WriteToLogFile), 2f, 2f);
+        //InvokeRepeating(nameof(WriteToLogFile), 2f, 2f);
     }
 
     void Update()
@@ -198,12 +206,12 @@ public class NPC : MonoBehaviour
 
 
     /*          DEBUGING            */
-    void WriteToLogFile()
-    {
-        string path = "Logs/log.txt";
-        string message = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -- Name: " + gameObject.name + ", Health: " + _health + ", Stamina: " + _stamina + ", is Infected: " + _isInfected + ", Cough Rate: " + _virus.CoughRate + " Touch Rate: " + _virus.TouchRate + ", Stamina Decay Rate: " + _virus.StaminaDecayRate + ", Health Decay Rate: " + _virus.HealthDecayRate + "\n";
+    //void WriteToLogFile()
+    //{
+    //    string path = "Logs/log.txt";
+    //    string message = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -- Name: " + gameObject.name + ", Health: " + _health + ", Stamina: " + _stamina + ", is Infected: " + _isInfected + ", Cough Rate: " + _virus.CoughRate + " Touch Rate: " + _virus.TouchRate + ", Stamina Decay Rate: " + _virus.StaminaDecayRate + ", Health Decay Rate: " + _virus.HealthDecayRate + "\n";
 
-        using System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true);
-        logFile.WriteLine(message);
-    }
+    //    using System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true);
+    //    logFile.WriteLine(message);
+    //}
 }
