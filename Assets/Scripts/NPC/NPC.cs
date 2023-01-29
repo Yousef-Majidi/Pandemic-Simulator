@@ -37,6 +37,8 @@ public class NPC : MonoBehaviour
     [Tooltip("Character Happiness Decay Rate")]
     private float _happinessDecayRate = 0f;
 
+    private bool _isHappinessDecayActive;
+
     [Space]
 
     [SerializeField]
@@ -48,8 +50,7 @@ public class NPC : MonoBehaviour
     private float _triggerCounter;
     private NavMeshAgent _agent;
 
-    private bool _isHappinessDecayActive;
-
+    GameManager _gameManager;
 
     public bool IsInfected { get => _isInfected; set => _isInfected = value; }
     public float Health { get => _health; set => _health = value; }
@@ -100,8 +101,11 @@ public class NPC : MonoBehaviour
     {
         if (_agent.velocity.magnitude > 0)
         {
-            float decayRate = _virus ? _virus.StaminaDecayRate : 0.2f;
-            _stamina -= decayRate * Time.deltaTime;
+            float decayRate = _virus ? _virus.StaminaDecayRate + 1f : 1f;
+            if (_stamina > 0)
+            {
+                _stamina -= decayRate * Time.deltaTime;
+            }
         }
     }
 
@@ -112,7 +116,7 @@ public class NPC : MonoBehaviour
             _health -= _virus.HealthDecayRate * Time.deltaTime;
         }
 
-        if (_health <= 0)
+        if (_health <= 0 && _gameManager.GodMode == false)
         {
             Destroy(gameObject);
         }
@@ -120,9 +124,12 @@ public class NPC : MonoBehaviour
 
     private void UpdateHappiness()
     {
-        UpdateHappinessDecayRate();
-        _happiness -= _happinessDecayRate * Time.deltaTime;
-        Debug.Log("Current Happiness: " + _happiness + " - Decay Rate: " + _happinessDecayRate);
+        if (!_gameManager.GodMode)
+        {
+            UpdateHappinessDecayRate();
+            _happiness -= _happinessDecayRate * Time.deltaTime;
+            Debug.Log("Current Happiness: " + _happiness + " - Decay Rate: " + _happinessDecayRate);
+        }
     }
 
     private void UpdateHappinessDecayRate()
@@ -188,6 +195,7 @@ public class NPC : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         //InvokeRepeating(nameof(WriteToLogFile), 2f, 2f);
     }
 

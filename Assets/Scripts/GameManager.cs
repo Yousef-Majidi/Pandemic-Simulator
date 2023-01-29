@@ -10,8 +10,12 @@ public class GameManager : MonoBehaviour
     private bool _godMode;
 
     [SerializeField]
-    [Tooltip("Max number of NPCs allowed")]
+    [Tooltip("Max NPCs")]
     private int _maxNPCs = 500;
+
+    [SerializeField]
+    [Tooltip("Currently spawned")]
+    private int _npcCount = 0;
 
     [SerializeField]
     [Tooltip("Test Spawn Point")]
@@ -36,7 +40,7 @@ public class GameManager : MonoBehaviour
     // a linked list of all NPCS
     private readonly LinkedList<GameObject> _npcs = new();
 
-
+    public bool GodMode { get => _godMode; set => _godMode = value; }
 
     private void ToggleGodMode()
     {
@@ -54,7 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnNPC()
     {
-        if (_npcs.Count < _maxNPCs)
+        if (_npcCount < _maxNPCs)
         {
             // instantiate a new healthy npc at testSpawnPoint
             GameObject newNPC = Instantiate(_healthyPrefab, _testSpawnPoint.transform.position, _testSpawnPoint.transform.rotation);
@@ -69,7 +73,7 @@ public class GameManager : MonoBehaviour
             _npcs.AddFirst(newNPC);
             // Debug.Log the name of the NPC
             Debug.Log(newNPC.name + " created - going to " + _destinations.ElementAt(randomIndex).name);
-            Debug.Log("Total NPCs: " + _npcs.Count);
+            _npcCount++;
         }
     }
 
@@ -83,7 +87,7 @@ public class GameManager : MonoBehaviour
 
     private void RefreshDestinations()
     {
-        foreach (GameObject npc in _npcs)
+        foreach (GameObject npc in _npcs.ToList())
         {
             if (npc != null)
             {
@@ -97,7 +101,7 @@ public class GameManager : MonoBehaviour
     private void CalculateAverageHappiness()
     {
         float totalHappiness = 0;
-        foreach (GameObject npc in _npcs)
+        foreach (GameObject npc in _npcs.ToList())
         {
             if (npc)
             {
@@ -127,7 +131,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         #region GOD MODE
-        if (_npcs.Count == _maxNPCs)
+        if (_npcCount == _maxNPCs)
         {
             CancelInvoke(nameof(SpawnNPC));
         }
