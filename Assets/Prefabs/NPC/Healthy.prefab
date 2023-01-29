@@ -539,7 +539,7 @@ MonoBehaviour:
   _happiness: 100
   _happinessDecayRate: 0
   _assetChanger: {fileID: 11400000, guid: bc5ce5eeda57f71499af48444a398c10, type: 2}
-  _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
+  _virus: {fileID: 0}
 --- !u!1 &1989916952965676
 GameObject:
   m_ObjectHideFlags: 0
