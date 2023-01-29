@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Max number of NPCs allowed")]
-    private int _maxNPCs = 1000;
+    private int _maxNPCs = 500;
 
     [SerializeField]
     [Tooltip("Test Spawn Point")]
@@ -25,11 +25,16 @@ public class GameManager : MonoBehaviour
     [Tooltip("Infected NPC Prefab")]
     private GameObject _infectedPrefab;
 
+    [SerializeField]
+    [Tooltip("Average Happiness of all NPCs")]
+    private float _averageHappiness;
+
+
     // a linked list of all waypoints
-    private LinkedList<GameObject> _destinations = new();
+    private readonly LinkedList<GameObject> _destinations = new();
 
     // a linked list of all NPCS
-    private LinkedList<GameObject> _npcs = new();
+    private readonly LinkedList<GameObject> _npcs = new();
 
 
 
@@ -49,19 +54,23 @@ public class GameManager : MonoBehaviour
 
     private void SpawnNPC()
     {
-        // instantiate a new healthy npc at testSpawnPoint
-        GameObject newNPC = Instantiate(_healthyPrefab, _testSpawnPoint.transform.position, _testSpawnPoint.transform.rotation);
-        // place the npc as a child of "NPCs" in the hierarchy
-        newNPC.transform.parent = GameObject.Find("NPCs").transform;
-        // find a random waypoint
-        int randomIndex = Random.Range(0, _destinations.Count);
-        // set the destination of newNPC to the random waypoint
-        newNPC.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
-        // set the tag to NPC
-        newNPC.tag = "NPC";
-        _npcs.AddFirst(newNPC);
-        // Debug.Log the name of the NPC
-        Debug.Log(newNPC.name + " created - going to " + _destinations.ElementAt(randomIndex).name);
+        if (_npcs.Count < _maxNPCs)
+        {
+            // instantiate a new healthy npc at testSpawnPoint
+            GameObject newNPC = Instantiate(_healthyPrefab, _testSpawnPoint.transform.position, _testSpawnPoint.transform.rotation);
+            // place the npc as a child of "NPCs" in the hierarchy
+            newNPC.transform.parent = GameObject.Find("NPCs").transform;
+            // find a random waypoint
+            int randomIndex = Random.Range(0, _destinations.Count);
+            // set the destination of newNPC to the random waypoint
+            newNPC.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
+            // set the tag to NPC
+            newNPC.tag = "NPC";
+            _npcs.AddFirst(newNPC);
+            // Debug.Log the name of the NPC
+            Debug.Log(newNPC.name + " created - going to " + _destinations.ElementAt(randomIndex).name);
+            Debug.Log("Total NPCs: " + _npcs.Count);
+        }
     }
 
     private void DestroyNPC()
@@ -82,11 +91,24 @@ public class GameManager : MonoBehaviour
                 npc.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
                 Debug.Log(npc.name + " is going to " + _destinations.ElementAt(randomIndex));
             }
+        }
+    }
+
+    private void CalculateAverageHappiness()
+    {
+        float totalHappiness = 0;
+        foreach (GameObject npc in _npcs)
+        {
+            if (npc)
+            {
+                totalHappiness += npc.GetComponent<NPC>().Happiness;
+            }
             else
             {
                 _npcs.Remove(npc);
             }
         }
+        _averageHappiness = totalHappiness / _npcs.Count;
     }
 
     void Awake()
@@ -98,18 +120,24 @@ public class GameManager : MonoBehaviour
             _destinations.AddFirst(waypoint);
         }
         _npcs.AddFirst(GameObject.FindGameObjectWithTag("NPC"));
-        InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
+        InvokeRepeating(nameof(SpawnNPC), 0f, 1f);
+        InvokeRepeating(nameof(RefreshDestinations), 0f, 10f);
     }
 
     void Update()
     {
         #region GOD MODE
+        if (_npcs.Count == _maxNPCs)
+        {
+            CancelInvoke(nameof(SpawnNPC));
+        }
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             ToggleGodMode();
         }
 
-        if (Input.GetKeyDown(KeyCode.N) && _godMode && _npcs.Count < _maxNPCs)
+        if (Input.GetKeyDown(KeyCode.N) && _godMode)
         {
             SpawnNPC();
         }
@@ -119,5 +147,8 @@ public class GameManager : MonoBehaviour
             DestroyNPC();
         }
         #endregion
+
+        CalculateAverageHappiness();
+
     }
 }

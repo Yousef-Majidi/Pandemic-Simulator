@@ -16,4 +16,4 @@ MonoBehaviour:
   _touchRate: 0.01
   _staminaDecayRate: 1
   _healthDecayRate: 0
-  _mutationChance: 0.3
+  _mutationChance: 0.1
