@@ -20,6 +20,7 @@ public class InGameUI : MonoBehaviour
         UpdateHappinessBar();
         UpdateTimeCounter();
         UpdateDayCounter();
+        keyPress();
         
     }
 
@@ -60,10 +61,13 @@ public class InGameUI : MonoBehaviour
         GameObject.Find("HappinessSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
     }
 
-    void UpdateTimeCounter()
+    void UpdateTimeCounter(bool isPaused = false)
     {
-        // update the time aceleration counter
-        GameObject.Find("TimeCount").GetComponent<TextMeshProUGUI>().text = "x" + Time.timeScale.ToString();
+        // update the time aceleration counte
+        if (isPaused)
+            GameObject.Find("TimeCount").GetComponent<TextMeshProUGUI>().text = "x0";
+        else
+            GameObject.Find("TimeCount").GetComponent<TextMeshProUGUI>().text = "x" + Time.timeScale.ToString();
     }
 
     void UpdateDayCounter()
@@ -81,5 +85,61 @@ public class InGameUI : MonoBehaviour
             panel.SetActive(true);
     }
 
+    public void PauseGame()
+    {
+        // if the game is paused, unpause it
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
+        else
+        {
+            Time.timeScale = 0;
+            UpdateTimeCounter(true);
+        }
+    }
+
+    public void FastForward()
+    {
+        switch (Time.timeScale)
+        {
+            case 0:
+                Time.timeScale = 1;
+                break;
+            case 1:
+                Time.timeScale = 2;
+                break;
+            case 2:
+                Time.timeScale = 4;
+                break;
+            case 4:
+                Time.timeScale = 1;
+                break;
+            default:
+                Time.timeScale = 1;
+                break;
+        }
+    }
+
+    void keyPress()
+    {
+        switch (Input.inputString)
+        {
+            case "1":
+                Time.timeScale = 1;
+                break;
+            case "2":
+                Time.timeScale = 2;
+                break;
+            case "3":
+                Time.timeScale = 4;
+                break;
+            case "0":
+                Time.timeScale = 0;
+                break;
+            default:
+                break;
+        }
+    }
 
 }
