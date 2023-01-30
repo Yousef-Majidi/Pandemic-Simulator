@@ -15,5 +15,5 @@ MonoBehaviour:
   _coughRate: 0.01
   _touchRate: 0.01
   _staminaDecayRate: 1
-  _healthDecayRate: 0
+  _healthDecayRate: 1
   _mutationChance: 0.1

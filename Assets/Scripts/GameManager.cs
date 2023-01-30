@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Max NPCs")]
-    private int _maxNPCs = 500;
+    private int _maxNPCs = 250;
 
     [SerializeField]
     [Tooltip("Currently spawned")]
@@ -33,12 +33,17 @@ public class GameManager : MonoBehaviour
     [Tooltip("Average Happiness of all NPCs")]
     private float _averageHappiness;
 
+    [Space]
+
+    [SerializeField]
+    private AssetChanger _assetChanger;
 
     // a linked list of all waypoints
     private readonly LinkedList<GameObject> _destinations = new();
 
     // a linked list of all NPCS
     private readonly LinkedList<GameObject> _npcs = new();
+
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
 
@@ -60,18 +65,12 @@ public class GameManager : MonoBehaviour
     {
         if (_npcCount < _maxNPCs)
         {
-            // instantiate a new healthy npc at testSpawnPoint
             GameObject newNPC = Instantiate(_healthyPrefab, _testSpawnPoint.transform.position, _testSpawnPoint.transform.rotation);
-            // place the npc as a child of "NPCs" in the hierarchy
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
-            // find a random waypoint
             int randomIndex = Random.Range(0, _destinations.Count);
-            // set the destination of newNPC to the random waypoint
             newNPC.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
-            // set the tag to NPC
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
-            // Debug.Log the name of the NPC
             Debug.Log(newNPC.name + " created - going to " + _destinations.ElementAt(randomIndex).name);
             _npcCount++;
         }
@@ -115,9 +114,30 @@ public class GameManager : MonoBehaviour
         _averageHappiness = totalHappiness / _npcs.Count;
     }
 
+    public void UpdateAsset(GameObject npc)
+    {
+        Debug.Log("Updating asset for " + npc.name);
+        GameObject newNPC;
+        if (npc.GetComponent<NPC>().IsInfected)
+        {
+            newNPC = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
+            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+        }
+        else
+        {
+            newNPC = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
+            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
+            newNPC.GetComponent<NPC>().Virus = null;
+        }
+        newNPC.transform.parent = npc.transform.parent;
+        newNPC.GetComponent<NPC>().Copy(npc);
+        _npcs.Remove(npc);
+        _npcs.AddFirst(newNPC);
+        Destroy(npc);
+    }
+
     void Awake()
     {
-        // find all the waypoints on the scene
         GameObject[] waypoints = GameObject.FindGameObjectsWithTag("Test");
         foreach (GameObject waypoint in waypoints)
         {
@@ -125,12 +145,12 @@ public class GameManager : MonoBehaviour
         }
         _npcs.AddFirst(GameObject.FindGameObjectWithTag("NPC"));
         InvokeRepeating(nameof(SpawnNPC), 0f, 1f);
-        InvokeRepeating(nameof(RefreshDestinations), 0f, 10f);
+        InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
     }
 
     void Update()
     {
-        #region GOD MODE
+        #region GOD_MODE
         if (_npcCount == _maxNPCs)
         {
             CancelInvoke(nameof(SpawnNPC));
