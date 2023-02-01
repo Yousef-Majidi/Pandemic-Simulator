@@ -11,11 +11,17 @@ public class Navigation : MonoBehaviour
 
     private NavMeshAgent _agent;
     private Animator _animator;
+    private GameObject[] _destinations;
+    private int _noOfDest;
 
     public void UpdateDestination(Transform newDest)
     {
-        _destination = newDest;
-        _agent.destination = _destination.position;
+        //_destination = newDest;
+        if (_agent.velocity.magnitude == 0)
+        {
+            _destination = _destinations[Random.Range(0,_noOfDest)].transform;
+            _agent.destination = _destination.position;
+        }
     }
 
     public Transform GetDestination()
@@ -35,13 +41,18 @@ public class Navigation : MonoBehaviour
 
     private void Awake()
     {
+        _destinations = GameObject.FindGameObjectsWithTag("Commercial");
+        print(_destinations[0].transform);
+        _noOfDest = _destinations.Length;
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
     }
 
     private void Update()
-    {
-        UpdateDestination(_destination);
-        UpdateAnimation();
+    { 
+         
+            UpdateDestination(_destination);
+            UpdateAnimation();
+        
     }
 }
