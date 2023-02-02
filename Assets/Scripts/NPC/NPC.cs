@@ -4,6 +4,7 @@ using UnityEditor.Media;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class NPC : MonoBehaviour
 {
     enum AssetType
@@ -162,4 +163,6 @@ public class NPC : MonoBehaviour
         using (System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true))
             logFile.WriteLine(message);
     }
+
+   
 }
