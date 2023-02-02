@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField]
     private GameObject _pauseMenuUI;
+
     public void Resume()
     {
         _pauseMenuUI.SetActive(false);
@@ -26,6 +27,7 @@ public class PauseMenu : MonoBehaviour
     void Awake()
     {
         _pauseMenuUI.SetActive(false);
+
     }
 
     // take screenshot
@@ -44,5 +46,11 @@ public class PauseMenu : MonoBehaviour
                 TakeScreenshot();
                 Pause();
             }
+    }
+
+    public void openMenu()
+    {
+        _pauseMenuUI.SetActive(true);
+        Pause();
     }
 }
