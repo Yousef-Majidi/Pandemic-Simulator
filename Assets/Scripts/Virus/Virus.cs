@@ -58,11 +58,11 @@ public class Virus : ScriptableObject
 
     public void Mutate()
     {
-        _coughRate = Random.Range(0f, 1f);
-        _touchRate = Random.Range(0f, 1f);
-        _staminaDecayRate = Random.Range(0f, 1f);
-        _healthDecayRate = Random.Range(0f, 1f);
-        _mutationChance = Random.Range(0.01f, 0.2f);
+        _coughRate = Random.Range(0.01f, 0.1f);
+        _touchRate = Random.Range(0.01f, 0.1f);
+        _staminaDecayRate = Random.Range(1f, 5f);
+        _healthDecayRate = Random.Range(1f, 5f);
+        _mutationChance = Random.Range(0.01f, 0.1f);
     }
 
     public void Copy(Virus source)

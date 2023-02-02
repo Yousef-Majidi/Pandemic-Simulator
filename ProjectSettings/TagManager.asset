@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - NPC
+  - Test
+  - Commercial
+  - Residential
+  - Medical
   layers:
   - Default
   - TransparentFX
