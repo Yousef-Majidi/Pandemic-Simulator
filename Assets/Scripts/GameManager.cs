@@ -69,8 +69,8 @@ public class GameManager : MonoBehaviour
         {
             GameObject newNPC = Instantiate(_healthyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
-            // newNPC.GetComponent<Navigation>().Home = _spawnPoint;
             int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
+            newNPC.GetComponent<Navigation>().Home = spawnPoint;
             newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
@@ -167,11 +167,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         #region GOD_MODE
-        if (_npcCount == _maxNPCs)
-        {
-            CancelInvoke(nameof(SpawnNPC));
-        }
-
         if (Input.GetKeyDown(KeyCode.G))
         {
             ToggleGodMode();
