@@ -18,34 +18,36 @@ public class Navigation : MonoBehaviour
     private NPC _npc;
     private Animator _animator;
     private GameManager _gameManager;
+    private bool _isCommuting;
 
     private LinkedList<GameObject> _commercials = new();
     private LinkedList<GameObject> _medicals = new();
 
     public Transform Destination { get => _destination; set => _destination = value; }
-    public Transform Home { get => _home; set => _destination = _home; }
+    public Transform Home { get => _home; set => _home = value; }
 
     public void UpdateDestination(Transform newDest)
     {
-        if (_agent.velocity.magnitude == 0)
+        if (_npc.Health < 25)
         {
-            if (_npc.Health < 25)
-            {
-                _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
-                _agent.destination = _destination.position;
-            }
+            _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
+            _agent.destination = _destination.position;
+            return;
+        }
 
-            else if (_npc.Stamina < 25)
-            {
-                _destination = _home;
-                _agent.destination = _destination.position;
-            }
+        if (_npc.Stamina < 25)
+        {
+            _destination = _home;
+            _agent.destination = _destination.position;
+            return;
+        }
 
-            else
-            {
-                _destination = _commercials.ElementAt(Random.Range(0, _commercials.Count)).transform;
-                _agent.destination = _destination.position;
-            }
+        if (!_isCommuting)
+        {
+            _destination = _commercials.ElementAt(Random.Range(0, _commercials.Count)).transform;
+            _agent.destination = _destination.position;
+            _isCommuting = true;
+            return;
         }
     }
 
@@ -84,6 +86,10 @@ public class Navigation : MonoBehaviour
     private void Update()
     {
         UpdateDestination(_destination);
+        if (Vector3.Distance(transform.position, _destination.position) < 1f)
+        {
+            _isCommuting = false;
+        }
         UpdateAnimation();
     }
 }
