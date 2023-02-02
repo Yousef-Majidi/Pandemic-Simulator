@@ -16,15 +16,15 @@ public class InGameUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateHealthBar();
-        UpdateHappinessBar();
+        UpdateHealth();
+        UpdateHappiness();
         UpdateTimeCounter();
         UpdateDayCounter();
         keyPress();
         
     }
 
-    void UpdateHealthBar()
+    void UpdateHealth()
     {
         // calculate health bar by getting the percentage of healthy NPCs to total NPCs
         // get the number of healthy NPCs
@@ -41,11 +41,18 @@ public class InGameUI : MonoBehaviour
         }
         // get the percentage of healthy NPCs to total NPCs
         float percentage = (float)healthyNPCs / (float)totalNPCs.Length;
+
         // update the health bar
         GameObject.Find("HealthSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
+
+        // update the health text
+        GameObject.Find("HealthText").GetComponent<TextMeshProUGUI>().text = "Healthy: " + (percentage * 100).ToString("0") + "%";
+
+        // update the infected text
+        GameObject.Find("InfectedText").GetComponent<TextMeshProUGUI>().text = "Infected: " + ((1 - percentage) * 100).ToString("0") + "%";
     }
 
-    void UpdateHappinessBar()
+    void UpdateHappiness()
     {
         // calculate happiness bar by getting the percentage of happy NPCs to total NPCs
         // get the number of happy NPCs
@@ -59,6 +66,12 @@ public class InGameUI : MonoBehaviour
         float percentage = totalHappiness / (totalNPCs.Length * 100);
         // update the happiness bar
         GameObject.Find("HappinessSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
+
+        // update the happiness text
+        GameObject.Find("HappyText").GetComponent<TextMeshProUGUI>().text = "Happy: " + (percentage * 100).ToString("0") + "%";
+
+        // update the unhappy text
+        GameObject.Find("UnhappyText").GetComponent<TextMeshProUGUI>().text = "Unhappy: " + ((1 - percentage) * 100).ToString("0") + "%";
     }
 
     void UpdateTimeCounter(bool isPaused = false)
