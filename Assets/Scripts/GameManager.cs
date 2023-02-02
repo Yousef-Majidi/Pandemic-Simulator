@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -18,10 +19,6 @@ public class GameManager : MonoBehaviour
     private int _npcCount = 0;
 
     [SerializeField]
-    [Tooltip("Test Spawn Point")]
-    private GameObject _testSpawnPoint;
-
-    [SerializeField]
     [Tooltip("Healthy NPC Prefab")]
     private GameObject _healthyPrefab;
 
@@ -38,14 +35,21 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private AssetChanger _assetChanger;
 
-    // a linked list of all waypoints
-    private readonly LinkedList<GameObject> _destinations = new();
-
-    // a linked list of all NPCS
+    private readonly LinkedList<GameObject> _commercialDestinations = new();
+    private readonly LinkedList<GameObject> _residentialDestinations = new();
+    private readonly LinkedList<GameObject> _medicalDestinations = new();
     private readonly LinkedList<GameObject> _npcs = new();
 
-
     public bool GodMode { get => _godMode; set => _godMode = value; }
+    public int MaxNPCs { get => _maxNPCs; set => _maxNPCs = value; }
+    public int NPCCount { get => _npcCount; set => _npcCount = value; }
+    public GameObject HealthyPrefab { get => _healthyPrefab; }
+    public GameObject InfectedPrefab { get => _infectedPrefab; }
+    public float AverageHappiness { get => _averageHappiness; }
+    public AssetChanger AssetChanger { get => _assetChanger; }
+    public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
+    public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
+    public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
 
     private void ToggleGodMode()
     {
@@ -53,26 +57,25 @@ public class GameManager : MonoBehaviour
         {
             _godMode = true;
             Debug.Log("God mode enabled");
+            return;
         }
-        else
-        {
-            _godMode = false;
-            Debug.Log("God mode disabled");
-        }
+        _godMode = false;
+        Debug.Log("God mode disabled");
     }
 
-    private void SpawnNPC()
+    private void SpawnNPC(GameObject spawnPoint)
     {
         if (_npcCount < _maxNPCs)
         {
-            GameObject newNPC = Instantiate(_healthyPrefab, _testSpawnPoint.transform.position, _testSpawnPoint.transform.rotation);
+            GameObject newNPC = Instantiate(_healthyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
-            int randomIndex = Random.Range(0, _destinations.Count);
-            newNPC.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
+            // newNPC.GetComponent<Navigation>().Home = _spawnPoint;
+            int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
+            newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
-            Debug.Log(newNPC.name + " created - going to " + _destinations.ElementAt(randomIndex).name);
             _npcCount++;
+            Debug.Log($"Spawned NPC: {newNPC.name}" + $" - Going to: {_commercialDestinations.ElementAt(randomIndex).name}");
         }
     }
 
@@ -82,6 +85,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Removed: " + npc.name);
         Destroy(npc);
         _npcs.Remove(npc);
+        --_npcCount;
     }
 
     private void RefreshDestinations()
@@ -90,9 +94,9 @@ public class GameManager : MonoBehaviour
         {
             if (npc != null)
             {
-                int randomIndex = Random.Range(0, _destinations.Count);
-                npc.GetComponent<Navigation>().UpdateDestination(_destinations.ElementAt(randomIndex).transform);
-                Debug.Log(npc.name + " is going to " + _destinations.ElementAt(randomIndex));
+                int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
+                npc.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
+                Debug.Log($"{npc.name} is now going to {_commercialDestinations.ElementAt(randomIndex)}");
             }
         }
     }
@@ -138,13 +142,25 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        GameObject[] waypoints = GameObject.FindGameObjectsWithTag("Test");
-        foreach (GameObject waypoint in waypoints)
+        GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
+        foreach (GameObject waypoint in commercialWaypoints)
         {
-            _destinations.AddFirst(waypoint);
+            _commercialDestinations.AddFirst(waypoint);
         }
-        _npcs.AddFirst(GameObject.FindGameObjectWithTag("NPC"));
-        InvokeRepeating(nameof(SpawnNPC), 0f, 1f);
+
+        GameObject[] residentialWaypoints = GameObject.FindGameObjectsWithTag("Residential");
+        foreach (GameObject waypoint in residentialWaypoints)
+        {
+            _residentialDestinations.AddFirst(waypoint);
+        }
+
+        GameObject[] medicalWaypoints = GameObject.FindGameObjectsWithTag("Medical");
+        foreach (GameObject waypoint in medicalWaypoints)
+        {
+            _medicalDestinations.AddFirst(waypoint);
+        }
+
+        // DEBUG:
         InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
     }
 
@@ -163,14 +179,15 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N) && _godMode)
         {
-            SpawnNPC();
+            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+            SpawnNPC(_residentialDestinations.ElementAt(randomIndex));
         }
 
         if (Input.GetKeyDown(KeyCode.V) && _godMode)
         {
             DestroyNPC();
         }
-        #endregion
+        #endregion GOD_MODE
 
         CalculateAverageHappiness();
 

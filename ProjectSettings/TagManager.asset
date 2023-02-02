@@ -6,6 +6,9 @@ TagManager:
   tags:
   - NPC
   - Test
+  - Commercial
+  - Residential
+  - Medical
   layers:
   - Default
   - TransparentFX
