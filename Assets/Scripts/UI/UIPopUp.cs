@@ -125,7 +125,7 @@ public class UIPopUp : MonoBehaviour
 
         // set text properties and place in center of panel
         text.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 900);
-        text.GetComponent<TextMeshProUGUI>().text = "Name: " + obj.name + "\nHealth: " + obj.GetComponent<NPC>().Health + "\nStamina: " + obj.GetComponent<NPC>().Stamina + "\nInfected: " + obj.GetComponent<NPC>().IsInfected;
+        text.GetComponent<TextMeshProUGUI>().text = "Name: " + obj.name + "\nHealth: " + obj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + obj.GetComponent<NPC>().Stamina.ToString("F2") + "\nInfected: " + obj.GetComponent<NPC>().IsInfected;
         text.GetComponent<TextMeshProUGUI>().color = Color.black;
         text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         text.GetComponent<TextMeshProUGUI>().fontSize = 75;
