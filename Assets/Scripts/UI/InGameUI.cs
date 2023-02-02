@@ -39,8 +39,11 @@ public class InGameUI : MonoBehaviour
                 healthyNPCs++;
             }
         }
-        // get the percentage of healthy NPCs to total NPCs
-        float percentage = (float)healthyNPCs / (float)totalNPCs.Length;
+        float percentage = 0;
+        if (totalNPCs.Length > 0){
+            // get the percentage of healthy NPCs to total NPCs
+            percentage = (float)healthyNPCs / (float)totalNPCs.Length;
+        }
 
         // update the health bar
         GameObject.Find("HealthSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
@@ -62,8 +65,13 @@ public class InGameUI : MonoBehaviour
         {
             totalHappiness += totalNPCs[i].GetComponent<NPC>().Happiness;
         }
-        // get the percentage of happy NPCs to total NPCs
-        float percentage = totalHappiness / (totalNPCs.Length * 100);
+        
+        float percentage = 0;
+        if (totalNPCs.Length > 0){
+            // get the percentage of happy NPCs to total NPCs
+            percentage = totalHappiness / (totalNPCs.Length * 100);
+        }
+
         // update the happiness bar
         GameObject.Find("HappinessSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
 

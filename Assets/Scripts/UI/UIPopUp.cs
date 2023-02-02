@@ -99,7 +99,7 @@ public class UIPopUp : MonoBehaviour
         panel.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f);
         panel.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
         panel.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
-        panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
         panel.GetComponent<Image>().color = 0.75f * Color.white;
 
 
@@ -125,7 +125,7 @@ public class UIPopUp : MonoBehaviour
 
         // set text properties and place in center of panel
         text.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 900);
-        text.GetComponent<TextMeshProUGUI>().text = "Name: " + obj.name + "\nHealth: " + obj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + obj.GetComponent<NPC>().Stamina.ToString("F2") + "\nInfected: " + obj.GetComponent<NPC>().IsInfected;
+        text.GetComponent<TextMeshProUGUI>().text = "Name: " + obj.name + "\nHealth: " + obj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + obj.GetComponent<NPC>().Stamina.ToString("F2") + "\n Happiness: " + obj.GetComponent<NPC>().Happiness.ToString("F2") + "\nInfected: " + obj.GetComponent<NPC>().IsInfected;
         text.GetComponent<TextMeshProUGUI>().color = Color.black;
         text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
         text.GetComponent<TextMeshProUGUI>().fontSize = 75;
