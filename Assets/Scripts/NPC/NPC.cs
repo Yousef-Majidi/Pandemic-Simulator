@@ -75,7 +75,7 @@ public class NPC : MonoBehaviour
         _happiness = sourceNpc._happiness;
         _triggerCounter = sourceNpc._triggerCounter;
         _virus = sourceNpc._virus;
-        var currentDestination = source.GetComponent<Navigation>().GetDestination();
+        var currentDestination = source.GetComponent<Navigation>().Destination;
         GetComponent<Navigation>().UpdateDestination(currentDestination);
     }
 

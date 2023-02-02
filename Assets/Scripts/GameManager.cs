@@ -70,7 +70,8 @@ public class GameManager : MonoBehaviour
             GameObject newNPC = Instantiate(_healthyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
             int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
-            newNPC.GetComponent<Navigation>().Home = spawnPoint;
+            newNPC.GetComponent<Navigation>().Home = spawnPoint.transform;
+            Debug.Log("Spawn point: " + spawnPoint.transform);
             newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);

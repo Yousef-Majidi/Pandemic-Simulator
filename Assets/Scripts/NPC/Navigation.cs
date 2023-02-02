@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,57 +9,45 @@ public class Navigation : MonoBehaviour
     [SerializeField]
     [Tooltip("The destination that the NPC moves to")]
     private Transform _destination;
+
+    [SerializeField]
+    [Tooltip("The location that the NPC spawns at")]
     private Transform _home;
 
     private NavMeshAgent _agent;
     private NPC _npc;
     private Animator _animator;
+    private GameManager _gameManager;
+    private bool _isCommuting;
 
     private LinkedList<GameObject> _commercials = new();
     private LinkedList<GameObject> _medicals = new();
 
-    //private GameObject[] _commercials;
-    //private GameObject[] _residential;
-    //private GameObject[] _medical;
-
-    private int _noOfComm;
-    private int _noOfResi;
-    private int _noOfMedi;
-
-    //getters and setter
-
     public Transform Destination { get => _destination; set => _destination = value; }
-    public Transform Home { get => _home; set => _destination = _home; }
-    //public LinkedList<GameObject> Commercials { get => _commercials; set => _commercials = value; }
-    //public GameObject[] Residential{ get => _residential; set => _residential= value; }
-    //public GameObject[] Medical { get => _medical; set => _medical = value; }
-    //private GameManager _gameManager;
-
-    // add getter and setter for all private members
+    public Transform Home { get => _home; set => _home = value; }
 
     public void UpdateDestination(Transform newDest)
     {
-        //_destination = newDest;
-        if (_agent.velocity.magnitude == 0)
+        if (_npc.Health < 25)
         {
-            if (_npc.Health < 25)
-            {
-                //_destination = _medicals[Random.Range(0, _noOfMedi)].transform;
-                _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
-                _agent.destination = _destination.position;
-            }
+            _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
+            _agent.destination = _destination.position;
+            return;
+        }
 
-            else if (_npc.Stamina < 25)
-            {
-                _destination = _home;
-                _agent.destination = _destination.position;
-            }
+        if (_npc.Stamina < 25)
+        {
+            _destination = _home;
+            _agent.destination = _destination.position;
+            return;
+        }
 
-            else
-            {
-                _destination = _commercials.ElementAt(Random.Range(0, _commercials.Count)).transform;
-                _agent.destination = _destination.position;
-            }
+        if (!_isCommuting)
+        {
+            _destination = _commercials.ElementAt(Random.Range(0, _commercials.Count)).transform;
+            _agent.destination = _destination.position;
+            _isCommuting = true;
+            return;
         }
     }
 
@@ -77,24 +66,17 @@ public class Navigation : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _commercials = _gameManager.CommercialDestinations;
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
-
         foreach (GameObject waypoint in commercialWaypoints)
         {
             _commercials.AddFirst(waypoint);
         }
 
-        //_residentials = GameObject.FindGameObjectsWithTag("Residential");
-        //_noOfResi = _residential.Length;
-        //_home = _residential[0].transform;
-
+        _medicals = _gameManager.MedicalDestinations;
         GameObject[] medicalWaypoints = GameObject.FindGameObjectsWithTag("Medical");
-        _medicals = _gameManager.MedicalDestination;
         foreach (GameObject waypoint in medicalWaypoints)
         {
             _medicals.AddFirst(waypoint);
         }
-
-        //_noOfMedi = _medical.Length;
 
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
@@ -102,10 +84,12 @@ public class Navigation : MonoBehaviour
     }
 
     private void Update()
-    { 
-         
-            UpdateDestination(_destination);
-            UpdateAnimation();
-        
+    {
+        UpdateDestination(_destination);
+        if (Vector3.Distance(transform.position, _destination.position) < 1f)
+        {
+            _isCommuting = false;
+        }
+        UpdateAnimation();
     }
 }
