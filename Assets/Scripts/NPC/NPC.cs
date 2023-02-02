@@ -5,6 +5,7 @@ using UnityEditor.Media;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class NPC : MonoBehaviour
 {
     enum AssetType
@@ -201,12 +202,12 @@ public class NPC : MonoBehaviour
 
 
     /*          DEBUGING            */
-    //void WriteToLogFile()
-    //{
-    //    string path = "Logs/log.txt";
-    //    string message = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -- Name: " + gameObject.name + ", Health: " + _health + ", Stamina: " + _stamina + ", is Infected: " + _isInfected + ", Cough Rate: " + _virus.CoughRate + " Touch Rate: " + _virus.TouchRate + ", Stamina Decay Rate: " + _virus.StaminaDecayRate + ", Health Decay Rate: " + _virus.HealthDecayRate + "\n";
+    void WriteToLogFile()
+    {
+        string path = "Logs/log.txt";
+        string message = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " -- Name: " + gameObject.name + ", Health: " + _health + ", Stamina: " + _stamina + ", is Infected: " + _isInfected + ", Cough Rate: " + _virus.CoughRate + " Touch Rate: " + _virus.TouchRate + ", Stamina Decay Rate: " + _virus.StaminaDecayRate + ", Health Decay Rate: " + _virus.HealthDecayRate + "\n";
 
-    //    using System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true);
-    //    logFile.WriteLine(message);
-    //}
+        using (System.IO.StreamWriter logFile = new System.IO.StreamWriter(@path, true))
+            logFile.WriteLine(message);
+    }
 }

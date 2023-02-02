@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField]
     private GameObject _pauseMenuUI;
+
     public void Resume()
     {
         _pauseMenuUI.SetActive(false);
@@ -26,6 +27,14 @@ public class PauseMenu : MonoBehaviour
     void Awake()
     {
         _pauseMenuUI.SetActive(false);
+
+    }
+
+    // take screenshot
+    public void TakeScreenshot()
+    {
+        ScreenCapture.CaptureScreenshot(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
+        UnityEditor.AssetDatabase.Refresh();
     }
 
     void Update()
@@ -33,7 +42,15 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             if (_gameIsPaused)
                 Resume();
-            else
+            else{
+                TakeScreenshot();
                 Pause();
+            }
+    }
+
+    public void openMenu()
+    {
+        _pauseMenuUI.SetActive(true);
+        Pause();
     }
 }
