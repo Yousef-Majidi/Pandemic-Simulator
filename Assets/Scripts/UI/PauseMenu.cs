@@ -40,12 +40,14 @@ public class PauseMenu : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
+        {
             if (_gameIsPaused)
                 Resume();
             else{
                 TakeScreenshot();
                 Pause();
             }
+        }
     }
 
     public void openMenu()

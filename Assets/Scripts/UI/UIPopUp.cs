@@ -8,7 +8,7 @@ public class UIPopUp : MonoBehaviour
 {
 
     private bool isPopUp = false;
-
+    private GameObject _tempObj;
     void Awake()
     {
         
@@ -18,6 +18,19 @@ public class UIPopUp : MonoBehaviour
     void Update()
     {
         OnMouseDown();
+        // add text if there is a canvas
+        GameObject canvasTemp = GameObject.Find("CanvasPop");
+        if (canvasTemp != null)
+        {
+            // get rid of old text
+            GameObject text = GameObject.Find("Text");
+            if (text != null)
+            {
+                Destroy(text);
+            }
+            // wait for a delay before adding text
+            Invoke("addText", 0.1f);
+        }
     }
 
      void OnMouseDown()
@@ -57,6 +70,7 @@ public class UIPopUp : MonoBehaviour
         {
             Destroy(canvasTemp);
         }
+        _tempObj = obj;
 
         // create canvas
         GameObject canvas = new GameObject("CanvasPop", typeof(RectTransform));
@@ -78,7 +92,7 @@ public class UIPopUp : MonoBehaviour
         exitButton.GetComponent<Button>().onClick.AddListener(() => Destroy(canvas));
 
         // add text from TextMeshPro to button 
-        GameObject buttonText = new GameObject("Text", typeof(RectTransform));
+        GameObject buttonText = new GameObject("ButtonText", typeof(RectTransform));
         buttonText.transform.SetParent(exitButton.transform, false);
         buttonText.AddComponent<TextMeshProUGUI>();
 
@@ -122,16 +136,23 @@ public class UIPopUp : MonoBehaviour
         buttonText.GetComponent<TextMeshProUGUI>().color = Color.black;
         buttonText.GetComponent<TextMeshProUGUI>().fontSize = 85;
         buttonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+    }
 
-        // set text properties and place in center of panel
-        text.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 900);
-        text.GetComponent<TextMeshProUGUI>().text = "Name: " + obj.name + "\nHealth: " + obj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + obj.GetComponent<NPC>().Stamina.ToString("F2") + "\n Happiness: " + obj.GetComponent<NPC>().Happiness.ToString("F2") + "\nInfected: " + obj.GetComponent<NPC>().IsInfected;
-        text.GetComponent<TextMeshProUGUI>().color = Color.black;
-        text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-        text.GetComponent<TextMeshProUGUI>().fontSize = 75;
-        text.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
-        text.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
-        text.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
-        text.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+    void addText(){
+        GameObject panel = GameObject.Find("Panel");
+        if (panel != null){
+            GameObject text = new GameObject("Text", typeof(RectTransform));
+            text.transform.SetParent(panel.transform, false);
+            text.AddComponent<TextMeshProUGUI>();
+            text.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 900);
+            text.GetComponent<TextMeshProUGUI>().text = "Name: " + _tempObj.name + "\nHealth: " + _tempObj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + _tempObj.GetComponent<NPC>().Stamina.ToString("F2") + "\n Happiness: " + _tempObj.GetComponent<NPC>().Happiness.ToString("F2") + "\nInfected: " + _tempObj.GetComponent<NPC>().IsInfected;
+            text.GetComponent<TextMeshProUGUI>().color = Color.black;
+            text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            text.GetComponent<TextMeshProUGUI>().fontSize = 75;
+            text.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+            text.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
+            text.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
+            text.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        }
     }
 }

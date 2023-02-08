@@ -11,6 +11,13 @@ public class OptionsMenu : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            if (OptionsMenuUI.activeSelf)
+                close();
+    }
+
     public void close()
     {
         OptionsMenuUI.SetActive(false);

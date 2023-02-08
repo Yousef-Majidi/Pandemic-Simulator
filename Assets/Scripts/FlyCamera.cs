@@ -98,12 +98,12 @@ public class FlyCamera : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale == 1) // game is not paused
-        {
+        if (Time.timeScale != 0){
             SetCursorState();
             Boost();
             CameraMovement();
             CameraRotation();
         }
+
     }
 }
