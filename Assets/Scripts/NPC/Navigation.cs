@@ -65,19 +65,7 @@ public class Navigation : MonoBehaviour
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _commercials = _gameManager.CommercialDestinations;
-        GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
-        foreach (GameObject waypoint in commercialWaypoints)
-        {
-            _commercials.AddFirst(waypoint);
-        }
-
         _medicals = _gameManager.MedicalDestinations;
-        GameObject[] medicalWaypoints = GameObject.FindGameObjectsWithTag("Medical");
-        foreach (GameObject waypoint in medicalWaypoints)
-        {
-            _medicals.AddFirst(waypoint);
-        }
-
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _npc = GetComponent<NPC>();

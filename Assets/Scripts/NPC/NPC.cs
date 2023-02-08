@@ -8,12 +8,6 @@ using UnityEngine.AI;
 
 public class NPC : MonoBehaviour
 {
-    public enum AssetType
-    {
-        Healthy,
-        Infected
-    }
-
     [SerializeField]
     [Tooltip("Current Asset Type")]
     private AssetType _assetType;
@@ -38,17 +32,22 @@ public class NPC : MonoBehaviour
     [Tooltip("Character Happiness Decay Rate")]
     private float _happinessDecayRate = 0f;
 
-    private bool _isHappinessDecayActive;
-
-    [Space]
+    [SerializeField]
+    [Tooltip("Base rate for happiness decay rate")]
+    private float _happinessDecayBase = 1f;
 
     [SerializeField]
     private Virus _virus;
 
-    private float _triggerCounter;
+    private bool _isHappinessDecayActive;
     private NavMeshAgent _agent;
+    private GameManager _gameManager;
 
-    GameManager _gameManager;
+    public enum AssetType
+    {
+        Healthy,
+        Infected
+    }
 
     public bool IsInfected { get => _isInfected; set => _isInfected = value; }
     public float Health { get => _health; set => _health = value; }
@@ -73,7 +72,6 @@ public class NPC : MonoBehaviour
         _health = sourceNpc._health;
         _stamina = sourceNpc._stamina;
         _happiness = sourceNpc._happiness;
-        _triggerCounter = sourceNpc._triggerCounter;
         _virus = sourceNpc._virus;
         var currentDestination = source.GetComponent<Navigation>().Destination;
         GetComponent<Navigation>().UpdateDestination(currentDestination);
@@ -83,7 +81,7 @@ public class NPC : MonoBehaviour
     {
         if (_agent.velocity.magnitude > 0)
         {
-            float decayRate = _virus ? _virus.StaminaDecayRate + 1f : 1f;
+            float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayBase : _happinessDecayBase;
             if (_stamina > 0)
             {
                 _stamina -= decayRate * Time.deltaTime;
@@ -98,7 +96,7 @@ public class NPC : MonoBehaviour
             _health -= _virus.HealthDecayRate * Time.deltaTime;
         }
 
-        if (_health <= 0 && _gameManager.GodMode == false)
+        if (_health <= 0 && !_gameManager.GodMode)
         {
             Destroy(gameObject);
         }
@@ -132,43 +130,22 @@ public class NPC : MonoBehaviour
     {
         if (other.gameObject.CompareTag("NPC") && !_isInfected)
         {
-            ++_triggerCounter;
-            NPC npc = other.gameObject.GetComponent<NPC>();
-            if (_triggerCounter == 4 && npc.IsInfected && npc._virus && UnityEngine.Random.Range(0f, 1f) < npc._virus.TouchRate)
+            NPC otherNPC = other.gameObject.GetComponent<NPC>();
+            if (otherNPC.IsInfected && otherNPC._virus && UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.CoughRate)
             {
                 _isInfected = true;
             }
-            else if (npc.IsInfected && npc._virus && UnityEngine.Random.Range(0f, 1f) < npc._virus.CoughRate)
-            {
-                _isInfected = true;
-            }
-            if (_isInfected && npc._virus)
+            if (_isInfected && otherNPC._virus)
             {
                 _virus = ScriptableObject.CreateInstance<Virus>();
-                if (UnityEngine.Random.Range(0f, 1f) < npc._virus.MutationChance)
+                if (UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.MutationChance)
                 {
                     _virus.Mutate();
                 }
                 else
                 {
-                    _virus.Copy(npc._virus);
+                    _virus.Copy(otherNPC._virus);
                 }
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag("NPC"))
-        {
-            // TODO: potential bug here
-            if (_triggerCounter == 4)
-            {
-                _triggerCounter = 0;
-            }
-            else if (_triggerCounter > 0)
-            {
-                --_triggerCounter;
             }
         }
     }

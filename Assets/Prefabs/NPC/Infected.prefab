@@ -803,7 +803,6 @@ GameObject:
   - component: {fileID: 4906828391645816}
   - component: {fileID: 95237074988894122}
   - component: {fileID: 3358777363329983531}
-  - component: {fileID: 4830170321496433043}
   - component: {fileID: 2795340359818492252}
   - component: {fileID: 5360601430296800215}
   - component: {fileID: -4451800489186763267}
@@ -874,19 +873,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &4830170321496433043
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1774625739149480}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.6
-  m_Center: {x: 0, y: 0.45, z: 0}
 --- !u!135 &2795340359818492252
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -929,6 +915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _destination: {fileID: 0}
+  _home: {fileID: 0}
 --- !u!114 &-1965596805489308574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -947,7 +934,6 @@ MonoBehaviour:
   _stamina: 100
   _happiness: 100
   _happinessDecayRate: 0
-  _assetChanger: {fileID: 11400000, guid: bc5ce5eeda57f71499af48444a398c10, type: 2}
   _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
 --- !u!1 &1822049695589022
 GameObject:

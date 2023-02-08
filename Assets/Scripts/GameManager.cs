@@ -82,6 +82,11 @@ public class GameManager : MonoBehaviour
 
     private void DestroyNPC()
     {
+        if (_npcs.Count == 0)
+        {
+            Debug.Log("No NPCs to destroy");
+            return;
+        }
         GameObject npc = _npcs.First();
         Debug.Log("Removed: " + npc.name);
         Destroy(npc);
@@ -114,6 +119,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 _npcs.Remove(npc);
+                --_npcCount;
             }
         }
         _averageHappiness = totalHappiness / _npcs.Count;
