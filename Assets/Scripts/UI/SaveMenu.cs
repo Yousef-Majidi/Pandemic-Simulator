@@ -27,6 +27,13 @@ public class SaveMenu : MonoBehaviour
 
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            if (_saveMenuUI.activeSelf)
+                close();
+    }
+
     public Texture2D LoadTexture(string FilePath)
     {
         Texture2D Tex2D;
@@ -57,8 +64,5 @@ public class SaveMenu : MonoBehaviour
         Sprite mysprite = loadSprite(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
         image.sprite = mysprite;
     }
-
-
-
 
 }
