@@ -193,6 +193,11 @@ public class GameManager : MonoBehaviour
         {
             DestroyNPC();
         }
+
+        if (Input.GetKeyDown(KeyCode.S) && _godMode)
+        {
+            _timeManager.SetTimeScale(8);
+        }
         #endregion GOD_MODE
 
         CalculateAverageHappiness();

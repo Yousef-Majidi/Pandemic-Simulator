@@ -31,7 +31,7 @@ public class TimeManager : ScriptableObject
                 Time.timeScale = 2;
                 break;
             case "3":
-                Time.timeScale = 4;
+                Time.timeScale = 3;
                 break;
             case "0":
                 Time.timeScale = 0;

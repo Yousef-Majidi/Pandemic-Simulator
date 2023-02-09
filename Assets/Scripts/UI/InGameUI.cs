@@ -132,7 +132,7 @@ public class InGameUI : MonoBehaviour
                 _gameManager.TimeManager.SetTimeScale(2);
                 break;
             case 2:
-                _gameManager.TimeManager.SetTimeScale(4);
+                _gameManager.TimeManager.SetTimeScale(3);
                 break;
             case 4:
                 _gameManager.TimeManager.SetTimeScale(1);
