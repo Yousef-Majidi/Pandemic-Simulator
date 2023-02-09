@@ -6,10 +6,13 @@ using TMPro;
 
 public class InGameUI : MonoBehaviour
 {
+    private GameManager _gameManager;
+
 
     void Awake()
     {
         GameObject.Find("UIMenuPanel").SetActive(false);
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
     }
 
@@ -20,8 +23,6 @@ public class InGameUI : MonoBehaviour
         UpdateHappiness();
         UpdateTimeCounter();
         UpdateDayCounter();
-        keyPress();
-        
     }
 
     void UpdateHealth()
@@ -94,8 +95,8 @@ public class InGameUI : MonoBehaviour
     void UpdateDayCounter()
     {
         // update the day counter
-        int day = (int)(Time.time / 60 / 60 / 24);
-        GameObject.Find("DayCount").GetComponent<TextMeshProUGUI>().text = "Day " + day.ToString();
+        GameObject.Find("Clock").GetComponent<TextMeshProUGUI>().text = _gameManager.TimeManager.InGameHour.ToString("00") + ":" + _gameManager.TimeManager.InGameMinute.ToString("00");
+        GameObject.Find("DayCount").GetComponent<TextMeshProUGUI>().text = "Day " + _gameManager.TimeManager.InGameDay.ToString();
     }
 
     public void HandleUIpanel(GameObject panel)
@@ -111,11 +112,11 @@ public class InGameUI : MonoBehaviour
         // if the game is paused, unpause it
         if (Time.timeScale == 0)
         {
-            Time.timeScale = 1;
+             _gameManager.TimeManager.SetTimeScale(1);
         }
         else
         {
-            Time.timeScale = 0;
+             _gameManager.TimeManager.SetTimeScale(0);
             UpdateTimeCounter(true);
         }
     }
@@ -125,42 +126,22 @@ public class InGameUI : MonoBehaviour
         switch (Time.timeScale)
         {
             case 0:
-                Time.timeScale = 1;
+                _gameManager.TimeManager.SetTimeScale(1);
                 break;
             case 1:
-                Time.timeScale = 2;
+                _gameManager.TimeManager.SetTimeScale(2);
                 break;
             case 2:
-                Time.timeScale = 4;
+                _gameManager.TimeManager.SetTimeScale(4);
                 break;
             case 4:
-                Time.timeScale = 1;
+                _gameManager.TimeManager.SetTimeScale(1);
                 break;
             default:
-                Time.timeScale = 1;
+                _gameManager.TimeManager.SetTimeScale(1);
                 break;
         }
     }
 
-    void keyPress()
-    {
-        switch (Input.inputString)
-        {
-            case "1":
-                Time.timeScale = 1;
-                break;
-            case "2":
-                Time.timeScale = 2;
-                break;
-            case "3":
-                Time.timeScale = 4;
-                break;
-            case "0":
-                Time.timeScale = 0;
-                break;
-            default:
-                break;
-        }
-    }
 
 }

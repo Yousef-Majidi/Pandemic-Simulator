@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private AssetChanger _assetChanger;
 
+    [SerializeField]
+    private TimeManager _timeManager;
+
     private readonly LinkedList<GameObject> _commercialDestinations = new();
     private readonly LinkedList<GameObject> _residentialDestinations = new();
     private readonly LinkedList<GameObject> _medicalDestinations = new();
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
     public GameObject InfectedPrefab { get => _infectedPrefab; }
     public float AverageHappiness { get => _averageHappiness; }
     public AssetChanger AssetChanger { get => _assetChanger; }
+    public TimeManager TimeManager { get => _timeManager; }
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
@@ -192,6 +196,8 @@ public class GameManager : MonoBehaviour
         #endregion GOD_MODE
 
         CalculateAverageHappiness();
-
+        _timeManager.OnKeyDown();
+        _timeManager.Clock();
     }
+
 }
