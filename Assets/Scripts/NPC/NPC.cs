@@ -138,7 +138,7 @@ public class NPC : MonoBehaviour
             if (_isInfected && otherNPC._virus)
             {
                 _virus = ScriptableObject.CreateInstance<Virus>();
-                if (UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.MutationChance)
+                if (UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.MutationChance / Time.deltaTime)
                 {
                     _virus.Mutate();
                 }

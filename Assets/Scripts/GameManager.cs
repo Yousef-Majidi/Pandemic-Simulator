@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
+    public LinkedList<GameObject> NPCs { get => _npcs; }
 
     private void ToggleGodMode()
     {
@@ -85,7 +86,6 @@ public class GameManager : MonoBehaviour
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
             int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
             newNPC.GetComponent<Navigation>().Home = spawnPoint.transform;
-            Debug.Log("Spawn point: " + spawnPoint.transform);
             newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
         --_npcCount;
     }
 
+    #region DEBUG
     private void RefreshDestinations()
     {
         foreach (GameObject npc in _npcs.ToList())
@@ -120,6 +121,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    #endregion DEBUG
 
     private void CalculateAverageHappiness()
     {
@@ -187,8 +189,15 @@ public class GameManager : MonoBehaviour
             _medicalDestinations.AddFirst(waypoint);
         }
 
-        // DEBUG:
-        InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
+        #region DEBUG
+        //InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
+        foreach (GameObject npc in npcs)
+        {
+            _npcs.AddFirst(npc);
+            _npcCount++;
+        }
+        #endregion DEBUG
     }
 
     void Update()

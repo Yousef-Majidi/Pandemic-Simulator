@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,7 +27,7 @@ public class Navigation : MonoBehaviour
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
 
-    public void UpdateDestination(Transform newDest)
+    public void UpdateDestination()
     {
         if (_npc.Health < 25)
         {
@@ -39,16 +40,32 @@ public class Navigation : MonoBehaviour
         {
             _destination = _home;
             _agent.destination = _destination.position;
+            foreach (GameObject residential in _gameManager.ResidentialDestinations)
+            {
+                if (residential.transform == _destination)
+                {
+                    residential.GetComponentInParent<Residential>().EnRoute.AddFirst(gameObject);
+                    return;
+                }
+            }
             return;
         }
 
         if (!_isCommuting)
         {
-            _destination = _commercials.ElementAt(Random.Range(0, _commercials.Count)).transform;
+            int randomIndex = Random.Range(0, _medicals.Count);
+            _destination = _commercials.ElementAt(randomIndex).transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
             return;
         }
+    }
+
+    public void UpdateDestination(Transform newDest)
+    {
+        _isCommuting = true;
+        _destination = newDest;
+        _agent.destination = _destination.position;
     }
 
     private void UpdateAnimation()
@@ -73,7 +90,7 @@ public class Navigation : MonoBehaviour
 
     private void Update()
     {
-        UpdateDestination(_destination);
+        UpdateDestination();
         if (Vector3.Distance(transform.position, _destination.position) < 1f)
         {
             _isCommuting = false;
