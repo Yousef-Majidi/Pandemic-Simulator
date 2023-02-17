@@ -81,6 +81,21 @@ public class Commercial : Building
         }
     }
 
+    protected override bool UpdateStamina(NPC npc)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override bool UpdateHealth(NPC npc)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override bool UpdateHappiness(NPC npc)
+    {
+        throw new System.NotImplementedException();
+    }
+
     private void Start()
     {
         Awake();
@@ -89,8 +104,8 @@ public class Commercial : Building
     private void Update()
     {
         DetectNPC();
-        CalculateHealth();
-        ReduceStamina();
-        ElapsedTime();
+        CalculateAttributes();
     }
+
+
 }

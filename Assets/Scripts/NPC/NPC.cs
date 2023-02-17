@@ -53,13 +53,7 @@ public class NPC : MonoBehaviour
     [Tooltip("Base rate for happiness decay rate")]
     private float _happinessDecayBase = 1f;
 
-    [SerializeField]
-    [Tooltip("Base rate for happiness recovery rate")]
-    private float _happinessRecoveryRate = 1f;
-
     private bool _isHappinessDecayActive;
-
-
 
     private NavMeshAgent _agent;
     private GameManager _gameManager;
@@ -76,7 +70,6 @@ public class NPC : MonoBehaviour
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
     public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
-    public float HappinessRecoveryRate { get => _happinessRecoveryRate; set => _happinessRecoveryRate = value; }
     public float StaminaDecayBase { get => _staminaDecayBase; set => _staminaDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
@@ -142,8 +135,8 @@ public class NPC : MonoBehaviour
         {
             if (_isInfected)
             {
-                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
                 UpdateHappinessDecayRate();
+                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
                 _happiness -= decayRate * Time.deltaTime;
             }
         }

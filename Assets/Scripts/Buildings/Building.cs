@@ -20,11 +20,10 @@ public abstract class Building : MonoBehaviour
     public LinkedList<GameObject> EnRoute { get => _enRoute; }
     public LinkedList<GameObject> Visiting { get => _visiting; }
 
-
-    protected void Awake()
-    {
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-    }
+    protected abstract bool UpdateStamina(NPC npc);
+    protected abstract bool UpdateHealth(NPC npc);
+    protected abstract bool UpdateHappiness(NPC npc);
+    protected abstract void ReleaseNPC(GameObject npc);
 
     protected void SetSpawnPoint(LinkedList<GameObject> waypoints)
     {
@@ -62,22 +61,28 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    protected void CalculateHealth()
+    protected void CalculateAttributes()
     {
         foreach (GameObject obj in _visiting.ToList())
         {
             NPC npc = obj.GetComponent<NPC>();
-            if (npc.IsInfected)
-            {
-                npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
-            }
-            if (npc.Health <= _gameManager.HealthThreshold)
+            if (UpdateStamina(npc))
             {
                 ReleaseNPC(obj);
+                continue;
             }
+            if (UpdateHealth(npc))
+            {
+                ReleaseNPC(obj);
+                continue;
+            }
+            UpdateHappiness(npc);
         }
     }
 
-    protected abstract void ReleaseNPC(GameObject npc);
+    protected void Awake()
+    {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
 }
 

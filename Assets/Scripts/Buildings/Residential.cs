@@ -7,7 +7,96 @@ public class Residential : Building
 {
     [SerializeField]
     [Tooltip("The rate at which the NPC's stamin recovers")]
-    protected float _staminaRecoveryRate = 5f;
+    private float _staminaRecoveryRate = 5f;
+
+    [SerializeField]
+    [Tooltip("Base rate for happiness recovery rate")]
+    private float _happinessRecoveryRate = 5f;
+
+    [SerializeField]
+    [Tooltip("The multiplier applied to stamina recovery when NPC is infected")]
+    private float _staminaRecoveryMultiplier = 0.5f;
+
+    protected override bool UpdateStamina(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            if (npc.IsInfected)
+            {
+                if (npc.Stamina < 100f)
+                {
+                    npc.Stamina += _staminaRecoveryMultiplier * npc.Virus.StaminaDecayRate * Time.deltaTime;
+                    if (npc.Stamina > 100f)
+                    {
+                        npc.Stamina = 100f;
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (npc.Stamina < 100f)
+                {
+                    npc.Stamina += _staminaRecoveryRate * Time.deltaTime;
+                    if (npc.Stamina > 100f)
+                    {
+                        npc.Stamina = 100f;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    protected override bool UpdateHealth(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            if (npc.IsInfected)
+            {
+                if (npc.Health <= _gameManager.HealthThreshold)
+                {
+                    return true;
+                }
+                npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
+            }
+        }
+        return false;
+    }
+
+    protected override bool UpdateHappiness(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            if (npc.IsInfected)
+            {
+                if (npc.Happiness > 0)
+                {
+                    npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
+                    if (npc.Happiness < 0)
+                    {
+                        npc.Happiness = 0;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                if (npc.Happiness < 100)
+                {
+                    npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
+                    if (npc.Happiness > 100)
+                    {
+                        npc.Happiness = 100;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected override void ReleaseNPC(GameObject npc)
     {
         int randomIndex;
@@ -18,45 +107,11 @@ public class Residential : Building
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
             comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
-            //comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
             return;
         }
         randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
         comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform);
         return;
-    }
-
-    private void RecoverStamina()
-    {
-        foreach (GameObject obj in _visiting.ToList())
-        {
-            NPC npc = obj.GetComponent<NPC>();
-            if (npc.Stamina < 100f)
-            {
-                npc.Stamina += _staminaRecoveryRate * Time.deltaTime;
-            }
-            if (npc.Stamina > 100f)
-            {
-                npc.Stamina = 100f;
-                ReleaseNPC(obj);
-            }
-        }
-    }
-
-    private void RecoverHappiness()
-    {
-        foreach (GameObject obj in _visiting.ToList())
-        {
-            NPC npc = obj.GetComponent<NPC>();
-            if (npc.Happiness < 100f)
-            {
-                npc.Happiness += npc.HappinessRecoveryRate * Time.deltaTime;
-            }
-            if (npc.Happiness > 100f)
-            {
-                npc.Happiness = 100f;
-            }
-        }
     }
 
     private void Start()
@@ -68,8 +123,6 @@ public class Residential : Building
     private void Update()
     {
         DetectNPC();
-        RecoverStamina();
-        RecoverHappiness();
-        CalculateHealth();
+        CalculateAttributes();
     }
 }
