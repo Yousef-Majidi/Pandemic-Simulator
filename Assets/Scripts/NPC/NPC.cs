@@ -54,6 +54,7 @@ public class NPC : MonoBehaviour
     public float Stamina { get => _stamina; set => _stamina = value; }
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
+    public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
@@ -79,15 +80,12 @@ public class NPC : MonoBehaviour
         GetComponent<Navigation>().UpdateDestination(currentDestination);
     }
 
-    private void UpdateStamina()
+    public void UpdateStamina()
     {
-        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
+        float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayRate : _happinessDecayBase;
+        if (_stamina > 0)
         {
-            float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayBase : _happinessDecayBase;
-            if (_stamina > 0)
-            {
-                _stamina -= decayRate * Time.deltaTime;
-            }
+            _stamina -= decayRate * Time.deltaTime;
         }
     }
 
@@ -148,7 +146,10 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        UpdateStamina();
+        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
+        {
+            UpdateStamina();
+        }
         UpdateHealth();
         CheckInfection();
         UpdateHappiness();

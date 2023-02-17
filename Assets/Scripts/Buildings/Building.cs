@@ -13,17 +13,6 @@ public abstract class Building : MonoBehaviour
     [Tooltip("The Game Manager")]
     protected GameManager _gameManager;
 
-    [SerializeField]
-    [Tooltip("Ellapsed time")]
-    protected float _elapsedTime;
-
-    [Space]
-    [Header("Recovery Rates")]
-
-    [SerializeField]
-    [Tooltip("The rate at which the NPC's stamin recovers")]
-    protected float _staminaRecoveryRate = 5f;
-
     protected LinkedList<GameObject> _enRoute = new();
     protected LinkedList<GameObject> _visiting = new();
 
@@ -72,23 +61,6 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    protected void RecoverStamina()
-    {
-        foreach (GameObject obj in _visiting.ToList())
-        {
-            NPC npc = obj.GetComponent<NPC>();
-            if (npc.Stamina < 100f)
-            {
-                npc.Stamina += _staminaRecoveryRate * Time.deltaTime;
-            }
-            if (npc.Stamina > 100f)
-            {
-                npc.Stamina = 100f;
-                ReleaseNPC(obj);
-            }
-        }
-    }
-
     protected void CalculateHealth()
     {
         foreach (GameObject obj in _visiting.ToList())
@@ -105,18 +77,6 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    protected void ElapsedTime()
-    {
-        if (_elapsedTime >= 1)
-        {
-            _elapsedTime = 0;
-        }
-        else
-        {
-            _elapsedTime += Time.deltaTime;
-        }
-    }
-
-    abstract protected void ReleaseNPC(GameObject npc);
+    protected abstract void ReleaseNPC(GameObject npc);
 }
 
