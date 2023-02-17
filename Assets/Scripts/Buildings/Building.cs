@@ -53,6 +53,7 @@ public abstract class Building : MonoBehaviour
             }
             if (Vector3.Distance(npc.transform.position, _spawnPoint.transform.position) < 1f)
             {
+                npc.GetComponent<Navigation>().IsCommuting = false;
                 npc.SetActive(false);
                 _enRoute.Remove(npc);
                 _visiting.AddFirst(npc);

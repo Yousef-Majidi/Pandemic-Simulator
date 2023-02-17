@@ -16,6 +16,7 @@ public class Navigation : MonoBehaviour
     private Transform _home;
 
     [SerializeField]
+    [Tooltip("Whether an NPC is commuting to a destination or not")]
     private bool _isCommuting;
 
     private NavMeshAgent _agent;
@@ -23,20 +24,28 @@ public class Navigation : MonoBehaviour
     private Animator _animator;
     private GameManager _gameManager;
 
-
     private LinkedList<GameObject> _commercials = new();
     private LinkedList<GameObject> _medicals = new();
 
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
+    public bool IsCommuting { get => _isCommuting; set => _isCommuting = value; }
 
     public void UpdateDestination()
     {
-        if (_npc.Health <= _gameManager.HealthThreshold && !_isCommuting)
+        if (_isCommuting)
+        {
+            _agent.destination = _destination.position;
+            return;
+        }
+
+        if (_npc.Health <= _gameManager.HealthThreshold)
         {
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
+
+            // TODO: Add to the medical building's enroute list and update the update destination overload 
             return;
         }
 
@@ -57,36 +66,24 @@ public class Navigation : MonoBehaviour
             return;
         }
 
-        if (!_isCommuting)
+
+        int randomIndex = Random.Range(0, _medicals.Count);
+        _destination = _commercials.ElementAt(randomIndex).transform;
+        _agent.destination = _destination.position;
+        _isCommuting = true;
+        foreach (GameObject commercial in _commercials)
         {
-            int randomIndex = Random.Range(0, _medicals.Count);
-            _destination = _commercials.ElementAt(randomIndex).transform;
-            _agent.destination = _destination.position;
-            _isCommuting = true;
-            foreach (GameObject commercial in _commercials)
+            Commercial building = commercial.GetComponentInParent<Commercial>();
+            if (commercial.transform == _destination)
             {
-                Commercial building = commercial.GetComponentInParent<Commercial>();
-                if (commercial.transform == _destination)
+                if (!building.EnRoute.Contains(gameObject))
                 {
-                    if (!building.EnRoute.Contains(gameObject))
-                    {
-                        building.EnRoute.AddFirst(gameObject);
-                        break;
-                    }
+                    building.EnRoute.AddFirst(gameObject);
+                    break;
                 }
             }
-            return;
         }
 
-        if (_isCommuting && Vector3.Distance(transform.position, _destination.position) < 0.1f)
-        {
-            _isCommuting = false;
-        }
-
-        if (_isCommuting)
-        {
-            _agent.destination = _destination.position;
-        }
     }
 
     public void UpdateDestination(Transform newDest)
@@ -94,6 +91,24 @@ public class Navigation : MonoBehaviour
         _isCommuting = true;
         _destination = newDest;
         _agent.destination = _destination.position;
+        foreach (GameObject residential in _gameManager.ResidentialDestinations)
+        {
+            Residential building = residential.GetComponentInParent<Residential>();
+            if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
+            {
+                building.EnRoute.AddFirst(gameObject);
+                return;
+            }
+        }
+        foreach (GameObject commercial in _commercials)
+        {
+            Commercial building = commercial.GetComponentInParent<Commercial>();
+            if (commercial.transform == _destination && !building.EnRoute.Contains(gameObject))
+            {
+                building.EnRoute.AddFirst(gameObject);
+                return;
+            }
+        }
     }
 
     private void UpdateAnimation()

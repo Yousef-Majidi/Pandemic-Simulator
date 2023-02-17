@@ -8,6 +8,9 @@ using UnityEngine.AI;
 
 public class NPC : MonoBehaviour
 {
+    [Space]
+    [Header("Health")]
+
     [SerializeField]
     [Tooltip("Current Asset Type")]
     private AssetType _assetType;
@@ -21,8 +24,22 @@ public class NPC : MonoBehaviour
     private float _health = 100f;
 
     [SerializeField]
+    [Tooltip("The Virus that the NPC carries when infected")]
+    private Virus _virus;
+
+    [Space]
+    [Header("Stamina")]
+
+    [SerializeField]
     [Tooltip("Character Stamina")]
     private float _stamina = 100f;
+
+    [SerializeField]
+    [Tooltip("Stamina base decay rate")]
+    private float _staminaDecayBase = 1f;
+
+    [Space]
+    [Header("Happiness")]
 
     [SerializeField]
     [Tooltip("Character Happiness")]
@@ -37,9 +54,13 @@ public class NPC : MonoBehaviour
     private float _happinessDecayBase = 1f;
 
     [SerializeField]
-    private Virus _virus;
+    [Tooltip("Base rate for happiness recovery rate")]
+    private float _happinessRecoveryRate = 1f;
 
     private bool _isHappinessDecayActive;
+
+
+
     private NavMeshAgent _agent;
     private GameManager _gameManager;
 
@@ -55,6 +76,8 @@ public class NPC : MonoBehaviour
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
     public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
+    public float HappinessRecoveryRate { get => _happinessRecoveryRate; set => _happinessRecoveryRate = value; }
+    public float StaminaDecayBase { get => _staminaDecayBase; set => _staminaDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
@@ -82,23 +105,34 @@ public class NPC : MonoBehaviour
 
     public void UpdateStamina()
     {
-        float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayRate : _happinessDecayBase;
-        if (_stamina > 0)
+        if (!_gameManager.GodMode)
         {
-            _stamina -= decayRate * Time.deltaTime;
+            float decayRate = _virus ? _virus.StaminaDecayRate + _staminaDecayBase : _staminaDecayBase;
+            if (_stamina > 0)
+            {
+                _stamina -= decayRate * Time.deltaTime;
+                return;
+            }
+            if (_stamina < 0)
+            {
+                _stamina = 0;
+            }
         }
     }
 
     private void UpdateHealth()
     {
-        if (_isInfected && _virus)
+        if (!_gameManager.GodMode)
         {
-            _health -= _virus.HealthDecayRate * Time.deltaTime;
-        }
+            if (_isInfected)
+            {
+                _health -= _virus.HealthDecayRate * Time.deltaTime;
+            }
 
-        if (_health <= 0 && !_gameManager.GodMode)
-        {
-            Destroy(gameObject);
+            if (_health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -106,8 +140,12 @@ public class NPC : MonoBehaviour
     {
         if (!_gameManager.GodMode)
         {
-            UpdateHappinessDecayRate();
-            _happiness -= _happinessDecayRate * Time.deltaTime;
+            if (_isInfected)
+            {
+                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
+                UpdateHappinessDecayRate();
+                _happiness -= decayRate * Time.deltaTime;
+            }
         }
     }
 

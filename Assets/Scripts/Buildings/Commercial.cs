@@ -16,11 +16,13 @@ public class Commercial : Building
         int randomIndex;
         npc.SetActive(true);
         _visiting.Remove(npc);
+
         Navigation comp = npc.GetComponent<Navigation>();
         if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
+            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
+            //comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
             return;
         }
 

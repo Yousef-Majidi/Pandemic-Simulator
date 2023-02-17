@@ -17,7 +17,8 @@ public class Residential : Building
         if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
+            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
+            //comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
             return;
         }
         randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
@@ -42,6 +43,22 @@ public class Residential : Building
         }
     }
 
+    private void RecoverHappiness()
+    {
+        foreach (GameObject obj in _visiting.ToList())
+        {
+            NPC npc = obj.GetComponent<NPC>();
+            if (npc.Happiness < 100f)
+            {
+                npc.Happiness += npc.HappinessRecoveryRate * Time.deltaTime;
+            }
+            if (npc.Happiness > 100f)
+            {
+                npc.Happiness = 100f;
+            }
+        }
+    }
+
     private void Start()
     {
         Awake();
@@ -52,6 +69,7 @@ public class Residential : Building
     {
         DetectNPC();
         RecoverStamina();
+        RecoverHappiness();
         CalculateHealth();
     }
 }
