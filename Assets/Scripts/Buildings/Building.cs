@@ -13,6 +13,10 @@ public abstract class Building : MonoBehaviour
     [Tooltip("The Game Manager")]
     protected GameManager _gameManager;
 
+    [SerializeField]
+    [Tooltip("Ellapsed time")]
+    protected float _elapsedTime;
+
     [Space]
     [Header("Recovery Rates")]
 
@@ -95,6 +99,40 @@ public abstract class Building : MonoBehaviour
             if (component.IsInfected)
             {
                 component.Health -= component.Virus.HealthDecayRate * Time.deltaTime;
+            }
+        }
+    }
+
+    protected void ElapsedTime()
+    {
+        if (_elapsedTime >= 1)
+        {
+            _elapsedTime = 0;
+        }
+        else
+        {
+            _elapsedTime += Time.deltaTime;
+        }
+    }
+
+    virtual protected void TransmitVirus()
+    {
+        if (_elapsedTime >= 1)
+        {
+            foreach (GameObject obj in _visiting.ToList())
+            {
+                NPC npc = obj.GetComponent<NPC>();
+                if (npc.IsInfected)
+                {
+                    foreach (GameObject obj2 in _visiting.ToList())
+                    {
+                        NPC otherNPC = obj2.GetComponent<NPC>();
+                        if (!otherNPC.IsInfected)
+                        {
+                            npc.Virus.TransmitVirus(otherNPC);
+                        }
+                    }
+                }
             }
         }
     }

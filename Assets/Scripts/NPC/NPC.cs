@@ -110,7 +110,6 @@ public class NPC : MonoBehaviour
         {
             UpdateHappinessDecayRate();
             _happiness -= _happinessDecayRate * Time.deltaTime;
-            Debug.Log("Current Happiness: " + _happiness + " - Decay Rate: " + _happinessDecayRate);
         }
     }
 
