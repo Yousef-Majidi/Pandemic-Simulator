@@ -69,12 +69,10 @@ public abstract class Building : MonoBehaviour
             if (UpdateStamina(npc))
             {
                 ReleaseNPC(obj);
-                continue;
             }
             if (UpdateHealth(npc))
             {
                 ReleaseNPC(obj);
-                continue;
             }
             UpdateHappiness(npc);
         }

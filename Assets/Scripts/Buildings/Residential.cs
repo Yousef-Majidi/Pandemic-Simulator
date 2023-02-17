@@ -21,29 +21,13 @@ public class Residential : Building
     {
         if (!_gameManager.GodMode)
         {
-            if (npc.IsInfected)
+            float recoveryRate = npc.IsInfected ? _staminaRecoveryMultiplier * npc.Virus.StaminaDecayRate : _staminaRecoveryRate;
+            npc.Stamina += recoveryRate * Time.deltaTime;
+
+            if (npc.Stamina > 100f)
             {
-                if (npc.Stamina < 100f)
-                {
-                    npc.Stamina += _staminaRecoveryMultiplier * npc.Virus.StaminaDecayRate * Time.deltaTime;
-                    if (npc.Stamina > 100f)
-                    {
-                        npc.Stamina = 100f;
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                if (npc.Stamina < 100f)
-                {
-                    npc.Stamina += _staminaRecoveryRate * Time.deltaTime;
-                    if (npc.Stamina > 100f)
-                    {
-                        npc.Stamina = 100f;
-                        return true;
-                    }
-                }
+                npc.Stamina = 100f;
+                return true;
             }
         }
         return false;

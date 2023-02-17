@@ -11,6 +11,61 @@ public class Commercial : Building
     [Tooltip("The transmission timer")]
     private float _elapsedTime = 0;
 
+    protected override bool UpdateStamina(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            float recoverRate = npc.IsInfected ? (npc.Virus.StaminaDecayRate + npc.StaminaDecayBase) : npc.StaminaDecayBase;
+            npc.Stamina -= recoverRate * Time.deltaTime;
+            if (npc.Stamina <= _gameManager.StaminaThreshold)
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    protected override bool UpdateHealth(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            if (npc.IsInfected)
+            {
+                if (npc.Health > _gameManager.HealthThreshold)
+                {
+                    npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
+                    if (npc.Health <= _gameManager.HealthThreshold)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    protected override bool UpdateHappiness(NPC npc)
+    {
+        if (!_gameManager.GodMode)
+        {
+            if (npc.IsInfected)
+            {
+                if (npc.Happiness > 0)
+                {
+                    npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
+                    if (npc.Happiness < 0)
+                    {
+                        npc.Happiness = 0;
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
     protected override void ReleaseNPC(GameObject npc)
     {
         int randomIndex;
@@ -22,7 +77,6 @@ public class Commercial : Building
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
             comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
-            //comp.Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
             return;
         }
 
@@ -36,7 +90,18 @@ public class Commercial : Building
         comp.Destination = _gameManager.CommercialDestinations.ElementAt(randomIndex).transform;
         return;
     }
-
+    private void ElapsedTime()
+    {
+        if (_elapsedTime >= 1f)
+        {
+            TransmitVirus();
+            _elapsedTime = 0f;
+        }
+        else
+        {
+            _elapsedTime += Time.deltaTime;
+        }
+    }
     private void TransmitVirus()
     {
         foreach (GameObject obj in _visiting.ToList())
@@ -55,57 +120,17 @@ public class Commercial : Building
             }
         }
     }
-    private void ElapsedTime()
-    {
-        if (_elapsedTime >= 1f)
-        {
-            TransmitVirus();
-            _elapsedTime = 0f;
-        }
-        else
-        {
-            _elapsedTime += Time.deltaTime;
-        }
-    }
-
-    private void ReduceStamina()
-    {
-        foreach (GameObject obj in _visiting.ToList())
-        {
-            NPC npc = obj.GetComponent<NPC>();
-            npc.UpdateStamina();
-            if (npc.Stamina <= _gameManager.StaminaThreshold)
-            {
-                ReleaseNPC(obj);
-            }
-        }
-    }
-
-    protected override bool UpdateStamina(NPC npc)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override bool UpdateHealth(NPC npc)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override bool UpdateHappiness(NPC npc)
-    {
-        throw new System.NotImplementedException();
-    }
 
     private void Start()
     {
         Awake();
         SetSpawnPoint(_gameManager.CommercialDestinations);
     }
+
     private void Update()
     {
         DetectNPC();
+        ElapsedTime();
         CalculateAttributes();
     }
-
-
 }
