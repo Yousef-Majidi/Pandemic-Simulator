@@ -56,14 +56,11 @@ public class Navigation : MonoBehaviour
             return;
         }
 
-        if (!_isCommuting)
-        {
-            int randomIndex = Random.Range(0, _medicals.Count);
-            _destination = _commercials.ElementAt(randomIndex).transform;
-            _agent.destination = _destination.position;
-            _isCommuting = true;
-            return;
-        }
+        int randomIndex = Random.Range(0, _medicals.Count);
+        _destination = _commercials.ElementAt(randomIndex).transform;
+        _agent.destination = _destination.position;
+        _isCommuting = true;
+        return;
     }
 
     public void UpdateDestination(Transform newDest)

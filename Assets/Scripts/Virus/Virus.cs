@@ -45,7 +45,12 @@ public class Virus : ScriptableObject
 
     public void TransmitVirus(NPC other)
     {
-        if (Random.Range(0f, 1f) < _coughRate / Time.deltaTime)
+        float infectionChance = _coughRate;
+        float random = Random.Range(0f, 1f);
+        Debug.Log("infection chance: " + _coughRate);
+        Debug.Log("adjusted chance: " + infectionChance);
+        Debug.Log("random number: " + random);
+        if (random < infectionChance)
         {
             other.IsInfected = true;
         }
@@ -53,7 +58,9 @@ public class Virus : ScriptableObject
         if (other.IsInfected)
         {
             other.Virus = CreateInstance<Virus>();
-            if (Random.Range(0f, 1f) < _mutationChance / Time.deltaTime)
+            float mutationChance = _mutationChance;
+            random = Random.Range(0f, 1f);
+            if (random < mutationChance)
             {
                 other.Virus.Mutate();
             }
