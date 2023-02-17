@@ -41,7 +41,6 @@ public abstract class Building : MonoBehaviour
     {
         foreach (GameObject waypoint in waypoints.ToList())
         {
-            // if the name of the waypoint matches the name of this object
             if (waypoint.name == gameObject.name)
             {
                 _spawnPoint = waypoint;
@@ -75,31 +74,31 @@ public abstract class Building : MonoBehaviour
 
     protected void RecoverStamina()
     {
-        foreach (GameObject npc in _visiting.ToList())
+        foreach (GameObject obj in _visiting.ToList())
         {
-            NPC component = npc.GetComponent<NPC>();
-            if (component.Stamina < 100f)
+            NPC npc = obj.GetComponent<NPC>();
+            if (npc.Stamina < 100f)
             {
-                component.Stamina += _staminaRecoveryRate * Time.deltaTime;
+                npc.Stamina += _staminaRecoveryRate * Time.deltaTime;
             }
-            if (component.Stamina > 100f)
+            if (npc.Stamina > 100f)
             {
-                component.Stamina = 100f;
-                npc.SetActive(true);
-                _visiting.Remove(npc);
-                ReleaseNPC(npc);
+                npc.Stamina = 100f;
+                obj.SetActive(true);
+                _visiting.Remove(obj);
+                ReleaseNPC(obj);
             }
         }
     }
 
     protected void CalculateHealth()
     {
-        foreach (GameObject npc in _visiting.ToList())
+        foreach (GameObject obj in _visiting.ToList())
         {
-            NPC component = npc.GetComponent<NPC>();
-            if (component.IsInfected)
+            NPC npc = obj.GetComponent<NPC>();
+            if (npc.IsInfected)
             {
-                component.Health -= component.Virus.HealthDecayRate * Time.deltaTime;
+                npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
             }
         }
     }
