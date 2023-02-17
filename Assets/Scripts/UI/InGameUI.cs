@@ -27,9 +27,9 @@ public class InGameUI : MonoBehaviour
     void UpdateHealth()
     {
         int healthyNPCs = 0;
-        for (int i = 0; i < _gameManager.NPCs.Count; i++)
+        foreach (GameObject npc in _gameManager.NPCs.ToList())
         {
-            if (!_gameManager.NPCs.ElementAt(i).GetComponent<NPC>().IsInfected)
+            if (!npc.GetComponent<NPC>().IsInfected)
             {
                 healthyNPCs++;
             }
