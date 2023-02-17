@@ -44,7 +44,12 @@ public class Navigation : MonoBehaviour
             {
                 if (residential.transform == _destination)
                 {
-                    residential.GetComponentInParent<Residential>().EnRoute.AddFirst(gameObject);
+                    if (!residential.GetComponentInParent<Residential>().EnRoute.Contains(gameObject))
+                    {
+                        residential.GetComponentInParent<Residential>().EnRoute.AddFirst(gameObject);
+                        Debug.Log("Added " + gameObject.name + " to EnRoute");
+                    }
+
                     return;
                 }
             }

@@ -42,4 +42,25 @@ public class Virus : ScriptableObject
         _healthDecayRate = source._healthDecayRate;
         _mutationChance = source._mutationChance;
     }
+
+    public void TransmitVirus(NPC other)
+    {
+        if (Random.Range(0f, 1f) < _coughRate / Time.deltaTime)
+        {
+            other.IsInfected = true;
+        }
+
+        if (other.IsInfected)
+        {
+            other.Virus = CreateInstance<Virus>();
+            if (Random.Range(0f, 1f) < _mutationChance / Time.deltaTime)
+            {
+                other.Virus.Mutate();
+            }
+            else
+            {
+                other.Virus.Copy(this);
+            }
+        }
+    }
 }

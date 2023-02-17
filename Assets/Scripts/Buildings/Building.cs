@@ -49,15 +49,21 @@ public abstract class Building : MonoBehaviour
     {
         foreach (GameObject npc in _enRoute.ToList())
         {
-            if (npc.activeSelf && npc.GetComponent<Navigation>().Destination.transform.position == _spawnPoint.transform.position)
+            if (npc == null)
             {
-                if (Vector3.Distance(npc.transform.position, _spawnPoint.transform.position) < 1f)
-                {
-                    npc.SetActive(false);
-                    _enRoute.Remove(npc);
-                    _visiting.AddFirst(npc);
-                    break;
-                }
+                _enRoute.Remove(npc);
+                continue;
+            }
+            if (!npc.activeSelf || npc.GetComponent<Navigation>().Destination.transform.position != _spawnPoint.transform.position)
+            {
+                continue;
+            }
+            if (Vector3.Distance(npc.transform.position, _spawnPoint.transform.position) < 1f)
+            {
+                npc.SetActive(false);
+                _enRoute.Remove(npc);
+                _visiting.AddFirst(npc);
+                break;
             }
         }
     }
@@ -77,6 +83,18 @@ public abstract class Building : MonoBehaviour
                 npc.SetActive(true);
                 _visiting.Remove(npc);
                 ReleaseNPC(npc);
+            }
+        }
+    }
+
+    protected void CalculateHealth()
+    {
+        foreach (GameObject npc in _visiting.ToList())
+        {
+            NPC component = npc.GetComponent<NPC>();
+            if (component.IsInfected)
+            {
+                component.Health -= component.Virus.HealthDecayRate * Time.deltaTime;
             }
         }
     }

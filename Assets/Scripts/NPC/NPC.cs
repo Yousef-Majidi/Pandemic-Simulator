@@ -74,6 +74,8 @@ public class NPC : MonoBehaviour
         _happiness = sourceNpc._happiness;
         _virus = sourceNpc._virus;
         var currentDestination = source.GetComponent<Navigation>().Destination;
+        var home = source.GetComponent<Navigation>().Home;
+        GetComponent<Navigation>().Home = home;
         GetComponent<Navigation>().UpdateDestination(currentDestination);
     }
 
@@ -131,21 +133,9 @@ public class NPC : MonoBehaviour
         if (other.gameObject.CompareTag("NPC") && !_isInfected)
         {
             NPC otherNPC = other.gameObject.GetComponent<NPC>();
-            if (otherNPC.IsInfected && otherNPC._virus && UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.CoughRate)
+            if (otherNPC.IsInfected && otherNPC._virus)
             {
-                _isInfected = true;
-            }
-            if (_isInfected && otherNPC._virus)
-            {
-                _virus = ScriptableObject.CreateInstance<Virus>();
-                if (UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.MutationChance / Time.deltaTime)
-                {
-                    _virus.Mutate();
-                }
-                else
-                {
-                    _virus.Copy(otherNPC._virus);
-                }
+                otherNPC._virus.TransmitVirus(this);
             }
         }
     }

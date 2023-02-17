@@ -21,6 +21,8 @@ public class Residential : Building
     {
         DetectNPC();
         RecoverStamina();
+        CalculateHealth();
         Debug.Log("Visiting: " + _visiting.Count);
+        Debug.Log("EnRoute: " + _enRoute.Count);
     }
 }
