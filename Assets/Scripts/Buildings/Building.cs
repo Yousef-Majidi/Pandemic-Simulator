@@ -22,7 +22,7 @@ public abstract class Building : MonoBehaviour
 
     [SerializeField]
     [Tooltip("The rate at which the NPC's stamin recovers")]
-    protected float _staminaRecoveryRate = 1f;
+    protected float _staminaRecoveryRate = 5f;
 
     protected LinkedList<GameObject> _enRoute = new();
     protected LinkedList<GameObject> _visiting = new();
@@ -41,7 +41,8 @@ public abstract class Building : MonoBehaviour
     {
         foreach (GameObject waypoint in waypoints.ToList())
         {
-            if (Vector3.Distance(waypoint.transform.position, transform.position) < 10f)
+            // if the name of the waypoint matches the name of this object
+            if (waypoint.name == gameObject.name)
             {
                 _spawnPoint = waypoint;
                 break;

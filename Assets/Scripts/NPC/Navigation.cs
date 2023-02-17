@@ -29,7 +29,7 @@ public class Navigation : MonoBehaviour
 
     public void UpdateDestination()
     {
-        if (_npc.Health < 25)
+        if (_npc.Health < 25 && !_isCommuting)
         {
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
