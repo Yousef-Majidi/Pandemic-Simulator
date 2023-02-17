@@ -84,8 +84,6 @@ public abstract class Building : MonoBehaviour
             if (npc.Stamina > 100f)
             {
                 npc.Stamina = 100f;
-                obj.SetActive(true);
-                _visiting.Remove(obj);
                 ReleaseNPC(obj);
             }
         }
@@ -99,6 +97,10 @@ public abstract class Building : MonoBehaviour
             if (npc.IsInfected)
             {
                 npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
+            }
+            if (npc.Health <= _gameManager.HealthThreshold)
+            {
+                ReleaseNPC(obj);
             }
         }
     }
@@ -115,30 +117,6 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    virtual protected void TransmitVirus()
-    {
-        if (_elapsedTime >= 1)
-        {
-            foreach (GameObject obj in _visiting.ToList())
-            {
-                NPC npc = obj.GetComponent<NPC>();
-                if (npc.IsInfected)
-                {
-                    foreach (GameObject obj2 in _visiting.ToList())
-                    {
-                        NPC otherNPC = obj2.GetComponent<NPC>();
-                        if (!otherNPC.IsInfected)
-                        {
-                            npc.Virus.TransmitVirus(otherNPC);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     abstract protected void ReleaseNPC(GameObject npc);
-
-
 }
 

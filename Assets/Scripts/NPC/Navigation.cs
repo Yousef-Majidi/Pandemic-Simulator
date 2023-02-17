@@ -15,11 +15,14 @@ public class Navigation : MonoBehaviour
     [Tooltip("The location that the NPC spawns at")]
     private Transform _home;
 
+    [SerializeField]
+    private bool _isCommuting;
+
     private NavMeshAgent _agent;
     private NPC _npc;
     private Animator _animator;
     private GameManager _gameManager;
-    private bool _isCommuting;
+
 
     private LinkedList<GameObject> _commercials = new();
     private LinkedList<GameObject> _medicals = new();
@@ -29,7 +32,7 @@ public class Navigation : MonoBehaviour
 
     public void UpdateDestination()
     {
-        if (_npc.Health < 25 && !_isCommuting)
+        if (_npc.Health <= _gameManager.HealthThreshold && !_isCommuting)
         {
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
@@ -37,22 +40,20 @@ public class Navigation : MonoBehaviour
             return;
         }
 
-        if (_npc.Stamina < 25)
+        if (_npc.Stamina <= _gameManager.StaminaThreshold)
         {
             _destination = _home;
             _agent.destination = _destination.position;
+            _isCommuting = true;
             foreach (GameObject residential in _gameManager.ResidentialDestinations)
             {
-                if (residential.transform == _destination)
+                Residential building = residential.GetComponentInParent<Residential>();
+                if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
                 {
-                    if (!residential.GetComponentInParent<Residential>().EnRoute.Contains(gameObject))
-                    {
-                        residential.GetComponentInParent<Residential>().EnRoute.AddFirst(gameObject);
-                    }
+                    building.EnRoute.AddFirst(gameObject);
                     break;
                 }
             }
-            _isCommuting = true;
             return;
         }
 
@@ -62,7 +63,29 @@ public class Navigation : MonoBehaviour
             _destination = _commercials.ElementAt(randomIndex).transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
+            foreach (GameObject commercial in _commercials)
+            {
+                Commercial building = commercial.GetComponentInParent<Commercial>();
+                if (commercial.transform == _destination)
+                {
+                    if (!building.EnRoute.Contains(gameObject))
+                    {
+                        building.EnRoute.AddFirst(gameObject);
+                        break;
+                    }
+                }
+            }
             return;
+        }
+
+        if (_isCommuting && Vector3.Distance(transform.position, _destination.position) < 0.1f)
+        {
+            _isCommuting = false;
+        }
+
+        if (_isCommuting)
+        {
+            _agent.destination = _destination.position;
         }
     }
 
@@ -96,10 +119,7 @@ public class Navigation : MonoBehaviour
     private void Update()
     {
         UpdateDestination();
-        if (Vector3.Distance(transform.position, _destination.position) < 1f)
-        {
-            _isCommuting = false;
-        }
+
         UpdateAnimation();
     }
 }

@@ -5,10 +5,20 @@ using UnityEngine;
 
 public class Residential : Building
 {
-    override protected void ReleaseNPC(GameObject npc)
+    protected override void ReleaseNPC(GameObject npc)
     {
-        int randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
+        int randomIndex;
+        npc.SetActive(true);
+        _visiting.Remove(npc);
+        if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
+        {
+            randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
+            npc.GetComponent<Navigation>().Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
+            return;
+        }
+        randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
         npc.GetComponent<Navigation>().UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform);
+        return;
     }
 
     private void Start()
@@ -23,6 +33,5 @@ public class Residential : Building
         RecoverStamina();
         CalculateHealth();
         ElapsedTime();
-        TransmitVirus();
     }
 }

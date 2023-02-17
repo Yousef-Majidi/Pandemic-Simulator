@@ -48,6 +48,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private AssetChanger _assetChanger;
 
+    [Space]
+    [Header("Thresholds")]
+
+    [SerializeField]
+    [Tooltip("The health threshold to visit the hospital")]
+    private int _healthThreshold = 25;
+
+    [SerializeField]
+    [Tooltip("The stamina threshold to go back home")]
+    private int _staminaThreshold = 25;
+
     private readonly LinkedList<GameObject> _commercialDestinations = new();
     private readonly LinkedList<GameObject> _residentialDestinations = new();
     private readonly LinkedList<GameObject> _medicalDestinations = new();
@@ -61,6 +72,8 @@ public class GameManager : MonoBehaviour
     public float AverageHappiness { get => _averageHappiness; }
     public float PoliticalPower { get => _politicalPower; }
     public AssetChanger AssetChanger { get => _assetChanger; }
+    public int HealthThreshold { get => _healthThreshold; set => _healthThreshold = value; }
+    public int StaminaThreshold { get => _staminaThreshold; set => _staminaThreshold = value; }
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
@@ -90,7 +103,6 @@ public class GameManager : MonoBehaviour
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
             _npcCount++;
-            Debug.Log($"Spawned NPC: {newNPC.name}" + $" - Going to: {_commercialDestinations.ElementAt(randomIndex).name}");
         }
     }
 
@@ -98,30 +110,13 @@ public class GameManager : MonoBehaviour
     {
         if (_npcs.Count == 0)
         {
-            Debug.Log("No NPCs to destroy");
             return;
         }
         GameObject npc = _npcs.First();
-        Debug.Log("Removed: " + npc.name);
         Destroy(npc);
         _npcs.Remove(npc);
         --_npcCount;
     }
-
-    #region DEBUG
-    private void RefreshDestinations()
-    {
-        foreach (GameObject npc in _npcs.ToList())
-        {
-            if (npc != null)
-            {
-                int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
-                npc.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
-                Debug.Log($"{npc.name} is now going to {_commercialDestinations.ElementAt(randomIndex)}");
-            }
-        }
-    }
-    #endregion DEBUG
 
     private void CalculateAverageHappiness()
     {
@@ -143,7 +138,6 @@ public class GameManager : MonoBehaviour
 
     public void UpdateAsset(GameObject npc)
     {
-        Debug.Log("Updating asset for " + npc.name);
         GameObject newNPC;
         if (npc.GetComponent<NPC>().IsInfected)
         {
@@ -190,7 +184,6 @@ public class GameManager : MonoBehaviour
         }
 
         #region DEBUG
-        //InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
         foreach (GameObject npc in npcs)
         {

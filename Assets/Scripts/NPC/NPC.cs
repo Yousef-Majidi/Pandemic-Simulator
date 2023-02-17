@@ -81,7 +81,7 @@ public class NPC : MonoBehaviour
 
     private void UpdateStamina()
     {
-        if (_agent.velocity.magnitude > 0)
+        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
         {
             float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayBase : _happinessDecayBase;
             if (_stamina > 0)
@@ -115,12 +115,12 @@ public class NPC : MonoBehaviour
 
     private void UpdateHappinessDecayRate()
     {
-        if (_health < 25 && !_isHappinessDecayActive)
+        if (_health < _gameManager.HealthThreshold && !_isHappinessDecayActive)
         {
             _happinessDecayRate += 1f;
             _isHappinessDecayActive = true;
         }
-        else if (_health >= 25 && _isHappinessDecayActive)
+        else if (_health >= _gameManager.HealthThreshold && _isHappinessDecayActive)
         {
             _happinessDecayRate -= 1f;
             _isHappinessDecayActive = false;
