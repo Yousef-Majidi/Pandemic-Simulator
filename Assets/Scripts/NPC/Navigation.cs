@@ -33,6 +33,7 @@ public class Navigation : MonoBehaviour
         {
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
+            _isCommuting = true;
             return;
         }
 
@@ -48,18 +49,21 @@ public class Navigation : MonoBehaviour
                     {
                         residential.GetComponentInParent<Residential>().EnRoute.AddFirst(gameObject);
                     }
-
-                    return;
+                    break;
                 }
             }
+            _isCommuting = true;
             return;
         }
 
-        int randomIndex = Random.Range(0, _medicals.Count);
-        _destination = _commercials.ElementAt(randomIndex).transform;
-        _agent.destination = _destination.position;
-        _isCommuting = true;
-        return;
+        if (!_isCommuting)
+        {
+            int randomIndex = Random.Range(0, _medicals.Count);
+            _destination = _commercials.ElementAt(randomIndex).transform;
+            _agent.destination = _destination.position;
+            _isCommuting = true;
+            return;
+        }
     }
 
     public void UpdateDestination(Transform newDest)
