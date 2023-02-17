@@ -8,7 +8,17 @@ public class Commercial : Building
 {
     protected override void ReleaseNPC(GameObject npc)
     {
-        throw new System.NotImplementedException();
+        int randomIndex;
+        npc.SetActive(true);
+        _visiting.Remove(npc);
+        if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
+        {
+            randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
+            npc.GetComponent<Navigation>().Destination = _gameManager.MedicalDestinations.ElementAt(randomIndex).transform;
+            return;
+        }
+        npc.GetComponent<Navigation>().UpdateDestination(npc.GetComponent<Navigation>().Home);
+        return;
     }
 
     private void TransmitVirus()
