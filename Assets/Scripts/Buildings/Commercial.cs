@@ -11,6 +11,10 @@ public class Commercial : Building
     [Tooltip("The transmission timer")]
     private float _elapsedTime = 0;
 
+    [SerializeField]
+    [Tooltip("The threshold at which NPCs will leave the building")]
+    private float _leaveThreshold = 50f;
+
     protected override bool UpdateStamina(NPC npc)
     {
         if (!_gameManager.GodMode)
@@ -73,7 +77,7 @@ public class Commercial : Building
             return;
         }
 
-        if (npc.GetComponent<NPC>().Stamina <= _gameManager.StaminaThreshold)
+        if (npc.GetComponent<NPC>().Stamina <= _leaveThreshold)
         {
             comp.UpdateDestination(comp.Home, BuildingType.Residential);
             return;
