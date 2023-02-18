@@ -55,27 +55,21 @@ public class Residential : Building
         {
             if (npc.IsInfected)
             {
-                if (npc.Happiness > 0)
+                npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
+                if (npc.Happiness < 0)
                 {
-                    npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
-                    if (npc.Happiness < 0)
-                    {
-                        npc.Happiness = 0;
-                    }
+                    npc.Happiness = 0;
                 }
                 return false;
             }
             else
             {
-                if (npc.Happiness < 100)
+                npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
+                if (npc.Happiness > 100)
                 {
-                    npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
-                    if (npc.Happiness > 100)
-                    {
-                        npc.Happiness = 100;
-                    }
+                    npc.Happiness = 100;
                 }
-                return true;
+                return false;
             }
         }
         return false;
@@ -90,11 +84,11 @@ public class Residential : Building
         if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
+            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform, BuildingType.Medical);
             return;
         }
         randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
-        comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform);
+        comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform, BuildingType.Commercial);
         return;
     }
 

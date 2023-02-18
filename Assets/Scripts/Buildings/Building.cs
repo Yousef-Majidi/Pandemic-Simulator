@@ -20,6 +20,13 @@ public abstract class Building : MonoBehaviour
     public LinkedList<GameObject> EnRoute { get => _enRoute; }
     public LinkedList<GameObject> Visiting { get => _visiting; }
 
+    public enum BuildingType
+    {
+        Commercial,
+        Medical,
+        Residential
+    }
+
     protected abstract bool UpdateStamina(NPC npc);
     protected abstract bool UpdateHealth(NPC npc);
     protected abstract bool UpdateHappiness(NPC npc);

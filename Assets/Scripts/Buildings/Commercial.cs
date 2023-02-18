@@ -23,7 +23,6 @@ public class Commercial : Building
             }
         }
         return false;
-
     }
 
     protected override bool UpdateHealth(NPC npc)
@@ -32,13 +31,10 @@ public class Commercial : Building
         {
             if (npc.IsInfected)
             {
-                if (npc.Health > _gameManager.HealthThreshold)
+                npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
+                if (npc.Health <= _gameManager.HealthThreshold)
                 {
-                    npc.Health -= npc.Virus.HealthDecayRate * Time.deltaTime;
-                    if (npc.Health <= _gameManager.HealthThreshold)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
@@ -51,14 +47,11 @@ public class Commercial : Building
         {
             if (npc.IsInfected)
             {
-                if (npc.Happiness > 0)
+                npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
+                if (npc.Happiness < 0)
                 {
-                    npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
-                    if (npc.Happiness < 0)
-                    {
-                        npc.Happiness = 0;
-                        return true;
-                    }
+                    npc.Happiness = 0;
+                    return true;
                 }
                 return false;
             }
@@ -76,18 +69,18 @@ public class Commercial : Building
         if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
         {
             randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform);
+            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform, BuildingType.Medical);
             return;
         }
 
         if (npc.GetComponent<NPC>().Stamina <= _gameManager.StaminaThreshold)
         {
-            comp.UpdateDestination(comp.Home);
+            comp.UpdateDestination(comp.Home, BuildingType.Residential);
             return;
         }
 
         randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
-        comp.Destination = _gameManager.CommercialDestinations.ElementAt(randomIndex).transform;
+        comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform, BuildingType.Commercial);
         return;
     }
     private void ElapsedTime()

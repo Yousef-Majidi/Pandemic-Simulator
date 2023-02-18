@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -44,8 +42,15 @@ public class Navigation : MonoBehaviour
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
-
-            // TODO: Add to the medical building's enroute list and update the update destination overload 
+            foreach (GameObject medical in _gameManager.MedicalDestinations)
+            {
+                Medical building = medical.GetComponentInParent<Medical>();
+                if (medical.transform == _destination && !building.EnRoute.Contains(gameObject))
+                {
+                    building.EnRoute.AddFirst(gameObject);
+                    break;
+                }
+            }
             return;
         }
 
@@ -66,7 +71,6 @@ public class Navigation : MonoBehaviour
             return;
         }
 
-
         int randomIndex = Random.Range(0, _medicals.Count);
         _destination = _commercials.ElementAt(randomIndex).transform;
         _agent.destination = _destination.position;
@@ -83,30 +87,49 @@ public class Navigation : MonoBehaviour
                 }
             }
         }
-
     }
 
-    public void UpdateDestination(Transform newDest)
+    public void UpdateDestination(Transform newDest, Building.BuildingType type)
     {
         _isCommuting = true;
         _destination = newDest;
         _agent.destination = _destination.position;
-        foreach (GameObject residential in _gameManager.ResidentialDestinations)
+        if (type == Building.BuildingType.Residential)
         {
-            Residential building = residential.GetComponentInParent<Residential>();
-            if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
+            foreach (GameObject residential in _gameManager.ResidentialDestinations)
             {
-                building.EnRoute.AddFirst(gameObject);
-                return;
+                Residential building = residential.GetComponentInParent<Residential>();
+                if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
+                {
+                    building.EnRoute.AddFirst(gameObject);
+                    return;
+                }
             }
         }
-        foreach (GameObject commercial in _commercials)
+
+        if (type == Building.BuildingType.Commercial)
         {
-            Commercial building = commercial.GetComponentInParent<Commercial>();
-            if (commercial.transform == _destination && !building.EnRoute.Contains(gameObject))
+            foreach (GameObject commercial in _commercials)
             {
-                building.EnRoute.AddFirst(gameObject);
-                return;
+                Commercial building = commercial.GetComponentInParent<Commercial>();
+                if (commercial.transform == _destination && !building.EnRoute.Contains(gameObject))
+                {
+                    building.EnRoute.AddFirst(gameObject);
+                    return;
+                }
+            }
+        }
+
+        if (type == Building.BuildingType.Medical)
+        {
+            foreach (GameObject medical in _medicals)
+            {
+                Medical building = medical.GetComponentInParent<Medical>();
+                if (medical.transform == _destination && !building.EnRoute.Contains(gameObject))
+                {
+                    building.EnRoute.AddFirst(gameObject);
+                    break;
+                }
             }
         }
     }

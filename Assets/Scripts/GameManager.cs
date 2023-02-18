@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Sets the max number of NPCs allowed to be spawned")]
-    private int _maxNPCs = 250;
+    private int _maxNPC = 250;
 
     [SerializeField]
     [Tooltip("Currently spawned on the scene")]
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
     private readonly LinkedList<GameObject> _npcs = new();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
-    public int MaxNPCs { get => _maxNPCs; set => _maxNPCs = value; }
+    public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
     public int NPCCount { get => _npcCount; set => _npcCount = value; }
     public GameObject HealthyPrefab { get => _healthyPrefab; }
     public GameObject InfectedPrefab { get => _infectedPrefab; }
@@ -93,13 +93,13 @@ public class GameManager : MonoBehaviour
 
     private void SpawnNPC(GameObject spawnPoint)
     {
-        if (_npcCount < _maxNPCs)
+        if (_npcCount < _maxNPC)
         {
             GameObject newNPC = Instantiate(_healthyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
             newNPC.transform.parent = GameObject.Find("NPCs").transform;
             int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
             newNPC.GetComponent<Navigation>().Home = spawnPoint.transform;
-            newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform);
+            newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform, Building.BuildingType.Commercial);
             newNPC.tag = "NPC";
             _npcs.AddFirst(newNPC);
             _npcCount++;

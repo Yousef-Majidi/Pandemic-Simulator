@@ -1,7 +1,5 @@
-using System;
-using System.IO;
-using UnityEditor;
-using UnityEditor.Media;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -93,7 +91,27 @@ public class NPC : MonoBehaviour
         var currentDestination = source.GetComponent<Navigation>().Destination;
         var home = source.GetComponent<Navigation>().Home;
         GetComponent<Navigation>().Home = home;
-        GetComponent<Navigation>().UpdateDestination(currentDestination);
+
+        var waypoints = _gameManager.ResidentialDestinations.ToList();
+        waypoints.Concat(_gameManager.CommercialDestinations.ToList());
+        waypoints.Concat(_gameManager.MedicalDestinations.ToList());
+
+        Building.BuildingType buildingType;
+        foreach (GameObject waypoint in waypoints)
+        {
+            if (waypoint.transform.position == currentDestination.transform.position)
+            {
+                string tag = waypoint.tag;
+                if (tag == "Commercial")
+                    buildingType = Building.BuildingType.Commercial;
+                else if (tag == "Residential")
+                    buildingType = Building.BuildingType.Residential;
+                else
+                    buildingType = Building.BuildingType.Medical;
+                GetComponent<Navigation>().UpdateDestination(currentDestination, buildingType);
+                break;
+            }
+        }
     }
 
     public void UpdateStamina()
@@ -138,6 +156,10 @@ public class NPC : MonoBehaviour
                 UpdateHappinessDecayRate();
                 float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
                 _happiness -= decayRate * Time.deltaTime;
+                if (_happiness < 0)
+                {
+                    _happiness = 0;
+                }
             }
         }
     }
