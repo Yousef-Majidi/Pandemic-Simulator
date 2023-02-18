@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "Decisions", menuName = "ScriptableObjects/Decisions", order = 1)]
 public class Decisions : ScriptableObject
 {
     string _description = "This is a decision";
     string _title = "Decision";
-    int _id = 0;
     double _healthEffect = 0;
     double _virusEffect = 0;
     double _happyEffect = 0;
@@ -24,11 +24,6 @@ public class Decisions : ScriptableObject
         set { _title = value; }
     }
 
-    public int id
-    {
-        get { return _id; }
-        set { _id = value; }
-    }
 
     public double healthEffect
     {
@@ -58,17 +53,15 @@ public class Decisions : ScriptableObject
     {
         _description = "This is a decision";
         _title = "Decision";
-        _id = 0;
         _healthEffect = 0;
         _virusEffect = 0;
         _happyEffect = 0;
     }
 
-    public Decisions(string description, string title, int id, double healthEffect, double virusEffect, double happyEffect)
+    public Decisions(string description, string title, double healthEffect, double virusEffect, double happyEffect)
     {
         _description = description;
         _title = title;
-        _id = id;
         _healthEffect = healthEffect;
         _virusEffect = virusEffect;
         _happyEffect = happyEffect;

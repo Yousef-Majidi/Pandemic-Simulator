@@ -35,10 +35,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private AssetChanger _assetChanger;
 
+    [SerializeField]
+    private Decisions _decisions;
+
     private readonly LinkedList<GameObject> _commercialDestinations = new();
     private readonly LinkedList<GameObject> _residentialDestinations = new();
     private readonly LinkedList<GameObject> _medicalDestinations = new();
     private readonly LinkedList<GameObject> _npcs = new();
+
+    private LinkedList<Decisions> _decisionList = new LinkedList<Decisions>();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPCs; set => _maxNPCs = value; }
@@ -47,9 +52,11 @@ public class GameManager : MonoBehaviour
     public GameObject InfectedPrefab { get => _infectedPrefab; }
     public float AverageHappiness { get => _averageHappiness; }
     public AssetChanger AssetChanger { get => _assetChanger; }
+    public Decisions Decisions { get => _decisions; }
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
+    public LinkedList<Decisions> DecisionList { get => _decisionList; }
 
     private void ToggleGodMode()
     {
@@ -166,6 +173,42 @@ public class GameManager : MonoBehaviour
         {
             _medicalDestinations.AddFirst(waypoint);
         }
+
+        Decisions decision1 = Decisions.CreateInstance<Decisions>();
+        decision1.description = "This is a decision";
+        decision1.title = "Decision";
+        decision1.healthEffect = 0;
+        decision1.virusEffect = 0;
+        decision1.happyEffect = 0;
+        decision1.isActive = false;
+
+        Decisions decision2 = Decisions.CreateInstance<Decisions>();
+        decision2.description = "This is a decision";
+        decision2.title = "Poop1";
+
+        Decisions decision3 = Decisions.CreateInstance<Decisions>();
+        decision3.description = "This is a decision";
+        decision3.title = "Poop2";
+        decision3.isActive = true;
+
+        Decisions decision4 = Decisions.CreateInstance<Decisions>();
+        decision4.description = "This is a decision";
+        decision4.title = "Poop3";
+
+        Decisions decision5 = Decisions.CreateInstance<Decisions>();
+        decision5.description = "This is a decision";
+        decision5.title = "Poop4";
+
+        Decisions decision6 = Decisions.CreateInstance<Decisions>();
+        decision6.description = "This is a decision";
+        decision6.title = "Poop5";
+
+        DecisionList.AddLast(decision1);
+        DecisionList.AddLast(decision2);
+        DecisionList.AddLast(decision3);
+        DecisionList.AddLast(decision4);
+        DecisionList.AddLast(decision5);
+        DecisionList.AddLast(decision6);
 
         // DEBUG:
         InvokeRepeating(nameof(RefreshDestinations), 0f, 30f);

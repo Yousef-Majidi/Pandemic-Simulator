@@ -6,57 +6,27 @@ using TMPro;
 
 public class DecisionsMenu : MonoBehaviour
 {
-    LinkedList<Decisions> decisions = new LinkedList<Decisions>();
+    //get the decisions from the game manager
+    private GameManager _gameManager;
+    private LinkedList<Decisions> _decisionList;
+
+
   
     void Awake()
     {
-        //create a decision 
-        Decisions decision1 = Decisions.CreateInstance<Decisions>();
-        decision1.description = "This is a decision";
-        decision1.title = "Decision";
-        decision1.id = 0;
-        decision1.healthEffect = 0;
-        decision1.virusEffect = 0;
-        decision1.happyEffect = 0;
-        decision1.isActive = false;
-
-        Decisions decision2 = Decisions.CreateInstance<Decisions>();
-        decision2.description = "This is a decision";
-        decision2.title = "Poop1";
-
-        Decisions decision3 = Decisions.CreateInstance<Decisions>();
-        decision3.description = "This is a decision";
-        decision3.title = "Poop2";
-        decision3.isActive = true;
-
-        Decisions decision4 = Decisions.CreateInstance<Decisions>();
-        decision4.description = "This is a decision";
-        decision4.title = "Poop3";
-
-        Decisions decision5 = Decisions.CreateInstance<Decisions>();
-        decision5.description = "This is a decision";
-        decision5.title = "Poop4";
-
-        Decisions decision6 = Decisions.CreateInstance<Decisions>();
-        decision6.description = "This is a decision";
-        decision6.title = "Poop5";
-
-
-
         gameObject.SetActive(false);
-        decisions.AddLast(decision1);
-        decisions.AddLast(decision2);
-        decisions.AddLast(decision3);
-        decisions.AddLast(decision4);
-        decisions.AddLast(decision5);
-        decisions.AddLast(decision6);
-
-
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _decisionList = _gameManager.DecisionList;
+    
     }
 
     public void close()
     {
         gameObject.SetActive(false);
+        if (GameObject.Find("DecisionCanvas") != null)
+        {
+            Destroy(GameObject.Find("DecisionCanvas"));
+        }
     }
 
     public void ShowMenu()
@@ -73,7 +43,10 @@ public class DecisionsMenu : MonoBehaviour
     }
 
     void PopUpDecision(Decisions decision){
-        decision.isActive = true;
+        if (GameObject.Find("DecisionCanvas") != null)
+        {
+            Destroy(GameObject.Find("DecisionCanvas"));
+        }
 
         //create canvas
         GameObject canvas = new GameObject("DecisionCanvas", typeof(RectTransform));
@@ -84,13 +57,71 @@ public class DecisionsMenu : MonoBehaviour
         canvas.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         canvas.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
         canvas.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
-        canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1000, 1000);
-        canvas.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 800);
+        canvas.GetComponent<RectTransform>().anchoredPosition = new Vector2(70, 0);
 
         //create panel
         GameObject panel = new GameObject("Panel", typeof(RectTransform));
         panel.transform.SetParent(canvas.transform, false);
         panel.AddComponent<Image>();
+        panel.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0);
+        panel.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0);
+        panel.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0);
+        panel.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 800);
+        panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(70, 0);
+        panel.GetComponent<Image>().color = 0.75f * Color.white;
+
+
+        GameObject slider = new GameObject("Slider", typeof(RectTransform));
+        slider.transform.SetParent(panel.transform, false);
+        slider.AddComponent<Slider>();
+        slider.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        slider.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        slider.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        slider.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 50);
+        slider.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
+        slider.GetComponent<Slider>().minValue = 0;
+        slider.GetComponent<Slider>().maxValue = 100;
+        slider.GetComponent<Slider>().value = 0;
+        slider.GetComponent<Slider>().interactable = true;
+        slider.GetComponent<Slider>().direction = Slider.Direction.LeftToRight;
+        slider.GetComponent<Slider>().wholeNumbers = true;
+
+
+        //slider background
+        GameObject sliderBackground = new GameObject("SliderBackground", typeof(RectTransform));
+        sliderBackground.transform.SetParent(slider.transform, false);
+        sliderBackground.AddComponent<Image>();
+        sliderBackground.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        sliderBackground.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        sliderBackground.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        sliderBackground.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 50);
+        sliderBackground.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        sliderBackground.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+
+        //slider handle area
+        GameObject sliderHandleArea = new GameObject("SliderHandleArea", typeof(RectTransform));
+        sliderHandleArea.transform.SetParent(slider.transform, false);
+        sliderHandleArea.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        sliderHandleArea.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        sliderHandleArea.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        sliderHandleArea.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 50);
+        sliderHandleArea.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+
+        //slider handle
+        GameObject sliderHandle = new GameObject("SliderHandle", typeof(RectTransform));
+        sliderHandle.transform.SetParent(sliderHandleArea.transform, false);
+        sliderHandle.AddComponent<Image>();
+        sliderHandle.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        sliderHandle.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        sliderHandle.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        sliderHandle.GetComponent<RectTransform>().sizeDelta = new Vector2(20, 50);
+        sliderHandle.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        sliderHandle.GetComponent<Image>().color = new Color32(128, 128, 128, 255);
+
+        slider.GetComponent<Slider>().targetGraphic = slider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
+        slider.GetComponent<Slider>().handleRect = slider.transform.GetChild(1).GetChild(0).GetComponent<RectTransform>();
+
         
         //create title
         GameObject title = new GameObject("Title", typeof(RectTransform));
@@ -99,23 +130,163 @@ public class DecisionsMenu : MonoBehaviour
         title.GetComponent<TextMeshProUGUI>().text = decision.title;
         title.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         title.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        title.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        title.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        title.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        title.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 0);
+        title.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 300);
+        title.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
         //create description
         GameObject description = new GameObject("Description", typeof(RectTransform));
         description.transform.SetParent(panel.transform, false);
         description.AddComponent<TextMeshProUGUI>();
         description.GetComponent<TextMeshProUGUI>().text = decision.description;
+        description.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
+        description.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        description.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        description.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        description.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        description.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 0);
+        description.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 200);
+        description.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
+        //create health effect text
+        GameObject healthEffect = new GameObject("HealthEffect", typeof(RectTransform));
+        healthEffect.transform.SetParent(panel.transform, false);
+        healthEffect.AddComponent<TextMeshProUGUI>();
+        healthEffect.GetComponent<TextMeshProUGUI>().text = "Health Effect: " + decision.healthEffect;
+        healthEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
+        healthEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        healthEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        healthEffect.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        healthEffect.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        healthEffect.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 0);
+        healthEffect.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 100);
+        healthEffect.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
+        //create happiness effect text
+        GameObject happinessEffect = new GameObject("HappinessEffect", typeof(RectTransform));
+        happinessEffect.transform.SetParent(panel.transform, false);
+        happinessEffect.AddComponent<TextMeshProUGUI>();
+        happinessEffect.GetComponent<TextMeshProUGUI>().text = "Happiness Effect: " + decision.happyEffect;
+        happinessEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
+        happinessEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        happinessEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        happinessEffect.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        happinessEffect.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        happinessEffect.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 0);
+        happinessEffect.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        happinessEffect.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
+        GameObject politicalPower = new GameObject("PoliticalPower", typeof(RectTransform));
+        politicalPower.transform.SetParent(panel.transform, false);
+        politicalPower.AddComponent<TextMeshProUGUI>();
+        politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value;
+        slider.GetComponent<Slider>().onValueChanged.AddListener(delegate { politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value; });
+        politicalPower.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
+        politicalPower.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        politicalPower.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        politicalPower.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        politicalPower.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        politicalPower.GetComponent<RectTransform>().sizeDelta = new Vector2(3200, 0);
+        politicalPower.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -100);
+        politicalPower.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
 
+        //create button
+        GameObject button = new GameObject("Button", typeof(RectTransform));
+        button.transform.SetParent(panel.transform, false);
+        button.AddComponent<Button>();
+        button.AddComponent<Image>();
+        if (decision.isActive){
+            button.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+        }
+        else{
+            button.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+        }
+        button.GetComponent<Button>().onClick.AddListener(delegate { 
+            if (decision.isActive){
+                decision.isActive = false;
+                GameObject DButton = GameObject.Find("DButton"+decision.title);
+                DButton.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+
+                GameObject DButtonText = GameObject.Find("DButtonText"+decision.title);
+                DButtonText.GetComponent<TextMeshProUGUI>().text = "Enact";
+                DButtonText.GetComponent<TextMeshProUGUI>().fontSize = 60;
+                DButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, -15);
+                
+
+            }
+            else{
+                decision.isActive = true;   
+
+                GameObject DButton = GameObject.Find("DButton"+decision.title);
+                DButton.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+
+                GameObject DButtonText = GameObject.Find("DButtonText"+decision.title);
+                DButtonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
+                DButtonText.GetComponent<TextMeshProUGUI>().fontSize = 50;
+                DButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -25);
+                
+            }
+            Destroy(canvas);
+         });
+        button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        button.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        button.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 150);
+        button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -320);
+
+        //create button text
+        GameObject buttonText = new GameObject("ButtonText", typeof(RectTransform));
+        buttonText.transform.SetParent(button.transform, false);
+        buttonText.AddComponent<TextMeshProUGUI>();
+        if (decision.isActive){
+            buttonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
+        }
+        else{
+            buttonText.GetComponent<TextMeshProUGUI>().text = "Enact";
+        }
+        buttonText.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
+        buttonText.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        buttonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        buttonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        buttonText.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        buttonText.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 150);
+        buttonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        buttonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        GameObject exitButton = new GameObject("ExitButton", typeof(RectTransform));
+        exitButton.transform.SetParent(panel.transform, false);
+        exitButton.AddComponent<Button>();
+        exitButton.AddComponent<Image>();
+        exitButton.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+        exitButton.GetComponent<Button>().onClick.AddListener(delegate { Destroy(canvas); });
+        exitButton.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        exitButton.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        exitButton.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        exitButton.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+        exitButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(1600, 380);
+
+        GameObject exitButtonText = new GameObject("ExitButtonText", typeof(RectTransform));
+        exitButtonText.transform.SetParent(exitButton.transform, false);
+        exitButtonText.AddComponent<TextMeshProUGUI>();
+        exitButtonText.GetComponent<TextMeshProUGUI>().text = "X";
+        exitButtonText.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
+        exitButtonText.GetComponent<TextMeshProUGUI>().fontSize = 80;
+        exitButtonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        exitButtonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        exitButtonText.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
+        exitButtonText.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+        exitButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        exitButtonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
     } 
 
     void CreateUI()
     {
         GameObject parent = GameObject.Find("Content");
         int buffer = 50;
-        foreach (Decisions decision in decisions)
+        foreach (Decisions decision in _decisionList)
         {
             GameObject panel = new GameObject("Panel", typeof(RectTransform));
             panel.transform.SetParent(parent.transform, false);
@@ -134,14 +305,14 @@ public class DecisionsMenu : MonoBehaviour
             description.AddComponent<TextMeshProUGUI>();
             description.GetComponent<TextMeshProUGUI>().text = decision.description;
 
-            GameObject button = new GameObject("Button", typeof(RectTransform));
+            GameObject button = new GameObject("DButton"+decision.title, typeof(RectTransform));
             button.transform.SetParent(panel.transform, false);
             button.AddComponent<Button>();
             button.AddComponent<Image>();
             button.GetComponent<Button>().onClick.AddListener(() => PopUpDecision(decision));
 
 
-            GameObject buttonText = new GameObject("ButtonText", typeof(RectTransform));
+            GameObject buttonText = new GameObject("DButtonText"+decision.title, typeof(RectTransform));
             buttonText.transform.SetParent(button.transform, false);
             buttonText.AddComponent<TextMeshProUGUI>();
             buttonText.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
