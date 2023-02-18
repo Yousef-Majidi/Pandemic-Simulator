@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Virus
   m_EditorClassIdentifier: 
   _coughRate: 0.1
-  _staminaDecayRate: 1
-  _healthDecayRate: 1
+  _staminaDecayRate: 0.2
+  _healthDecayRate: 0.2
   _mutationChance: 0.1
