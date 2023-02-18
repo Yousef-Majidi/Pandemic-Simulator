@@ -21,7 +21,7 @@ public class Commercial : Building
         {
             float recoverRate = npc.IsInfected ? (npc.Virus.StaminaDecayRate + npc.StaminaDecayBase) : npc.StaminaDecayBase;
             npc.Stamina -= recoverRate * Time.deltaTime;
-            if (npc.Stamina <= _gameManager.StaminaThreshold)
+            if (npc.Stamina <= _leaveThreshold)
             {
                 return true;
             }
@@ -77,7 +77,7 @@ public class Commercial : Building
             return;
         }
 
-        if (npc.GetComponent<NPC>().Stamina <= _leaveThreshold)
+        if (npc.GetComponent<NPC>().Stamina <= _gameManager.StaminaThreshold)
         {
             comp.UpdateDestination(comp.Home, BuildingType.Residential);
             return;

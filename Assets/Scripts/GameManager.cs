@@ -148,10 +148,10 @@ public class GameManager : MonoBehaviour
         {
             newNPC = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
             newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
-            newNPC.GetComponent<NPC>().Virus = null;
         }
         newNPC.transform.parent = npc.transform.parent;
         newNPC.GetComponent<NPC>().Copy(npc);
+        newNPC.GetComponent<NPC>().Virus = null;
         _npcs.Remove(npc);
         _npcs.AddFirst(newNPC);
         Destroy(npc);
