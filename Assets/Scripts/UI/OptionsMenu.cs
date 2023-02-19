@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class OptionsMenu : MonoBehaviour
 {
+    private GameManager _gameManager;
+
     [SerializeField]
     private GameObject OptionsMenuUI;
 
     public void open()
     {
         OptionsMenuUI.SetActive(true);
-        Time.timeScale = 0f;
+        _gameManager.TimeManager.SetTimeScale(0);
     }
 
     void Update()
@@ -21,12 +23,13 @@ public class OptionsMenu : MonoBehaviour
     public void close()
     {
         OptionsMenuUI.SetActive(false);
-        Time.timeScale = 1f;
+        _gameManager.TimeManager.SetTimeScale(1);
     }
 
     void Awake()
     {
         OptionsMenuUI.SetActive(false);
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
 

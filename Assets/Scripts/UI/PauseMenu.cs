@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
+    private GameManager _gameManager;
+
     [SerializeField]
     private static bool _gameIsPaused = false;
 
@@ -13,20 +15,21 @@ public class PauseMenu : MonoBehaviour
     public void Resume()
     {
         _pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;
+        _gameManager.TimeManager.SetTimeScale(1);
         _gameIsPaused = false;
     }
 
     public void Pause()
     {
         _pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
+        _gameManager.TimeManager.SetTimeScale(0);
         _gameIsPaused = true;
     }
 
     void Awake()
     {
         _pauseMenuUI.SetActive(false);
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
     }
 

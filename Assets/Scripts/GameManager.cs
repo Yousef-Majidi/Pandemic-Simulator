@@ -59,6 +59,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("The stamina threshold to go back home")]
     private int _staminaThreshold = 25;
 
+    [SerializeField]
+    private TimeManager _timeManager;
+
     private readonly LinkedList<GameObject> _commercialDestinations = new();
     private readonly LinkedList<GameObject> _residentialDestinations = new();
     private readonly LinkedList<GameObject> _medicalDestinations = new();
@@ -74,6 +77,7 @@ public class GameManager : MonoBehaviour
     public AssetChanger AssetChanger { get => _assetChanger; }
     public int HealthThreshold { get => _healthThreshold; set => _healthThreshold = value; }
     public int StaminaThreshold { get => _staminaThreshold; set => _staminaThreshold = value; }
+    public TimeManager TimeManager { get => _timeManager; }
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
@@ -211,9 +215,17 @@ public class GameManager : MonoBehaviour
         {
             DestroyNPC();
         }
+
+        if (Input.GetKeyDown(KeyCode.S) && _godMode)
+        {
+            _timeManager.SetTimeScale(8);
+        }
         #endregion GOD_MODE
 
         CalculateAverageHappiness();
         CalculatePoliticalPower();
+        _timeManager.OnKeyDown();
+        _timeManager.Clock();
     }
+
 }

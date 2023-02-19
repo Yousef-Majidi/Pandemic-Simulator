@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class SaveMenu : MonoBehaviour
 {
+    private GameManager _gameManager;
+
     [SerializeField]
     private GameObject _saveMenuUI;
 
@@ -12,18 +14,19 @@ public class SaveMenu : MonoBehaviour
     {
         setImage();
         _saveMenuUI.SetActive(true);
-        Time.timeScale = 0f;
+        _gameManager.TimeManager.SetTimeScale(0);
     }
 
     public void close()
     {
         _saveMenuUI.SetActive(false);
-        Time.timeScale = 1f;
+        _gameManager.TimeManager.SetTimeScale(1);
     }
 
     void Awake()
     {
         _saveMenuUI.SetActive(false);
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
     }
 
