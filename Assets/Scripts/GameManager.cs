@@ -6,17 +6,36 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("God Mode")]
     [SerializeField]
     [Tooltip("God mode status")]
     private bool _godMode;
 
+    [Space]
+    [Header("NPCs")]
+
     [SerializeField]
-    [Tooltip("Max NPCs")]
+    [Tooltip("Sets the max number of NPCs allowed to be spawned")]
     private int _maxNPCs = 250;
 
     [SerializeField]
-    [Tooltip("Currently spawned")]
+    [Tooltip("Currently spawned on the scene")]
     private int _npcCount = 0;
+
+    [SerializeField]
+    [Tooltip("Average Happiness of all NPCs")]
+    private float _averageHappiness = 1f;
+
+    [SerializeField]
+    [Tooltip("Political Power")]
+    private float _politicalPower = 1f;
+
+    [SerializeField]
+    [Tooltip("The political power multiplier")]
+    private float _politicalPowerMultiplier = 0.001f;
+
+    [Space]
+    [Header("Prefabs")]
 
     [SerializeField]
     [Tooltip("Healthy NPC Prefab")]
@@ -25,12 +44,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     [Tooltip("Infected NPC Prefab")]
     private GameObject _infectedPrefab;
-
-    [SerializeField]
-    [Tooltip("Average Happiness of all NPCs")]
-    private float _averageHappiness;
-
-    [Space]
 
     [SerializeField]
     private AssetChanger _assetChanger;
@@ -46,6 +59,7 @@ public class GameManager : MonoBehaviour
     public GameObject HealthyPrefab { get => _healthyPrefab; }
     public GameObject InfectedPrefab { get => _infectedPrefab; }
     public float AverageHappiness { get => _averageHappiness; }
+    public float PoliticalPower { get => _politicalPower; }
     public AssetChanger AssetChanger { get => _assetChanger; }
     public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
@@ -147,6 +161,12 @@ public class GameManager : MonoBehaviour
         Destroy(npc);
     }
 
+    public void CalculatePoliticalPower()
+    {
+        if (!float.IsNaN(_averageHappiness))
+            _politicalPower += _averageHappiness * Time.deltaTime * _politicalPowerMultiplier;
+    }
+
     void Awake()
     {
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
@@ -192,6 +212,6 @@ public class GameManager : MonoBehaviour
         #endregion GOD_MODE
 
         CalculateAverageHappiness();
-
+        CalculatePoliticalPower();
     }
 }
