@@ -67,8 +67,8 @@ public class FlyCamera : MonoBehaviour
 
         if (Input.GetKey(KeyCode.E))
             deltaPosition += transform.up;
-
-        _rigidBody.velocity = _moveSpeed * Time.deltaTime * deltaPosition;
+            //use unscaledDeltaTime to make movement framerate independent
+        _rigidBody.velocity = _moveSpeed * Time.unscaledDeltaTime * deltaPosition;
     }
 
     private void CameraRotation()
@@ -98,12 +98,10 @@ public class FlyCamera : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale != 0){
-            SetCursorState();
-            Boost();
-            CameraMovement();
-            CameraRotation();
-        }
+        SetCursorState();
+        Boost();
+        CameraMovement();
+        CameraRotation();
 
     }
 }
