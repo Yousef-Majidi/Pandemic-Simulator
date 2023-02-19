@@ -1,13 +1,14 @@
-using System;
-using System.IO;
-using UnityEditor;
-using UnityEditor.Media;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 
 public class NPC : MonoBehaviour
 {
+    [Space]
+    [Header("Health")]
+
     [SerializeField]
     [Tooltip("Current Asset Type")]
     private AssetType _assetType;
@@ -21,8 +22,22 @@ public class NPC : MonoBehaviour
     private float _health = 100f;
 
     [SerializeField]
+    [Tooltip("The Virus that the NPC carries when infected")]
+    private Virus _virus;
+
+    [Space]
+    [Header("Stamina")]
+
+    [SerializeField]
     [Tooltip("Character Stamina")]
     private float _stamina = 100f;
+
+    [SerializeField]
+    [Tooltip("Stamina base decay rate")]
+    private float _staminaDecayBase = 1f;
+
+    [Space]
+    [Header("Happiness")]
 
     [SerializeField]
     [Tooltip("Character Happiness")]
@@ -36,10 +51,8 @@ public class NPC : MonoBehaviour
     [Tooltip("Base rate for happiness decay rate")]
     private float _happinessDecayBase = 1f;
 
-    [SerializeField]
-    private Virus _virus;
-
     private bool _isHappinessDecayActive;
+
     private NavMeshAgent _agent;
     private GameManager _gameManager;
 
@@ -54,6 +67,8 @@ public class NPC : MonoBehaviour
     public float Stamina { get => _stamina; set => _stamina = value; }
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
+    public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
+    public float StaminaDecayBase { get => _staminaDecayBase; set => _staminaDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
@@ -74,31 +89,61 @@ public class NPC : MonoBehaviour
         _happiness = sourceNpc._happiness;
         _virus = sourceNpc._virus;
         var currentDestination = source.GetComponent<Navigation>().Destination;
-        GetComponent<Navigation>().UpdateDestination(currentDestination);
+        var home = source.GetComponent<Navigation>().Home;
+        GetComponent<Navigation>().Home = home;
+
+        var waypoints = _gameManager.ResidentialDestinations.ToList();
+        waypoints.Concat(_gameManager.CommercialDestinations.ToList());
+        waypoints.Concat(_gameManager.MedicalDestinations.ToList());
+
+        Building.BuildingType buildingType;
+        foreach (GameObject waypoint in waypoints)
+        {
+            if (waypoint.transform.position == currentDestination.transform.position)
+            {
+                string tag = waypoint.tag;
+                if (tag == "Commercial")
+                    buildingType = Building.BuildingType.Commercial;
+                else if (tag == "Residential")
+                    buildingType = Building.BuildingType.Residential;
+                else
+                    buildingType = Building.BuildingType.Medical;
+                GetComponent<Navigation>().UpdateDestination(currentDestination, buildingType);
+                break;
+            }
+        }
     }
 
-    private void UpdateStamina()
+    public void UpdateStamina()
     {
-        if (_agent.velocity.magnitude > 0)
+        if (!_gameManager.GodMode)
         {
-            float decayRate = _virus ? _virus.StaminaDecayRate + _happinessDecayBase : _happinessDecayBase;
+            float decayRate = _virus ? _virus.StaminaDecayRate + _staminaDecayBase : _staminaDecayBase;
             if (_stamina > 0)
             {
                 _stamina -= decayRate * Time.deltaTime;
+                return;
+            }
+            if (_stamina < 0)
+            {
+                _stamina = 0;
             }
         }
     }
 
     private void UpdateHealth()
     {
-        if (_isInfected && _virus)
+        if (!_gameManager.GodMode)
         {
-            _health -= _virus.HealthDecayRate * Time.deltaTime;
-        }
+            if (_isInfected)
+            {
+                _health -= _virus.HealthDecayRate * Time.deltaTime;
+            }
 
-        if (_health <= 0 && !_gameManager.GodMode)
-        {
-            Destroy(gameObject);
+            if (_health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -106,20 +151,27 @@ public class NPC : MonoBehaviour
     {
         if (!_gameManager.GodMode)
         {
-            UpdateHappinessDecayRate();
-            _happiness -= _happinessDecayRate * Time.deltaTime;
-            Debug.Log("Current Happiness: " + _happiness + " - Decay Rate: " + _happinessDecayRate);
+            if (_isInfected)
+            {
+                UpdateHappinessDecayRate();
+                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
+                _happiness -= decayRate * Time.deltaTime;
+                if (_happiness < 0)
+                {
+                    _happiness = 0;
+                }
+            }
         }
     }
 
     private void UpdateHappinessDecayRate()
     {
-        if (_health < 25 && !_isHappinessDecayActive)
+        if (_health < _gameManager.HealthThreshold && !_isHappinessDecayActive)
         {
             _happinessDecayRate += 1f;
             _isHappinessDecayActive = true;
         }
-        else if (_health >= 25 && _isHappinessDecayActive)
+        else if (_health >= _gameManager.HealthThreshold && _isHappinessDecayActive)
         {
             _happinessDecayRate -= 1f;
             _isHappinessDecayActive = false;
@@ -131,21 +183,9 @@ public class NPC : MonoBehaviour
         if (other.gameObject.CompareTag("NPC") && !_isInfected)
         {
             NPC otherNPC = other.gameObject.GetComponent<NPC>();
-            if (otherNPC.IsInfected && otherNPC._virus && UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.CoughRate)
+            if (otherNPC.IsInfected && otherNPC._virus)
             {
-                _isInfected = true;
-            }
-            if (_isInfected && otherNPC._virus)
-            {
-                _virus = ScriptableObject.CreateInstance<Virus>();
-                if (UnityEngine.Random.Range(0f, 1f) < otherNPC._virus.MutationChance)
-                {
-                    _virus.Mutate();
-                }
-                else
-                {
-                    _virus.Copy(otherNPC._virus);
-                }
+                otherNPC._virus.TransmitVirus(this);
             }
         }
     }
@@ -159,7 +199,10 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
-        UpdateStamina();
+        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
+        {
+            UpdateStamina();
+        }
         UpdateHealth();
         CheckInfection();
         UpdateHappiness();

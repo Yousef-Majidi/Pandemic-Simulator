@@ -525,6 +525,7 @@ MonoBehaviour:
   _stamina: 100
   _happiness: 100
   _happinessDecayRate: 0
+  _happinessDecayBase: 1
   _virus: {fileID: 0}
 --- !u!1 &1989916952965676
 GameObject:

@@ -3,50 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class InGameUI : MonoBehaviour
 {
+    private GameManager _gameManager;
 
     void Awake()
     {
         GameObject.Find("UIMenuPanel").SetActive(false);
-
+        _gameManager = FindObjectOfType<GameManager>().GetComponent<GameManager>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         UpdateHealth();
         UpdateHappiness();
         UpdateTimeCounter();
         UpdateDayCounter();
-        keyPress();
-        
+        KeyPress();
     }
 
     void UpdateHealth()
     {
-        // calculate health bar by getting the percentage of healthy NPCs to total NPCs
-        // get the number of healthy NPCs
-        GameObject[] totalNPCs = GameObject.FindGameObjectsWithTag("NPC");
         int healthyNPCs = 0;
-        for (int i = 0; i < totalNPCs.Length; i++)
+        foreach (GameObject npc in _gameManager.NPCs.ToList())
         {
-            if (totalNPCs[i].GetComponent<NPC>().IsInfected == false)
+            if (!npc.GetComponent<NPC>().IsInfected)
             {
-
-                // increment healthyNPCs
                 healthyNPCs++;
             }
         }
         float percentage = 0;
-        if (totalNPCs.Length > 0){
-            // get the percentage of healthy NPCs to total NPCs
-            percentage = (float)healthyNPCs / (float)totalNPCs.Length;
+        if (_gameManager.NPCs.Count > 0)
+        {
+            percentage = (float)healthyNPCs / _gameManager.NPCs.Count;
         }
 
         // update the health bar
-        GameObject.Find("HealthSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
+        GameObject.Find("HealthSlider").GetComponent<Slider>().value = percentage;
 
         // update the health text
         GameObject.Find("HealthText").GetComponent<TextMeshProUGUI>().text = "Healthy: " + (percentage * 100).ToString("0") + "%";
@@ -57,19 +52,16 @@ public class InGameUI : MonoBehaviour
 
     void UpdateHappiness()
     {
-        // calculate happiness bar by getting the percentage of happy NPCs to total NPCs
-        // get the number of happy NPCs
-        GameObject[] totalNPCs = GameObject.FindGameObjectsWithTag("NPC");
         float totalHappiness = 0;
-        for (int i = 0; i < totalNPCs.Length; i++)
+        for (int i = 0; i < _gameManager.NPCs.Count; i++)
         {
-            totalHappiness += totalNPCs[i].GetComponent<NPC>().Happiness;
+            totalHappiness += _gameManager.NPCs.ElementAt(i).GetComponent<NPC>().Happiness;
         }
-        
+
         float percentage = 0;
-        if (totalNPCs.Length > 0){
-            // get the percentage of happy NPCs to total NPCs
-            percentage = totalHappiness / (totalNPCs.Length * 100);
+        if (_gameManager.NPCs.Count > 0)
+        {
+            percentage = totalHappiness / (_gameManager.NPCs.Count * 100);
         }
 
         // update the happiness bar
@@ -84,7 +76,6 @@ public class InGameUI : MonoBehaviour
 
     void UpdateTimeCounter(bool isPaused = false)
     {
-        // update the time aceleration counte
         if (isPaused)
             GameObject.Find("TimeCount").GetComponent<TextMeshProUGUI>().text = "x0";
         else
@@ -93,7 +84,6 @@ public class InGameUI : MonoBehaviour
 
     void UpdateDayCounter()
     {
-        // update the day counter
         int day = (int)(Time.time / 60 / 60 / 24);
         GameObject.Find("DayCount").GetComponent<TextMeshProUGUI>().text = "Day " + day.ToString();
     }
@@ -108,7 +98,6 @@ public class InGameUI : MonoBehaviour
 
     public void PauseGame()
     {
-        // if the game is paused, unpause it
         if (Time.timeScale == 0)
         {
             Time.timeScale = 1;
@@ -142,7 +131,7 @@ public class InGameUI : MonoBehaviour
         }
     }
 
-    void keyPress()
+    void KeyPress()
     {
         switch (Input.inputString)
         {
