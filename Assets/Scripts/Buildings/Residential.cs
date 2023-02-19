@@ -21,7 +21,7 @@ public class Residential : Building
     {
         if (!_gameManager.GodMode)
         {
-            float recoveryRate = npc.IsInfected ? _staminaRecoveryMultiplier * npc.Virus.StaminaDecayRate : _staminaRecoveryRate;
+            float recoveryRate = npc.IsInfected ? _staminaRecoveryMultiplier * _staminaRecoveryRate : _staminaRecoveryRate;
             npc.Stamina += recoveryRate * Time.deltaTime;
 
             if (npc.Stamina > 100f)
