@@ -20,6 +20,7 @@ public class InGameUI : MonoBehaviour
         UpdateHappiness();
         UpdateTimeCounter();
         UpdateDayCounter();
+        UpdatePoliticalPower();
     }
 
     void UpdateHealth()
@@ -74,6 +75,13 @@ public class InGameUI : MonoBehaviour
     {
         GameObject.Find("Clock").GetComponent<TextMeshProUGUI>().text = _gameManager.TimeManager.InGameHour.ToString("00") + ":" + _gameManager.TimeManager.InGameMinute.ToString("00");
         GameObject.Find("DayCount").GetComponent<TextMeshProUGUI>().text = "Day " + _gameManager.TimeManager.InGameDay.ToString();
+    }
+
+    void UpdatePoliticalPower()
+    {
+        //make sure political power is a whole number
+        int PP = Mathf.RoundToInt(_gameManager.PoliticalPower);
+        GameObject.Find("PoliticalPower").GetComponent<TextMeshProUGUI>().text = PP.ToString();
     }
 
     public void HandleUIpanel(GameObject panel)

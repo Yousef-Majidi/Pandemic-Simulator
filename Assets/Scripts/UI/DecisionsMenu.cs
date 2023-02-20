@@ -81,7 +81,7 @@ public class DecisionsMenu : MonoBehaviour
         slider.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 50);
         slider.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
         slider.GetComponent<Slider>().minValue = 0;
-        slider.GetComponent<Slider>().maxValue = 100;
+        slider.GetComponent<Slider>().maxValue = _gameManager.PoliticalPower;
         slider.GetComponent<Slider>().value = 0;
         slider.GetComponent<Slider>().interactable = true;
         slider.GetComponent<Slider>().direction = Slider.Direction.LeftToRight;
