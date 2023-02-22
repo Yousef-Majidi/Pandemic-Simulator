@@ -33,6 +33,7 @@ public class Virus : ScriptableObject
         _staminaDecayRate = Random.Range(1f, 5f);
         _healthDecayRate = Random.Range(1f, 5f);
         _mutationChance = Random.Range(0.01f, 0.1f);
+        Debug.Log("Mutated: " + GetInstanceID());
     }
 
     public void Copy(Virus source)
@@ -45,17 +46,11 @@ public class Virus : ScriptableObject
 
     public void TransmitVirus(NPC other)
     {
-        float random = Random.Range(0f, 1f);
-        if (random < _coughRate)
+        if (Random.Range(0f, 1f) < _coughRate)
         {
             other.IsInfected = true;
-        }
-
-        if (other.IsInfected)
-        {
             other.Virus = CreateInstance<Virus>();
-            random = Random.Range(0f, 1f);
-            if (random < _mutationChance)
+            if (Random.Range(0f, 1f) < _mutationChance)
             {
                 other.Virus.Mutate();
             }
