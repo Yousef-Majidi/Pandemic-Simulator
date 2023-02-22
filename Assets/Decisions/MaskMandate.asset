@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MaskMandate
   m_EditorClassIdentifier: 
   _description: Dummy description
-  _title: Mask mandate
+  _title: Mask Mandate
   _healthEffect: 0
   _virusEffect: 0
   _happyEffect: 0

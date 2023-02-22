@@ -229,7 +229,7 @@ public class GameManager : MonoBehaviour
             DestroyNPC();
         }
 
-        if (Input.GetKeyDown(KeyCode.S) && _godMode)
+        if (Input.GetKeyDown(KeyCode.Alpha4) && _godMode)
         {
             _timeManager.SetTimeScale(8);
         }

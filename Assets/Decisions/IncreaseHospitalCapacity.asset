@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IncreaseHospitalCapacity
   m_EditorClassIdentifier: 
   _description: Dummy description
-  _title: Increase hospital capacity
+  _title: Increase Hospital Capacity
   _healthEffect: 0
   _virusEffect: 0
   _happyEffect: 0

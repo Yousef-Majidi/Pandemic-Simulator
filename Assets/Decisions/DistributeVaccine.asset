@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DistributeVaccine
   m_EditorClassIdentifier: 
   _description: Dummy description
-  _title: Distribute vaccine
+  _title: Distribute Vaccine
   _healthEffect: 0
   _virusEffect: 0
   _happyEffect: 0
