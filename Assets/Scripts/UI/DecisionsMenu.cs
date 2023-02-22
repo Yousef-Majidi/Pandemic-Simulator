@@ -230,7 +230,7 @@ public class DecisionsMenu : MonoBehaviour
                 DButton.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
 
                 GameObject DButtonText = GameObject.Find("DButtonText" + decision.Title);
-                DButtonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
+                DButtonText.GetComponent<TextMeshProUGUI>().text = "Revoke";
                 DButtonText.GetComponent<TextMeshProUGUI>().fontSize = 50;
                 DButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -25);
 
@@ -249,7 +249,7 @@ public class DecisionsMenu : MonoBehaviour
         buttonText.AddComponent<TextMeshProUGUI>();
         if (decision.IsEnacted)
         {
-            buttonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
+            buttonText.GetComponent<TextMeshProUGUI>().text = "Revoke";
         }
         else
         {
@@ -340,7 +340,7 @@ public class DecisionsMenu : MonoBehaviour
             if (decision.IsEnacted)
             {
                 button.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
-                buttonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
+                buttonText.GetComponent<TextMeshProUGUI>().text = "Revoke";
                 buttonText.GetComponent<TextMeshProUGUI>().fontSize = 50;
                 buttonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -25);
 
