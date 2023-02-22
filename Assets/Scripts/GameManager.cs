@@ -59,18 +59,24 @@ public class GameManager : MonoBehaviour
     [Tooltip("The stamina threshold to go back home")]
     private int _staminaThreshold = 25;
 
+    [Space]
+    [Header("Time Manager")]
+
     [SerializeField]
     private TimeManager _timeManager;
 
+    [Space]
+    [Header("Decisions")]
+
     [SerializeField]
-    private Decisions _decisions;
+    [Tooltip("The list of all decisions")]
+    private List<Decision> _decisionList = new();
 
     private readonly LinkedList<GameObject> _commercialDestinations = new();
     private readonly LinkedList<GameObject> _residentialDestinations = new();
     private readonly LinkedList<GameObject> _medicalDestinations = new();
     private readonly LinkedList<GameObject> _npcs = new();
 
-    private LinkedList<Decisions> _decisionList = new LinkedList<Decisions>();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
@@ -87,8 +93,7 @@ public class GameManager : MonoBehaviour
     public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public LinkedList<GameObject> NPCs { get => _npcs; }
-    public Decisions Decisions { get => _decisions; }
-    public LinkedList<Decisions> DecisionList { get => _decisionList; }
+    public List<Decision> DecisionList { get => _decisionList; }
 
 
     private void ToggleGodMode()
@@ -202,42 +207,6 @@ public class GameManager : MonoBehaviour
             _npcs.AddFirst(npc);
             _npcCount++;
         }
-
-        Decisions decision1 = Decisions.CreateInstance<Decisions>();
-        decision1.description = "This is a decision";
-        decision1.title = "Decision";
-        decision1.healthEffect = 0;
-        decision1.virusEffect = 0;
-        decision1.happyEffect = 0;
-        decision1.isActive = false;
-
-        Decisions decision2 = Decisions.CreateInstance<Decisions>();
-        decision2.description = "This is a decision";
-        decision2.title = "Poop1";
-
-        Decisions decision3 = Decisions.CreateInstance<Decisions>();
-        decision3.description = "This is a decision";
-        decision3.title = "Poop2";
-        decision3.isActive = true;
-
-        Decisions decision4 = Decisions.CreateInstance<Decisions>();
-        decision4.description = "This is a decision";
-        decision4.title = "Poop3";
-
-        Decisions decision5 = Decisions.CreateInstance<Decisions>();
-        decision5.description = "This is a decision";
-        decision5.title = "Poop4";
-
-        Decisions decision6 = Decisions.CreateInstance<Decisions>();
-        decision6.description = "This is a decision";
-        decision6.title = "Poop5";
-
-        DecisionList.AddLast(decision1);
-        DecisionList.AddLast(decision2);
-        DecisionList.AddLast(decision3);
-        DecisionList.AddLast(decision4);
-        DecisionList.AddLast(decision5);
-        DecisionList.AddLast(decision6);
         #endregion DEBUG
     }
 

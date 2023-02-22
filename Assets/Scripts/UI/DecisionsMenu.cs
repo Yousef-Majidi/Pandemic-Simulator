@@ -8,16 +8,16 @@ public class DecisionsMenu : MonoBehaviour
 {
     //get the decisions from the game manager
     private GameManager _gameManager;
-    private LinkedList<Decisions> _decisionList;
+    private List<Decision> _decisionList;
 
 
-  
+
     void Awake()
     {
         gameObject.SetActive(false);
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _decisionList = _gameManager.DecisionList;
-    
+
     }
 
     public void close()
@@ -42,7 +42,8 @@ public class DecisionsMenu : MonoBehaviour
         }
     }
 
-    void PopUpDecision(Decisions decision){
+    void PopUpDecision(Decision decision)
+    {
         if (GameObject.Find("DecisionCanvas") != null)
         {
             Destroy(GameObject.Find("DecisionCanvas"));
@@ -122,12 +123,12 @@ public class DecisionsMenu : MonoBehaviour
         slider.GetComponent<Slider>().targetGraphic = slider.transform.GetChild(1).GetChild(0).GetComponent<Image>();
         slider.GetComponent<Slider>().handleRect = slider.transform.GetChild(1).GetChild(0).GetComponent<RectTransform>();
 
-        
+
         //create title
         GameObject title = new GameObject("Title", typeof(RectTransform));
         title.transform.SetParent(panel.transform, false);
         title.AddComponent<TextMeshProUGUI>();
-        title.GetComponent<TextMeshProUGUI>().text = decision.title;
+        title.GetComponent<TextMeshProUGUI>().text = decision.Title;
         title.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         title.GetComponent<TextMeshProUGUI>().fontSize = 80;
         title.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -141,7 +142,7 @@ public class DecisionsMenu : MonoBehaviour
         GameObject description = new GameObject("Description", typeof(RectTransform));
         description.transform.SetParent(panel.transform, false);
         description.AddComponent<TextMeshProUGUI>();
-        description.GetComponent<TextMeshProUGUI>().text = decision.description;
+        description.GetComponent<TextMeshProUGUI>().text = decision.Description;
         description.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         description.GetComponent<TextMeshProUGUI>().fontSize = 80;
         description.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -155,7 +156,7 @@ public class DecisionsMenu : MonoBehaviour
         GameObject healthEffect = new GameObject("HealthEffect", typeof(RectTransform));
         healthEffect.transform.SetParent(panel.transform, false);
         healthEffect.AddComponent<TextMeshProUGUI>();
-        healthEffect.GetComponent<TextMeshProUGUI>().text = "Health Effect: " + decision.healthEffect;
+        healthEffect.GetComponent<TextMeshProUGUI>().text = "Health Effect: " + decision.HealthEffect;
         healthEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         healthEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
         healthEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -169,7 +170,7 @@ public class DecisionsMenu : MonoBehaviour
         GameObject happinessEffect = new GameObject("HappinessEffect", typeof(RectTransform));
         happinessEffect.transform.SetParent(panel.transform, false);
         happinessEffect.AddComponent<TextMeshProUGUI>();
-        happinessEffect.GetComponent<TextMeshProUGUI>().text = "Happiness Effect: " + decision.happyEffect;
+        happinessEffect.GetComponent<TextMeshProUGUI>().text = "Happiness Effect: " + decision.HappyEffect;
         happinessEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         happinessEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
         happinessEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -198,39 +199,44 @@ public class DecisionsMenu : MonoBehaviour
         button.transform.SetParent(panel.transform, false);
         button.AddComponent<Button>();
         button.AddComponent<Image>();
-        if (decision.isActive){
+        if (decision.IsEnacted)
+        {
             button.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
         }
-        else{
+        else
+        {
             button.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
         }
-        button.GetComponent<Button>().onClick.AddListener(delegate { 
-            if (decision.isActive){
-                decision.isActive = false;
-                GameObject DButton = GameObject.Find("DButton"+decision.title);
+        button.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            if (decision.IsEnacted)
+            {
+                decision.IsEnacted = false;
+                GameObject DButton = GameObject.Find("DButton" + decision.Title);
                 DButton.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
 
-                GameObject DButtonText = GameObject.Find("DButtonText"+decision.title);
+                GameObject DButtonText = GameObject.Find("DButtonText" + decision.Title);
                 DButtonText.GetComponent<TextMeshProUGUI>().text = "Enact";
                 DButtonText.GetComponent<TextMeshProUGUI>().fontSize = 60;
                 DButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, -15);
-                
+
 
             }
-            else{
-                decision.isActive = true;   
+            else
+            {
+                decision.IsEnacted = true;
 
-                GameObject DButton = GameObject.Find("DButton"+decision.title);
+                GameObject DButton = GameObject.Find("DButton" + decision.Title);
                 DButton.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
 
-                GameObject DButtonText = GameObject.Find("DButtonText"+decision.title);
+                GameObject DButtonText = GameObject.Find("DButtonText" + decision.Title);
                 DButtonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
                 DButtonText.GetComponent<TextMeshProUGUI>().fontSize = 50;
                 DButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -25);
-                
+
             }
             Destroy(canvas);
-         });
+        });
         button.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         button.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
         button.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
@@ -241,10 +247,12 @@ public class DecisionsMenu : MonoBehaviour
         GameObject buttonText = new GameObject("ButtonText", typeof(RectTransform));
         buttonText.transform.SetParent(button.transform, false);
         buttonText.AddComponent<TextMeshProUGUI>();
-        if (decision.isActive){
+        if (decision.IsEnacted)
+        {
             buttonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
         }
-        else{
+        else
+        {
             buttonText.GetComponent<TextMeshProUGUI>().text = "Enact";
         }
         buttonText.GetComponent<TextMeshProUGUI>().color = new Color32(255, 255, 255, 255);
@@ -280,13 +288,13 @@ public class DecisionsMenu : MonoBehaviour
         exitButtonText.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
         exitButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         exitButtonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-    } 
+    }
 
     void CreateUI()
     {
         GameObject parent = GameObject.Find("Content");
         int buffer = 50;
-        foreach (Decisions decision in _decisionList)
+        foreach (Decision decision in _decisionList)
         {
             GameObject panel = new GameObject("Panel", typeof(RectTransform));
             panel.transform.SetParent(parent.transform, false);
@@ -295,7 +303,7 @@ public class DecisionsMenu : MonoBehaviour
             GameObject title = new GameObject("Title", typeof(RectTransform));
             title.transform.SetParent(panel.transform, false);
             title.AddComponent<TextMeshProUGUI>();
-            title.GetComponent<TextMeshProUGUI>().text = decision.title;
+            title.GetComponent<TextMeshProUGUI>().text = decision.Title;
             title.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
             title.GetComponent<TextMeshProUGUI>().fontSize = 80;
 
@@ -303,16 +311,16 @@ public class DecisionsMenu : MonoBehaviour
             GameObject description = new GameObject("Description", typeof(RectTransform));
             description.transform.SetParent(panel.transform, false);
             description.AddComponent<TextMeshProUGUI>();
-            description.GetComponent<TextMeshProUGUI>().text = decision.description;
+            description.GetComponent<TextMeshProUGUI>().text = decision.Description;
 
-            GameObject button = new GameObject("DButton"+decision.title, typeof(RectTransform));
+            GameObject button = new GameObject("DButton" + decision.Title, typeof(RectTransform));
             button.transform.SetParent(panel.transform, false);
             button.AddComponent<Button>();
             button.AddComponent<Image>();
             button.GetComponent<Button>().onClick.AddListener(() => PopUpDecision(decision));
 
 
-            GameObject buttonText = new GameObject("DButtonText"+decision.title, typeof(RectTransform));
+            GameObject buttonText = new GameObject("DButtonText" + decision.Title, typeof(RectTransform));
             buttonText.transform.SetParent(button.transform, false);
             buttonText.AddComponent<TextMeshProUGUI>();
             buttonText.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
@@ -329,7 +337,7 @@ public class DecisionsMenu : MonoBehaviour
             title.GetComponent<RectTransform>().anchoredPosition = new Vector2(500, 0);
             title.GetComponent<RectTransform>().sizeDelta = new Vector2(panel.GetComponent<RectTransform>().rect.width * 0.3f, 50);
 
-            if (decision.isActive)
+            if (decision.IsEnacted)
             {
                 button.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
                 buttonText.GetComponent<TextMeshProUGUI>().text = "Disenact";
