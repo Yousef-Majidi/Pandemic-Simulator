@@ -8,10 +8,6 @@ using UnityEngine;
 public class Commercial : Building
 {
     [SerializeField]
-    [Tooltip("The transmission timer")]
-    private float _elapsedTime = 0;
-
-    [SerializeField]
     [Tooltip("The threshold at which NPCs will leave the building")]
     private float _leaveThreshold = 50f;
 
@@ -89,14 +85,9 @@ public class Commercial : Building
     }
     private void ElapsedTime()
     {
-        if (_elapsedTime >= 1f)
+        if (_gameManager.TimeManager.ElapsedTime >= 1f)
         {
             TransmitVirus();
-            _elapsedTime = 0f;
-        }
-        else
-        {
-            _elapsedTime += Time.deltaTime;
         }
     }
     private void TransmitVirus()
