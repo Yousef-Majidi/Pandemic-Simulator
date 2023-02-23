@@ -28,6 +28,8 @@ public class InGameUI : MonoBehaviour
         int healthyNPCs = 0;
         foreach (GameObject npc in _gameManager.NPCs.ToList())
         {
+            if (npc == null) continue;
+
             if (!npc.GetComponent<NPC>().IsInfected)
             {
                 healthyNPCs++;
@@ -47,9 +49,11 @@ public class InGameUI : MonoBehaviour
     void UpdateHappiness()
     {
         float totalHappiness = 0;
-        for (int i = 0; i < _gameManager.NPCs.Count; i++)
+        foreach (GameObject npc in _gameManager.NPCs.ToList())
         {
-            totalHappiness += _gameManager.NPCs.ElementAt(i).GetComponent<NPC>().Happiness;
+            if (npc == null) continue;
+
+            totalHappiness += npc.GetComponent<NPC>().Happiness;
         }
 
         float percentage = 0;
@@ -96,11 +100,11 @@ public class InGameUI : MonoBehaviour
     {
         if (Time.timeScale == 0)
         {
-             _gameManager.TimeManager.SetTimeScale(1);
+            _gameManager.TimeManager.SetTimeScale(1);
         }
         else
         {
-             _gameManager.TimeManager.SetTimeScale(0);
+            _gameManager.TimeManager.SetTimeScale(0);
             UpdateTimeCounter(true);
         }
     }

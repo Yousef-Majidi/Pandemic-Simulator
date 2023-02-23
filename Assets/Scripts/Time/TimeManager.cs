@@ -1,76 +1,95 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "TimeManager", menuName = "ScriptableObjects/TimeManager", order = 1)]
 public class TimeManager : ScriptableObject
 {
-    private bool _isSpacePressed = false;
-    private float _inGameHour = 0;
-    private float _inGameMinute = 0;
-    private float _inGameDay = 0;
+    private bool _isPaused = false;
 
-    public float InGameHour { get => _inGameHour; }
-    public float InGameMinute { get => _inGameMinute; }
-    public float InGameDay { get => _inGameDay; }
+    [SerializeField]
+    [Tooltip("In game hour")]
+    private int _inGameHour = 0;
 
+    [SerializeField]
+    [Tooltip("In game minutes")]
+    private int _inGameMinute = 0;
 
-    public void SetTimeScale(float timeScale)
+    [SerializeField]
+    [Tooltip("In game days")]
+    private int _inGameDay = 0;
+
+    [SerializeField]
+    [Tooltip("Delta Time")]
+    private float _elapsedTime = 0f;
+
+    [SerializeField]
+    [Tooltip("Time scale")]
+    private float _timeScale = 1f;
+
+    private void Awake()
     {
-        Time.timeScale = timeScale;
+        _timeScale = Time.timeScale;
     }
 
+    public int InGameHour { get => _inGameHour; }
+    public int InGameMinute { get => _inGameMinute; }
+    public int InGameDay { get => _inGameDay; }
+    public float ElapsedTime { get => _elapsedTime; }
+
+    public void SetTimeScale(float value)
+    {
+        Time.timeScale = value;
+        _timeScale = Time.timeScale;
+    }
     public void OnKeyDown()
     {
-        switch (Input.inputString)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            case "1":
-                Time.timeScale = 1;
-                break;
-            case "2":
-                Time.timeScale = 2;
-                break;
-            case "3":
-                Time.timeScale = 3;
-                break;
-            case "0":
-                Time.timeScale = 0;
-                break;
-            default:
-                break;
+            Time.timeScale = 1f;
+            _timeScale = Time.timeScale;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Time.timeScale = 2f;
+            _timeScale = Time.timeScale;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Time.timeScale = 3f;
+            _timeScale = Time.timeScale;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (_isSpacePressed)
-            {
-                Time.timeScale = 1;
-                _isSpacePressed = false;
-            }
-            else
-            {
-                Time.timeScale = 0;
-                _isSpacePressed = true;
-            }
+            _isPaused = Time.timeScale != 0;
+            Time.timeScale = _isPaused ? 0 : 1;
+            _timeScale = Time.timeScale;
         }
     }
 
-    public void Clock ()
+    public void Clock()
     {
-        // 24 in game hours = equal to 15 minutes in real life
-        // 60 in game minutes = equal to 1 minute in real life
-        _inGameMinute += Time.deltaTime * 60 / 15;
-        if (_inGameMinute >= 60)
+        if (_elapsedTime >= 1f)
         {
-            _inGameMinute = 0;
-            _inGameHour++;
+            _elapsedTime = 0f;
+            _inGameMinute++;
+            if (_inGameMinute >= 60)
+            {
+                _inGameMinute = 0;
+                _inGameHour++;
+            }
+            if (_inGameHour >= 24)
+            {
+                _inGameHour = 0;
+                _inGameDay++;
+            }
+            return;
         }
-        if (_inGameHour >= 24)
-        {
-            _inGameHour = 0;
-            _inGameDay++;
-        }
-
+        _elapsedTime += Time.deltaTime;
     }
-
 }

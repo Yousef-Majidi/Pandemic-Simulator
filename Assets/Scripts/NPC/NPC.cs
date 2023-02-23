@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -80,14 +81,19 @@ public class NPC : MonoBehaviour
         }
     }
 
-    public void Copy(GameObject source)
+    public void Copy(NPC source)
     {
-        NPC sourceNpc = source.GetComponent<NPC>();
-        _isInfected = sourceNpc._isInfected;
-        _health = sourceNpc._health;
-        _stamina = sourceNpc._stamina;
-        _happiness = sourceNpc._happiness;
-        _virus = sourceNpc._virus;
+        _isInfected = source._isInfected;
+        _health = source._health;
+        _stamina = source._stamina;
+        _happiness = source._happiness;
+
+        if (source.Virus != null && _isInfected)
+        {
+            _virus = ScriptableObject.CreateInstance<Virus>();
+            _virus.Copy(source._virus);
+        }
+
         var currentDestination = source.GetComponent<Navigation>().Destination;
         var home = source.GetComponent<Navigation>().Home;
         GetComponent<Navigation>().Home = home;
@@ -183,7 +189,7 @@ public class NPC : MonoBehaviour
         if (other.gameObject.CompareTag("NPC") && !_isInfected)
         {
             NPC otherNPC = other.gameObject.GetComponent<NPC>();
-            if (otherNPC.IsInfected && otherNPC._virus)
+            if (otherNPC.IsInfected)
             {
                 otherNPC._virus.TransmitVirus(this);
             }
