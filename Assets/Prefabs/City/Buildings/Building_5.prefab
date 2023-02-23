@@ -121,8 +121,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnPoint: {fileID: 0}
   _gameManager: {fileID: 0}
-  _elapsedTime: 0
   _staminaRecoveryRate: 5
+  _happinessRecoveryRate: 5
+  _staminaRecoveryMultiplier: 0.25
 --- !u!1001 &674624698
 PrefabInstance:
   m_ObjectHideFlags: 0
