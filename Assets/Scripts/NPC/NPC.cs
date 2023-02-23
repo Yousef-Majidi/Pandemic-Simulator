@@ -88,7 +88,7 @@ public class NPC : MonoBehaviour
         _stamina = source._stamina;
         _happiness = source._happiness;
 
-        if (source.Virus != null)
+        if (source.Virus != null && _isInfected)
         {
             _virus = ScriptableObject.CreateInstance<Virus>();
             _virus.Copy(source._virus);
