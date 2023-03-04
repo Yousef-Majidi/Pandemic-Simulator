@@ -22,8 +22,9 @@ public class Navigation : MonoBehaviour
     private Animator _animator;
     private GameManager _gameManager;
 
-    private LinkedList<GameObject> _commercials = new();
-    private LinkedList<GameObject> _medicals = new();
+    private LinkedList<GameObject> _residentials;
+    private LinkedList<GameObject> _commercials;
+    private LinkedList<GameObject> _medicals;
 
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
@@ -134,6 +135,18 @@ public class Navigation : MonoBehaviour
         }
     }
 
+    public void SetHome(Vector3 position)
+    {
+        foreach (GameObject residential in _residentials)
+        {
+            if (residential.transform.position == position)
+            {
+                _home = residential.transform;
+                break;
+            }
+        }
+    }
+
     private void UpdateAnimation()
     {
         if (_agent.velocity.magnitude > 0)
@@ -147,6 +160,7 @@ public class Navigation : MonoBehaviour
     private void Awake()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _residentials = _gameManager.ResidentialDestinations;
         _commercials = _gameManager.CommercialDestinations;
         _medicals = _gameManager.MedicalDestinations;
         _agent = GetComponent<NavMeshAgent>();
@@ -157,7 +171,6 @@ public class Navigation : MonoBehaviour
     private void Update()
     {
         UpdateDestination();
-
         UpdateAnimation();
     }
 }

@@ -69,6 +69,7 @@ public class NPC : MonoBehaviour
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
     public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
+    public bool IsHappinessDecayActive { get => _isHappinessDecayActive; set => _isHappinessDecayActive = value; }
     public float StaminaDecayBase { get => _staminaDecayBase; set => _staminaDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
@@ -200,6 +201,7 @@ public class NPC : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 

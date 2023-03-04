@@ -34,10 +34,12 @@ public class TimeManager : ScriptableObject
         _timeScale = Time.timeScale;
     }
 
-    public int InGameHour { get => _inGameHour; }
-    public int InGameMinute { get => _inGameMinute; }
-    public int InGameDay { get => _inGameDay; }
-    public float ElapsedTime { get => _elapsedTime; }
+    public bool IsPaused { get => _isPaused; set => _isPaused = value; }
+    public int InGameHour { get => _inGameHour; set => _inGameHour = value; }
+    public int InGameMinute { get => _inGameMinute; set => _inGameMinute = value; }
+    public int InGameDay { get => _inGameDay; set => _inGameDay = value; }
+    public float ElapsedTime { get => _elapsedTime; set => _elapsedTime = value; }
+    public float TimeScale { get => _timeScale; set => _timeScale = value; }
 
     public void SetTimeScale(float value)
     {
