@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _godMode: 0
+  _startNpcs: 1
   _maxNPC: 250
   _npcCount: 0
   _averageHappiness: 0

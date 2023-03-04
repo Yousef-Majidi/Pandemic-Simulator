@@ -77,18 +77,10 @@ public class Residential : Building
 
     protected override void ReleaseNPC(GameObject npc)
     {
-        int randomIndex;
         npc.SetActive(true);
         _visiting.Remove(npc);
-        Navigation comp = npc.GetComponent<Navigation>();
-        if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
-        {
-            randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform, BuildingType.Medical);
-            return;
-        }
-        randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
-        comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform, BuildingType.Commercial);
+        Navigation nav = npc.GetComponent<Navigation>();
+        nav.IsCommuting = false;
         return;
     }
 
@@ -98,9 +90,9 @@ public class Residential : Building
         SetSpawnPoint(_gameManager.ResidentialDestinations);
     }
 
-    private void Update()
+    private new void Update()
     {
-        DetectNPC();
+        base.Update();
         CalculateAttributes();
     }
 }

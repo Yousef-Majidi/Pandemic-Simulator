@@ -26,9 +26,57 @@ public class Navigation : MonoBehaviour
     private LinkedList<GameObject> _commercials;
     private LinkedList<GameObject> _medicals;
 
+    public delegate void NavigationEventHandler(GameObject obj);
+    public event NavigationEventHandler OnReachedDestination;
+
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
     public bool IsCommuting { get => _isCommuting; set => _isCommuting = value; }
+    private void Awake()
+    {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _residentials = _gameManager.ResidentialDestinations;
+        _commercials = _gameManager.CommercialDestinations;
+        _medicals = _gameManager.MedicalDestinations;
+        _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
+        _npc = GetComponent<NPC>();
+        UpdateDestination();
+    }
+
+    private void Update()
+    {
+        UpdateDestination();
+        UpdateAnimation();
+        CheckDestinationReached();
+    }
+
+    private void NotifyReachedDestination(GameObject obj)
+    {
+        if (obj != null)
+        {
+            OnReachedDestination(obj);
+        }
+    }
+
+    private void CheckDestinationReached()
+    {
+        if (Vector3.Distance(transform.position, _destination.position) <= 0.5f)
+        {
+            NotifyReachedDestination(gameObject);
+        }
+    }
+
+    private void UpdateAnimation()
+    {
+        if (_agent.velocity.magnitude > 0)
+        {
+            _animator.SetBool("isWalking", true);
+            return;
+        }
+        _animator.SetBool("isWalking", false);
+    }
+
 
     public void UpdateDestination()
     {
@@ -43,15 +91,6 @@ public class Navigation : MonoBehaviour
             _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
-            foreach (GameObject medical in _gameManager.MedicalDestinations)
-            {
-                Medical building = medical.GetComponentInParent<Medical>();
-                if (medical.transform == _destination && !building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    break;
-                }
-            }
             return;
         }
 
@@ -60,15 +99,6 @@ public class Navigation : MonoBehaviour
             _destination = _home;
             _agent.destination = _destination.position;
             _isCommuting = true;
-            foreach (GameObject residential in _gameManager.ResidentialDestinations)
-            {
-                Residential building = residential.GetComponentInParent<Residential>();
-                if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    break;
-                }
-            }
             return;
         }
 
@@ -76,63 +106,6 @@ public class Navigation : MonoBehaviour
         _destination = _commercials.ElementAt(randomIndex).transform;
         _agent.destination = _destination.position;
         _isCommuting = true;
-        foreach (GameObject commercial in _commercials)
-        {
-            Commercial building = commercial.GetComponentInParent<Commercial>();
-            if (commercial.transform == _destination)
-            {
-                if (!building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void UpdateDestination(Transform newDest, Building.BuildingType type)
-    {
-        _isCommuting = true;
-        _destination = newDest;
-        _agent.destination = _destination.position;
-        if (type == Building.BuildingType.Residential)
-        {
-            foreach (GameObject residential in _gameManager.ResidentialDestinations)
-            {
-                Residential building = residential.GetComponentInParent<Residential>();
-                if (residential.transform == _destination && !building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    return;
-                }
-            }
-        }
-
-        if (type == Building.BuildingType.Commercial)
-        {
-            foreach (GameObject commercial in _commercials)
-            {
-                Commercial building = commercial.GetComponentInParent<Commercial>();
-                if (commercial.transform == _destination && !building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    return;
-                }
-            }
-        }
-
-        if (type == Building.BuildingType.Medical)
-        {
-            foreach (GameObject medical in _medicals)
-            {
-                Medical building = medical.GetComponentInParent<Medical>();
-                if (medical.transform == _destination && !building.EnRoute.Contains(gameObject))
-                {
-                    building.EnRoute.AddFirst(gameObject);
-                    break;
-                }
-            }
-        }
     }
 
     public void SetHome(Vector3 position)
@@ -147,30 +120,4 @@ public class Navigation : MonoBehaviour
         }
     }
 
-    private void UpdateAnimation()
-    {
-        if (_agent.velocity.magnitude > 0)
-        {
-            _animator.SetBool("isWalking", true);
-            return;
-        }
-        _animator.SetBool("isWalking", false);
-    }
-
-    private void Awake()
-    {
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        _residentials = _gameManager.ResidentialDestinations;
-        _commercials = _gameManager.CommercialDestinations;
-        _medicals = _gameManager.MedicalDestinations;
-        _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
-        _npc = GetComponent<NPC>();
-    }
-
-    private void Update()
-    {
-        UpdateDestination();
-        UpdateAnimation();
-    }
 }

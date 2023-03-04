@@ -98,27 +98,8 @@ public class NPC : MonoBehaviour
         var currentDestination = source.GetComponent<Navigation>().Destination;
         var home = source.GetComponent<Navigation>().Home;
         GetComponent<Navigation>().Home = home;
-
-        var waypoints = _gameManager.ResidentialDestinations.ToList();
-        waypoints.Concat(_gameManager.CommercialDestinations.ToList());
-        waypoints.Concat(_gameManager.MedicalDestinations.ToList());
-
-        Building.BuildingType buildingType;
-        foreach (GameObject waypoint in waypoints)
-        {
-            if (waypoint.transform.position == currentDestination.transform.position)
-            {
-                string tag = waypoint.tag;
-                if (tag == "Commercial")
-                    buildingType = Building.BuildingType.Commercial;
-                else if (tag == "Residential")
-                    buildingType = Building.BuildingType.Residential;
-                else
-                    buildingType = Building.BuildingType.Medical;
-                GetComponent<Navigation>().UpdateDestination(currentDestination, buildingType);
-                break;
-            }
-        }
+        GetComponent<Navigation>().Destination = currentDestination;
+        GetComponent<Navigation>().IsCommuting = source.GetComponent<Navigation>().IsCommuting;
     }
 
     public void UpdateStamina()
@@ -149,6 +130,7 @@ public class NPC : MonoBehaviour
 
             if (_health <= 0)
             {
+                _gameManager.NPCs.Remove(gameObject);
                 Destroy(gameObject);
             }
         }
@@ -201,7 +183,6 @@ public class NPC : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
-
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 

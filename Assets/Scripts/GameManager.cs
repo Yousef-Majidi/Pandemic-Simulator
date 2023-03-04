@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     [Tooltip("God mode status")]
     private bool _godMode;
+
+    [SerializeField]
+    [Tooltip("Number of npcs to spawn on start")]
+    private int _startNpcs;
 
     [Space]
     [Header("NPCs")]
@@ -141,35 +146,33 @@ public class GameManager : MonoBehaviour
     {
         if (_npcs.Count < _maxNPC)
         {
-            GameObject newNPC = Instantiate(_healthyPrefab, position, rotation);
-            newNPC.transform.parent = GameObject.Find("NPCs").transform;
-            int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
-            newNPC.GetComponent<Navigation>().SetHome(position);
-            newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform, Building.BuildingType.Commercial);
-            newNPC.tag = "NPC";
-            _npcs.AddFirst(newNPC);
-            return newNPC;
+            GameObject obj = Instantiate(_healthyPrefab, position, rotation);
+            obj.transform.parent = GameObject.Find("NPCs").transform;
+            obj.GetComponent<Navigation>().SetHome(position);
+            obj.tag = "NPC";
+            _npcs.AddFirst(obj);
+            return obj;
         }
         return null;
     }
     public void UpdateAsset(GameObject npc)
     {
-        GameObject newNPC;
+        GameObject obj;
         if (npc.GetComponent<NPC>().IsInfected)
         {
-            newNPC = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
-            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            obj = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
+            obj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
         }
         else
         {
-            newNPC = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
-            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
-            newNPC.GetComponent<NPC>().Virus = null;
+            obj = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
+            obj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
+            obj.GetComponent<NPC>().Virus = null;
         }
-        newNPC.transform.parent = npc.transform.parent;
-        newNPC.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
+        obj.transform.parent = npc.transform.parent;
+        obj.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
         _npcs.Remove(npc);
-        _npcs.AddFirst(newNPC);
+        _npcs.AddFirst(obj);
         Destroy(npc);
     }
 
@@ -204,6 +207,13 @@ public class GameManager : MonoBehaviour
         foreach (GameObject npc in npcs)
         {
             _npcs.AddFirst(npc);
+        }
+
+        for (int i = 0; i < _startNpcs; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
+            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
         }
         #endregion DEBUG
     }
@@ -242,6 +252,7 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             _saveManager.LoadGame(this, "QuickSave");
         }
         #endregion Save_Load
