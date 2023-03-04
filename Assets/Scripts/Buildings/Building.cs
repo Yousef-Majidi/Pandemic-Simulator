@@ -71,16 +71,23 @@ public abstract class Building : MonoBehaviour
     {
         foreach (GameObject obj in _visiting.ToList())
         {
-            NPC npc = obj.GetComponent<NPC>();
-            if (UpdateStamina(npc))
+            if (obj != null)
             {
-                ReleaseNPC(obj);
+                NPC npc = obj.GetComponent<NPC>();
+                if (UpdateStamina(npc))
+                {
+                    ReleaseNPC(obj);
+                }
+                if (UpdateHealth(npc))
+                {
+                    ReleaseNPC(obj);
+                }
+                UpdateHappiness(npc);
             }
-            if (UpdateHealth(npc))
+            else
             {
-                ReleaseNPC(obj);
+                _visiting.Remove(obj);
             }
-            UpdateHappiness(npc);
         }
     }
 }

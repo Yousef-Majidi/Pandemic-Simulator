@@ -78,24 +78,31 @@ public class Commercial : Building
     {
         foreach (GameObject obj in _visiting.ToList())
         {
-            NPC npc = obj.GetComponent<NPC>();
-            if (npc.IsInfected)
+            if (obj != null)
             {
-                foreach (GameObject obj2 in _visiting.ToList())
+                NPC npc = obj.GetComponent<NPC>();
+                if (npc.IsInfected)
                 {
-                    NPC otherNPC = obj2.GetComponent<NPC>();
-                    if (!otherNPC.IsInfected)
+                    foreach (GameObject obj2 in _visiting.ToList())
                     {
-                        npc.Virus.TransmitVirus(otherNPC);
+                        NPC otherNPC = obj2.GetComponent<NPC>();
+                        if (!otherNPC.IsInfected)
+                        {
+                            npc.Virus.TransmitVirus(otherNPC);
+                        }
                     }
                 }
+            }
+            else
+            {
+                _visiting.Remove(obj);
             }
         }
     }
 
-    private void Start()
+    private new void Awake()
     {
-        Awake();
+        base.Awake();
         SetSpawnPoint(_gameManager.CommercialDestinations);
     }
 

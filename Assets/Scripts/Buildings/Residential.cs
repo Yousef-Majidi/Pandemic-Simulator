@@ -84,9 +84,9 @@ public class Residential : Building
         return;
     }
 
-    private void Start()
+    private new void Awake()
     {
-        Awake();
+        base.Awake();
         SetSpawnPoint(_gameManager.ResidentialDestinations);
     }
 

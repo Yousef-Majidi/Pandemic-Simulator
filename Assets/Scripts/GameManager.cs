@@ -136,9 +136,18 @@ public class GameManager : MonoBehaviour
     {
         if (_npcs.Count != 0)
         {
-            GameObject npc = _npcs.First();
-            Destroy(npc);
-            _npcs.Remove(npc);
+            GameObject obj = _npcs.First();
+            _npcs.Remove(obj);
+            Destroy(obj);
+        }
+    }
+
+    public void DestroyNPC(GameObject obj)
+    {
+        if (_npcs.Count != 0)
+        {
+            _npcs.Remove(obj);
+            Destroy(obj);
         }
     }
 
@@ -252,7 +261,6 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
-            //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             _saveManager.LoadGame(this, "QuickSave");
         }
         #endregion Save_Load

@@ -74,6 +74,24 @@ public class NPC : MonoBehaviour
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
+    void Awake()
+    {
+        _agent = GetComponent<NavMeshAgent>();
+        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
+
+    void Update()
+    {
+        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
+        {
+            UpdateStamina();
+        }
+        UpdateHealth();
+        CheckInfection();
+        UpdateHappiness();
+    }
+
     private void CheckInfection()
     {
         if ((_isInfected && _assetType == AssetType.Healthy) || (!_isInfected && _assetType == AssetType.Infected))
@@ -177,23 +195,5 @@ public class NPC : MonoBehaviour
                 otherNPC._virus.TransmitVirus(this);
             }
         }
-    }
-
-    void Awake()
-    {
-        _agent = GetComponent<NavMeshAgent>();
-        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-    }
-
-    void Update()
-    {
-        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
-        {
-            UpdateStamina();
-        }
-        UpdateHealth();
-        CheckInfection();
-        UpdateHappiness();
     }
 }

@@ -45,7 +45,6 @@ public class SaveManager
     [Serializable]
     private class NpcData
     {
-        // public bool _isActive;
         public bool _isInfected;
         public float _health;
         public VirusData _virus;
@@ -75,7 +74,6 @@ public class SaveManager
         public float _politicalPowerMultiplier;
         public int _healthThreshold;
         public int _staminaThreshold;
-
         public TimeData _timeData;
         public List<NpcData> _npcDataList = new();
     }
@@ -114,16 +112,20 @@ public class SaveManager
         {
             NPC npc = obj.GetComponent<NPC>();
             Navigation nav = obj.GetComponent<Navigation>();
-            NpcData npcData = new();
-            npcData._isInfected = npc.IsInfected;
-            npcData._health = npc.Health;
+            NpcData npcData = new()
+            {
+                _isInfected = npc.IsInfected,
+                _health = npc.Health
+            };
             if (npc.IsInfected && npc.Virus)
             {
-                npcData._virus = new();
-                npcData._virus._coughRate = npc.Virus.CoughRate;
-                npcData._virus._staminaDecayRate = npc.Virus.StaminaDecayRate;
-                npcData._virus._healthDecayRate = npc.Virus.HealthDecayRate;
-                npcData._virus._mutationChance = npc.Virus.MutationChance;
+                npcData._virus = new()
+                {
+                    _coughRate = npc.Virus.CoughRate,
+                    _staminaDecayRate = npc.Virus.StaminaDecayRate,
+                    _healthDecayRate = npc.Virus.HealthDecayRate,
+                    _mutationChance = npc.Virus.MutationChance
+                };
             }
             npcData._stamina = npc.Stamina;
             npcData._staminaDecayBase = npc.StaminaDecayBase;
@@ -139,13 +141,10 @@ public class SaveManager
             npcData._isCommuting = nav.IsCommuting;
             npcData._home = new(nav.Home.transform.position.x, nav.Home.transform.position.y, nav.Home.transform.position.z);
             npcData._destination = new(nav.Destination.transform.position.x, nav.Destination.transform.position.y, nav.Destination.transform.position.z);
-
             data._npcDataList.Add(npcData);
         }
         #endregion NpcRegion
-
         formatter.Serialize(stream, data);
-
         stream.Close();
         Debug.Log("Saved game in " + Application.persistentDataPath);
     }
@@ -157,9 +156,7 @@ public class SaveManager
         {
             BinaryFormatter formatter = new();
             FileStream stream = new(filePath, FileMode.Open);
-
             GameData data = formatter.Deserialize(stream) as GameData;
-
             stream.Close();
             Debug.Log("Loaded game file");
 
@@ -183,9 +180,9 @@ public class SaveManager
             #region NPCs
             if (gm.NPCs.Count != 0)
             {
-                for (int i = 0; i < gm.NPCs.Count; i++)
+                foreach (GameObject obj in gm.NPCs.ToList())
                 {
-                    gm.DestroyNPC();
+                    gm.DestroyNPC(obj);
                 }
                 gm.NPCs.Clear();
             }
@@ -200,7 +197,7 @@ public class SaveManager
                 npc.Health = npcData._health;
                 if (npc.IsInfected)
                 {
-                    npc.Virus = new Virus();
+                    npc.Virus = ScriptableObject.CreateInstance<Virus>();
                     npc.Virus.CoughRate = npcData._virus._coughRate;
                     npc.Virus.StaminaDecayRate = npcData._virus._staminaDecayRate;
                     npc.Virus.HealthDecayRate = npcData._virus._healthDecayRate;
@@ -213,7 +210,7 @@ public class SaveManager
                 npc.HappinessDecayBase = npcData._happinessDecayBase;
                 npc.IsHappinessDecayActive = npcData._isHappinessDecayActive;
                 nav.IsCommuting = npcData._isCommuting;
-                nav.Destination.position = new Vector3(npcData._destination._posX, npcData._destination._posY, npcData._destination._posZ);
+                nav.SetDestination(new Vector3(npcData._destination._posX, npcData._destination._posY, npcData._destination._posZ));
                 nav.SetHome(new Vector3(npcData._home._posX, npcData._home._posY, npcData._home._posZ));
             }
             #endregion NPCs

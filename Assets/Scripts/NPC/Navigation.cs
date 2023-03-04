@@ -108,6 +108,21 @@ public class Navigation : MonoBehaviour
         _isCommuting = true;
     }
 
+    public void SetDestination(Vector3 position)
+    {
+        List<GameObject> destinations = _residentials.Concat(_commercials).Concat(_medicals).Concat(_residentials).ToList();
+        foreach (GameObject dest in destinations)
+        {
+            if (dest.transform.position == position)
+            {
+                _destination = dest.transform;
+                _agent.destination = _destination.position;
+                _isCommuting = true;
+                break;
+            }
+        }
+    }
+
     public void SetHome(Vector3 position)
     {
         foreach (GameObject residential in _residentials)
@@ -115,6 +130,8 @@ public class Navigation : MonoBehaviour
             if (residential.transform.position == position)
             {
                 _home = residential.transform;
+                _agent.destination = _destination.position;
+                _isCommuting = true;
                 break;
             }
         }
