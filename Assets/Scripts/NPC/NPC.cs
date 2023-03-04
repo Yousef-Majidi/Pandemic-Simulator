@@ -69,9 +69,28 @@ public class NPC : MonoBehaviour
     public float Happiness { get => _happiness; set => _happiness = value; }
     public float HappinessDecayRate { get => _happinessDecayRate; set => _happinessDecayRate = value; }
     public float HappinessDecayBase { get => _happinessDecayBase; set => _happinessDecayBase = value; }
+    public bool IsHappinessDecayActive { get => _isHappinessDecayActive; set => _isHappinessDecayActive = value; }
     public float StaminaDecayBase { get => _staminaDecayBase; set => _staminaDecayBase = value; }
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
+
+    void Awake()
+    {
+        _agent = GetComponent<NavMeshAgent>();
+        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
+
+    void Update()
+    {
+        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
+        {
+            UpdateStamina();
+        }
+        UpdateHealth();
+        CheckInfection();
+        UpdateHappiness();
+    }
 
     private void CheckInfection()
     {
@@ -97,27 +116,8 @@ public class NPC : MonoBehaviour
         var currentDestination = source.GetComponent<Navigation>().Destination;
         var home = source.GetComponent<Navigation>().Home;
         GetComponent<Navigation>().Home = home;
-
-        var waypoints = _gameManager.ResidentialDestinations.ToList();
-        waypoints.Concat(_gameManager.CommercialDestinations.ToList());
-        waypoints.Concat(_gameManager.MedicalDestinations.ToList());
-
-        Building.BuildingType buildingType;
-        foreach (GameObject waypoint in waypoints)
-        {
-            if (waypoint.transform.position == currentDestination.transform.position)
-            {
-                string tag = waypoint.tag;
-                if (tag == "Commercial")
-                    buildingType = Building.BuildingType.Commercial;
-                else if (tag == "Residential")
-                    buildingType = Building.BuildingType.Residential;
-                else
-                    buildingType = Building.BuildingType.Medical;
-                GetComponent<Navigation>().UpdateDestination(currentDestination, buildingType);
-                break;
-            }
-        }
+        GetComponent<Navigation>().Destination = currentDestination;
+        GetComponent<Navigation>().IsCommuting = source.GetComponent<Navigation>().IsCommuting;
     }
 
     public void UpdateStamina()
@@ -148,6 +148,7 @@ public class NPC : MonoBehaviour
 
             if (_health <= 0)
             {
+                _gameManager.NPCs.Remove(gameObject);
                 Destroy(gameObject);
             }
         }
@@ -194,23 +195,5 @@ public class NPC : MonoBehaviour
                 otherNPC._virus.TransmitVirus(this);
             }
         }
-    }
-
-    void Awake()
-    {
-        _agent = GetComponent<NavMeshAgent>();
-        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-    }
-
-    void Update()
-    {
-        if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
-        {
-            UpdateStamina();
-        }
-        UpdateHealth();
-        CheckInfection();
-        UpdateHappiness();
     }
 }

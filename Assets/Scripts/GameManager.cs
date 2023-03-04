@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     [Tooltip("God mode status")]
     private bool _godMode;
+
+    [SerializeField]
+    [Tooltip("Number of npcs to spawn on start")]
+    private int _startNpcs;
 
     [Space]
     [Header("NPCs")]
@@ -72,19 +77,21 @@ public class GameManager : MonoBehaviour
     [Tooltip("The list of all decisions")]
     private List<Decision> _decisionList = new();
 
-    private readonly LinkedList<GameObject> _commercialDestinations = new();
-    private readonly LinkedList<GameObject> _residentialDestinations = new();
-    private readonly LinkedList<GameObject> _medicalDestinations = new();
-    private readonly LinkedList<GameObject> _npcs = new();
+    SaveManager _saveManager = new();
 
+    private LinkedList<GameObject> _commercialDestinations = new();
+    private LinkedList<GameObject> _residentialDestinations = new();
+    private LinkedList<GameObject> _medicalDestinations = new();
+    private LinkedList<GameObject> _npcs = new();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
-    public int NPCCount { get => _npcCount; set => _npcCount = value; }
+    public int NPCCount { get => _npcs.Count; }
     public GameObject HealthyPrefab { get => _healthyPrefab; }
     public GameObject InfectedPrefab { get => _infectedPrefab; }
     public float AverageHappiness { get => _averageHappiness; }
-    public float PoliticalPower { get => _politicalPower; }
+    public float PoliticalPower { get => _politicalPower; set => _politicalPower = value; }
+    public float PoliticalPowerMultiplier { get => _politicalPowerMultiplier; set => _politicalPowerMultiplier = value; }
     public AssetChanger AssetChanger { get => _assetChanger; }
     public int HealthThreshold { get => _healthThreshold; set => _healthThreshold = value; }
     public int StaminaThreshold { get => _staminaThreshold; set => _staminaThreshold = value; }
@@ -108,33 +115,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("God mode disabled");
     }
 
-    private void SpawnNPC(GameObject spawnPoint)
-    {
-        if (_npcCount < _maxNPC)
-        {
-            GameObject newNPC = Instantiate(_healthyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
-            newNPC.transform.parent = GameObject.Find("NPCs").transform;
-            int randomIndex = UnityEngine.Random.Range(0, _commercialDestinations.Count);
-            newNPC.GetComponent<Navigation>().Home = spawnPoint.transform;
-            newNPC.GetComponent<Navigation>().UpdateDestination(_commercialDestinations.ElementAt(randomIndex).transform, Building.BuildingType.Commercial);
-            newNPC.tag = "NPC";
-            _npcs.AddFirst(newNPC);
-            _npcCount++;
-        }
-    }
-
-    private void DestroyNPC()
-    {
-        if (_npcs.Count == 0)
-        {
-            return;
-        }
-        GameObject npc = _npcs.First();
-        Destroy(npc);
-        _npcs.Remove(npc);
-        --_npcCount;
-    }
-
     private void CalculateAverageHappiness()
     {
         float totalHappiness = 0;
@@ -147,30 +127,61 @@ public class GameManager : MonoBehaviour
             else
             {
                 _npcs.Remove(npc);
-                --_npcCount;
             }
         }
         _averageHappiness = totalHappiness / _npcs.Count;
     }
 
+    public void DestroyNPC()
+    {
+        if (_npcs.Count != 0)
+        {
+            GameObject obj = _npcs.First();
+            _npcs.Remove(obj);
+            Destroy(obj);
+        }
+    }
+
+    public void DestroyNPC(GameObject obj)
+    {
+        if (_npcs.Count != 0)
+        {
+            _npcs.Remove(obj);
+            Destroy(obj);
+        }
+    }
+
+    public GameObject SpawnNPC(Vector3 position, Quaternion rotation)
+    {
+        if (_npcs.Count < _maxNPC)
+        {
+            GameObject obj = Instantiate(_healthyPrefab, position, rotation);
+            obj.transform.parent = GameObject.Find("NPCs").transform;
+            obj.GetComponent<Navigation>().SetHome(position);
+            obj.tag = "NPC";
+            _npcs.AddFirst(obj);
+            return obj;
+        }
+        return null;
+    }
     public void UpdateAsset(GameObject npc)
     {
-        GameObject newNPC;
+        GameObject obj;
         if (npc.GetComponent<NPC>().IsInfected)
         {
-            newNPC = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
-            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            obj = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
+            obj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
         }
         else
         {
-            newNPC = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
-            newNPC.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
-            newNPC.GetComponent<NPC>().Virus = null;
+            obj = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
+            obj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
+            obj.GetComponent<NPC>().Virus = null;
         }
-        newNPC.transform.parent = npc.transform.parent;
-        newNPC.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
+        obj.transform.parent = npc.transform.parent;
+        obj.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
         _npcs.Remove(npc);
-        _npcs.AddFirst(newNPC);
+        _npcs.AddFirst(obj);
         Destroy(npc);
     }
 
@@ -205,7 +216,13 @@ public class GameManager : MonoBehaviour
         foreach (GameObject npc in npcs)
         {
             _npcs.AddFirst(npc);
-            _npcCount++;
+        }
+
+        for (int i = 0; i < _startNpcs; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
+            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
         }
         #endregion DEBUG
     }
@@ -221,7 +238,8 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.N) && _godMode)
         {
             int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-            SpawnNPC(_residentialDestinations.ElementAt(randomIndex));
+            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
+            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
         }
 
         if (Input.GetKeyDown(KeyCode.V) && _godMode)
@@ -235,10 +253,22 @@ public class GameManager : MonoBehaviour
         }
         #endregion GOD_MODE
 
+        #region Save_Load
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            _saveManager.SaveGame(this, "QuickSave");
+        }
+
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            _saveManager.LoadGame(this, "QuickSave");
+        }
+        #endregion Save_Load
+
         CalculateAverageHappiness();
         CalculatePoliticalPower();
         _timeManager.OnKeyDown();
         _timeManager.Clock();
+        _npcCount = _npcs.Count;
     }
-
 }

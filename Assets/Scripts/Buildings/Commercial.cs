@@ -15,8 +15,8 @@ public class Commercial : Building
     {
         if (!_gameManager.GodMode)
         {
-            float recoverRate = npc.IsInfected ? (npc.Virus.StaminaDecayRate + npc.StaminaDecayBase) : npc.StaminaDecayBase;
-            npc.Stamina -= recoverRate * Time.deltaTime;
+            float decayRate = npc.IsInfected ? (npc.Virus.StaminaDecayRate + npc.StaminaDecayBase) : npc.StaminaDecayBase;
+            npc.Stamina -= decayRate * Time.deltaTime;
             if (npc.Stamina <= _leaveThreshold)
             {
                 return true;
@@ -61,26 +61,10 @@ public class Commercial : Building
 
     protected override void ReleaseNPC(GameObject npc)
     {
-        int randomIndex;
         npc.SetActive(true);
         _visiting.Remove(npc);
-
-        Navigation comp = npc.GetComponent<Navigation>();
-        if (npc.GetComponent<NPC>().Health <= _gameManager.HealthThreshold)
-        {
-            randomIndex = Random.Range(0, _gameManager.MedicalDestinations.Count);
-            comp.UpdateDestination(_gameManager.MedicalDestinations.ElementAt(randomIndex).transform, BuildingType.Medical);
-            return;
-        }
-
-        if (npc.GetComponent<NPC>().Stamina <= _gameManager.StaminaThreshold)
-        {
-            comp.UpdateDestination(comp.Home, BuildingType.Residential);
-            return;
-        }
-
-        randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
-        comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform, BuildingType.Commercial);
+        Navigation nav = npc.GetComponent<Navigation>();
+        nav.IsCommuting = false;
         return;
     }
     private void ElapsedTime()
@@ -94,30 +78,37 @@ public class Commercial : Building
     {
         foreach (GameObject obj in _visiting.ToList())
         {
-            NPC npc = obj.GetComponent<NPC>();
-            if (npc.IsInfected)
+            if (obj != null)
             {
-                foreach (GameObject obj2 in _visiting.ToList())
+                NPC npc = obj.GetComponent<NPC>();
+                if (npc.IsInfected)
                 {
-                    NPC otherNPC = obj2.GetComponent<NPC>();
-                    if (!otherNPC.IsInfected)
+                    foreach (GameObject obj2 in _visiting.ToList())
                     {
-                        npc.Virus.TransmitVirus(otherNPC);
+                        NPC otherNPC = obj2.GetComponent<NPC>();
+                        if (!otherNPC.IsInfected)
+                        {
+                            npc.Virus.TransmitVirus(otherNPC);
+                        }
                     }
                 }
+            }
+            else
+            {
+                _visiting.Remove(obj);
             }
         }
     }
 
-    private void Start()
+    private new void Awake()
     {
-        Awake();
+        base.Awake();
         SetSpawnPoint(_gameManager.CommercialDestinations);
     }
 
-    private void Update()
+    private new void Update()
     {
-        DetectNPC();
+        base.Update();
         ElapsedTime();
         CalculateAttributes();
     }

@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class Medical : Building
 {
-
     [SerializeField]
     [Tooltip("The rate at which the NPC's stamina recovers")]
     private float _staminaRecoveryRate = 5f;
@@ -63,27 +63,24 @@ public class Medical : Building
         {
             if (npc.GetComponent<NPC>().Health == 100f && npc.GetComponent<NPC>().Stamina == 100f)
             {
-                int randomIndex;
                 npc.SetActive(true);
                 _visiting.Remove(npc);
-
-                Navigation comp = npc.GetComponent<Navigation>();
-                randomIndex = Random.Range(0, _gameManager.CommercialDestinations.Count);
-                comp.UpdateDestination(_gameManager.CommercialDestinations.ElementAt(randomIndex).transform, BuildingType.Commercial);
+                Navigation nav = npc.GetComponent<Navigation>();
+                nav.IsCommuting = false;
             }
         }
         return;
     }
 
-    void Start()
+    private new void Awake()
     {
-        Awake();
+        base.Awake();
         SetSpawnPoint(_gameManager.MedicalDestinations);
     }
 
-    private void Update()
+    private new void Update()
     {
-        DetectNPC();
+        base.Update();
         CalculateAttributes();
     }
 }

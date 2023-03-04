@@ -33,7 +33,6 @@ public class Virus : ScriptableObject
         _staminaDecayRate = Random.Range(1f, 5f);
         _healthDecayRate = Random.Range(1f, 5f);
         _mutationChance = Random.Range(0.01f, 0.1f);
-        Debug.Log("Mutated: " + GetInstanceID());
     }
 
     public void Copy(Virus source)

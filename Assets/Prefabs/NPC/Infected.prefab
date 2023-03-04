@@ -916,6 +916,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _destination: {fileID: 0}
   _home: {fileID: 0}
+  _isCommuting: 0
 --- !u!114 &-1965596805489308574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -931,10 +932,12 @@ MonoBehaviour:
   _assetType: 1
   _isInfected: 1
   _health: 100
+  _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
   _stamina: 100
+  _staminaDecayBase: 1
   _happiness: 100
   _happinessDecayRate: 0
-  _virus: {fileID: 11400000, guid: 864c0de76b9e7cb458e8f39212641e34, type: 2}
+  _happinessDecayBase: 1
 --- !u!1 &1822049695589022
 GameObject:
   m_ObjectHideFlags: 0

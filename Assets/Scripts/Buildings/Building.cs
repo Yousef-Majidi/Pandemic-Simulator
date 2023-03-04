@@ -6,6 +6,10 @@ using UnityEngine;
 public abstract class Building : MonoBehaviour
 {
     [SerializeField]
+    [Tooltip("Currently inside the building")]
+    protected int _currentOccopancy;
+
+    [SerializeField]
     [Tooltip("The location that the NPC spawns at")]
     protected GameObject _spawnPoint;
 
@@ -13,24 +17,43 @@ public abstract class Building : MonoBehaviour
     [Tooltip("The Game Manager")]
     protected GameManager _gameManager;
 
-    protected LinkedList<GameObject> _enRoute = new();
     protected LinkedList<GameObject> _visiting = new();
 
     public GameObject SpawnPoint { get => _spawnPoint; }
-    public LinkedList<GameObject> EnRoute { get => _enRoute; }
     public LinkedList<GameObject> Visiting { get => _visiting; }
 
-    public enum BuildingType
-    {
-        Commercial,
-        Medical,
-        Residential
-    }
+
 
     protected abstract bool UpdateStamina(NPC npc);
     protected abstract bool UpdateHealth(NPC npc);
     protected abstract bool UpdateHappiness(NPC npc);
     protected abstract void ReleaseNPC(GameObject npc);
+
+    protected void Awake()
+    {
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
+
+    protected void Update()
+    {
+        _currentOccopancy = _visiting.Count;
+        foreach (GameObject obj in _gameManager.NPCs.ToList())
+        {
+            if (obj.TryGetComponent<Navigation>(out var nav) && obj != null && nav.Destination.name == name)
+            {
+                nav.OnReachedDestination += Nav_OnReachedDestination;
+            }
+        }
+    }
+    protected void Nav_OnReachedDestination(GameObject obj)
+    {
+        if (obj.activeSelf)
+        {
+            obj.GetComponent<Navigation>().IsCommuting = false;
+            obj.SetActive(false);
+            _visiting.AddFirst(obj);
+        }
+    }
 
     protected void SetSpawnPoint(LinkedList<GameObject> waypoints)
     {
@@ -44,50 +67,28 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    protected void DetectNPC()
-    {
-        foreach (GameObject npc in _enRoute.ToList())
-        {
-            if (npc == null)
-            {
-                _enRoute.Remove(npc);
-                continue;
-            }
-            if (!npc.activeSelf || npc.GetComponent<Navigation>().Destination.transform.position != _spawnPoint.transform.position)
-            {
-                continue;
-            }
-            if (Vector3.Distance(npc.transform.position, _spawnPoint.transform.position) < 1f)
-            {
-                npc.GetComponent<Navigation>().IsCommuting = false;
-                npc.SetActive(false);
-                _enRoute.Remove(npc);
-                _visiting.AddFirst(npc);
-                break;
-            }
-        }
-    }
-
     protected void CalculateAttributes()
     {
         foreach (GameObject obj in _visiting.ToList())
         {
-            NPC npc = obj.GetComponent<NPC>();
-            if (UpdateStamina(npc))
+            if (obj != null)
             {
-                ReleaseNPC(obj);
+                NPC npc = obj.GetComponent<NPC>();
+                if (UpdateStamina(npc))
+                {
+                    ReleaseNPC(obj);
+                }
+                if (UpdateHealth(npc))
+                {
+                    ReleaseNPC(obj);
+                }
+                UpdateHappiness(npc);
             }
-            if (UpdateHealth(npc))
+            else
             {
-                ReleaseNPC(obj);
+                _visiting.Remove(obj);
             }
-            UpdateHappiness(npc);
         }
-    }
-
-    protected void Awake()
-    {
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 }
 
