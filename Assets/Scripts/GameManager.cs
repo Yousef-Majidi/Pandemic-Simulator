@@ -79,6 +79,8 @@ public class GameManager : MonoBehaviour
 
     SaveManager _saveManager = new();
 
+    UIPopUp _uiPopUp;
+
     private LinkedList<GameObject> _commercialDestinations = new();
     private LinkedList<GameObject> _residentialDestinations = new();
     private LinkedList<GameObject> _medicalDestinations = new();
@@ -101,7 +103,6 @@ public class GameManager : MonoBehaviour
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public LinkedList<GameObject> NPCs { get => _npcs; }
     public List<Decision> DecisionList { get => _decisionList; }
-
 
     private void ToggleGodMode()
     {
@@ -193,6 +194,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)
         {
@@ -257,11 +259,13 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             _saveManager.SaveGame(this, "QuickSave");
+            _uiPopUp.SaveLoadPopUp("Quick Saved");
         }
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
             _saveManager.LoadGame(this, "QuickSave");
+            _uiPopUp.SaveLoadPopUp("Quick Loaded");
         }
         #endregion Save_Load
 

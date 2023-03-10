@@ -9,9 +9,13 @@ public class UIPopUp : MonoBehaviour
 
     private bool isPopUp = false;
     private GameObject _tempObj;
+    private GameManager _gameManager;
+    private int _intervalMin = 0;
+    private int _intervalHour = 0;
+    private int _intervalDay = 0;
     void Awake()
     {
-        
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -30,6 +34,15 @@ public class UIPopUp : MonoBehaviour
             }
             // wait for a delay before adding text
             Invoke("addText", 0.1f);
+        }
+
+        GameObject saveCanTemp = GameObject.Find("SaveCanvasPop");
+        if (saveCanTemp != null )
+        {
+            if (_intervalMin <= _gameManager.TimeManager.InGameMinute && _intervalHour <= _gameManager.TimeManager.InGameHour && _intervalDay <= _gameManager.TimeManager.InGameDay)
+            {
+                Destroy(saveCanTemp);
+            }
         }
     }
 
@@ -155,4 +168,64 @@ public class UIPopUp : MonoBehaviour
             text.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
         }
     }
+
+    public void SaveLoadPopUp(string text){
+        GameObject canvasTemp = GameObject.Find("SaveCanvasPop");
+        if (canvasTemp != null)
+        {
+            Destroy(canvasTemp);
+        }
+
+        GameObject canvas = new GameObject("SaveCanvasPop", typeof(RectTransform));
+        canvas.AddComponent<Canvas>();
+        canvas.AddComponent<CanvasScaler>();
+        canvas.AddComponent<GraphicRaycaster>();
+
+        GameObject panel = new GameObject("Panel", typeof(RectTransform));
+        panel.transform.SetParent(canvas.transform, false);
+        panel.AddComponent<Image>();
+
+        GameObject textObj = new GameObject("Text", typeof(RectTransform));
+        textObj.transform.SetParent(panel.transform, false);
+        textObj.AddComponent<TextMeshProUGUI>();
+
+        canvas.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0);
+        canvas.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0);
+        canvas.GetComponent<RectTransform>().pivot = new Vector2(1, 0);
+        canvas.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+
+        panel.GetComponent<RectTransform>().sizeDelta = new Vector2(700, 200);
+        panel.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f);
+        panel.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
+        panel.GetComponent<RectTransform>().pivot = new Vector2(1, 0);
+        panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -450);
+        panel.GetComponent<Image>().color = 0 * Color.white;
+
+        textObj.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 200);
+        textObj.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+        textObj.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
+        textObj.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
+        textObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+        textObj.GetComponent<TextMeshProUGUI>().text = text;
+        textObj.GetComponent<TextMeshProUGUI>().color = Color.black;
+        textObj.GetComponent<TextMeshProUGUI>().fontSize = 75;
+        textObj.GetComponent<TextMeshProUGUI>().font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Roboto-Bold SDF");
+        textObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        _intervalMin = _gameManager.TimeManager.InGameMinute + 2;
+        _intervalHour = _gameManager.TimeManager.InGameHour;
+        _intervalDay = _gameManager.TimeManager.InGameDay;
+        if (_intervalMin >= 60)
+        {
+            _intervalHour = _gameManager.TimeManager.InGameHour + 1;
+            _intervalMin = 0;
+            if (_intervalHour >= 24)
+            {
+                _intervalDay = _gameManager.TimeManager.InGameDay + 1;
+                _intervalHour = 0;
+            }
+        }
+    }
+
 }
