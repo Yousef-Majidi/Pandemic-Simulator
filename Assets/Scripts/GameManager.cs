@@ -259,6 +259,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             _saveManager.SaveGame(this, "QuickSave");
+            ScreenCapture.CaptureScreenshot(Application.persistentDataPath + "/images/Saves/" + "QuickSave" + ".png");
             _uiPopUp.SaveLoadPopUp("Quick Saved");
         }
 

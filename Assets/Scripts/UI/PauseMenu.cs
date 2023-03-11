@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.IO;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -36,8 +38,9 @@ public class PauseMenu : MonoBehaviour
     // take screenshot
     public void TakeScreenshot()
     {
-        ScreenCapture.CaptureScreenshot(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
-        UnityEditor.AssetDatabase.Refresh();
+        if (!Directory.Exists(Application.persistentDataPath + "/images/Screenshots/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/images/Screenshots/");
+        ScreenCapture.CaptureScreenshot(Application.persistentDataPath + "/images/Screenshots/" + "temp" + ".png");
     }
 
     void Update()

@@ -75,8 +75,7 @@ public class SaveMenu : MonoBehaviour
     {
         GameObject temp = transform.GetChild(1).GetChild(4).gameObject;
         Image image = temp.GetComponent<Image>();
-
-        Sprite mysprite = loadSprite(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
+        Sprite mysprite = loadSprite(Application.persistentDataPath + "/images/Screenshots/" + "temp" + ".png");
         image.sprite = mysprite;
     }
 
@@ -87,7 +86,10 @@ public class SaveMenu : MonoBehaviour
 
     public void Save(){
         _saveManager.SaveGame(_gameManager, _saveName);
-        File.Move(Application.dataPath + "/images/Screenshots/" + "temp" + ".png", Application.dataPath + "/Resources/SaveImages/" + _saveName + ".png");
+        //move screenshot to save images folder
+        if (!Directory.Exists(Application.persistentDataPath + "/images/Saves/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/images/Saves/");
+        File.Move(Application.persistentDataPath + "/images/Screenshots/" + "temp" + ".png", Application.persistentDataPath + "/images/Saves/" + _saveName + ".png");
         _uiPopUp.SaveLoadPopUp(_saveName +" Saved");
         close();
     }
