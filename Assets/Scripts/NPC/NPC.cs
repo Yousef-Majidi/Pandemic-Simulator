@@ -74,14 +74,14 @@ public class NPC : MonoBehaviour
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
-    void Awake()
+    private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    void Update()
+    private void Update()
     {
         if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
         {

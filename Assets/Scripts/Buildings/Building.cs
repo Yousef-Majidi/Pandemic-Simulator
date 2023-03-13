@@ -11,7 +11,7 @@ public abstract class Building : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Currently inside the building")]
-    protected int _currentOccopancy;
+    protected int _occupancy;
 
     [SerializeField]
     [Tooltip("The location that the NPC spawns at")]
@@ -26,9 +26,7 @@ public abstract class Building : MonoBehaviour
     public GameObject SpawnPoint { get => _spawnPoint; }
     public LinkedList<GameObject> Visiting { get => _visiting; }
     public int Capacity { get => _capacity; }
-    public int CurrentOccupancy { get => _currentOccopancy; }
-
-
+    public int Occupancy { get => _occupancy; set => _occupancy = value; }
 
     protected abstract bool UpdateStamina(NPC npc);
     protected abstract bool UpdateHealth(NPC npc);
@@ -40,24 +38,31 @@ public abstract class Building : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    protected void Update()
+    public void Subscribe(Navigation nav)
     {
-        _currentOccopancy = _visiting.Count;
-        foreach (GameObject obj in _gameManager.NPCs.ToList())
-        {
-            if (obj.TryGetComponent<Navigation>(out var nav) && obj != null && nav.Destination.name == name)
-            {
-                nav.OnReachedDestination += Nav_OnReachedDestination;
-            }
-        }
+        nav.OnReachedDestination += Nav_OnReachedDestination;
     }
+
+    public void Unsubscribe(Navigation nav)
+    {
+        nav.OnReachedDestination -= Nav_OnReachedDestination;
+    }
+
     protected void Nav_OnReachedDestination(GameObject obj)
     {
         if (obj.activeSelf)
         {
-            obj.GetComponent<Navigation>().IsCommuting = false;
-            obj.SetActive(false);
-            _visiting.AddFirst(obj);
+            if (this is Residential || _occupancy == 0)
+            {
+                obj.GetComponent<Navigation>().IsCommuting = false;
+                obj.SetActive(false);
+                _visiting.AddFirst(obj);
+                return;
+            }
+            if (_occupancy == _capacity)
+            {
+                obj.GetComponent<Navigation>().IsCommuting = false;
+            }
         }
     }
 

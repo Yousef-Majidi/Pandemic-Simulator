@@ -103,13 +103,13 @@ public class Commercial : Building
     private new void Awake()
     {
         base.Awake();
-        _capacity = _gameManager.MaxNPCs / _gameManager.CommercialDestinations.Count;
+        _capacity = Mathf.CeilToInt((float)_gameManager.MaxNPCs / _gameManager.CommercialDestinations.Count);
         SetSpawnPoint(_gameManager.CommercialDestinations);
     }
 
-    private new void Update()
+    private void Update()
     {
-        base.Update();
+        _occupancy = _visiting.Count;
         ElapsedTime();
         CalculateAttributes();
     }

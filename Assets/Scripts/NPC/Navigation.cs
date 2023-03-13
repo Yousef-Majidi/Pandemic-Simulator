@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 public class Navigation : MonoBehaviour
 {
@@ -86,9 +87,32 @@ public class Navigation : MonoBehaviour
             return;
         }
 
+        Building building;
+        GameObject waypoint;
+        List<GameObject> destinations = _residentials.Concat(_commercials).Concat(_medicals).Concat(_residentials).ToList();
+        foreach (GameObject dest in destinations)
+        {
+            if (dest.transform == _destination)
+            {
+                Building oldBuilding = dest.GetComponentInParent<Building>();
+                oldBuilding.Unsubscribe(this);
+                break;
+            }
+        };
+
         if (_npc.Health <= _gameManager.HealthThreshold)
         {
-            _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
+            do
+            {
+                int randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
+                waypoint = _medicals.ElementAt(randomIndex);
+                building = waypoint.GetComponentInParent<Medical>();
+                if (building.Occupancy == 0) break;
+            } while (building.Occupancy == building.Capacity);
+
+
+            building.Subscribe(this);
+            _destination = waypoint.transform;
             _agent.destination = _destination.position;
             _isCommuting = true;
             return;
@@ -97,13 +121,28 @@ public class Navigation : MonoBehaviour
         if (_npc.Stamina <= _gameManager.StaminaThreshold)
         {
             _destination = _home;
+            foreach (GameObject residential in _residentials)
+            {
+                if (residential.transform == _destination)
+                {
+                    building = residential.GetComponentInParent<Residential>();
+                    building.Subscribe(this);
+                }
+            }
             _agent.destination = _destination.position;
             _isCommuting = true;
             return;
         }
 
-        int randomIndex = Random.Range(0, _medicals.Count);
-        _destination = _commercials.ElementAt(randomIndex).transform;
+        do
+        {
+            int randomIndex = UnityEngine.Random.Range(0, _commercials.Count);
+            waypoint = _commercials.ElementAt(randomIndex);
+            building = waypoint.GetComponentInParent<Commercial>();
+            if (building.Occupancy == 0) break;
+        } while (building.Occupancy == building.Capacity);
+        building.Subscribe(this);
+        _destination = waypoint.transform;
         _agent.destination = _destination.position;
         _isCommuting = true;
     }
