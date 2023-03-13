@@ -6,6 +6,10 @@ using UnityEngine;
 public abstract class Building : MonoBehaviour
 {
     [SerializeField]
+    [Tooltip("Building capacity")]
+    protected int _capacity;
+
+    [SerializeField]
     [Tooltip("Currently inside the building")]
     protected int _currentOccopancy;
 
@@ -21,6 +25,8 @@ public abstract class Building : MonoBehaviour
 
     public GameObject SpawnPoint { get => _spawnPoint; }
     public LinkedList<GameObject> Visiting { get => _visiting; }
+    public int Capacity { get => _capacity; }
+    public int CurrentOccupancy { get => _currentOccopancy; }
 
 
 

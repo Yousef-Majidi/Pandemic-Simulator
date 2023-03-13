@@ -75,6 +75,7 @@ public class Medical : Building
     private new void Awake()
     {
         base.Awake();
+        _capacity = (_gameManager.MaxNPCs / _gameManager.MedicalDestinations.Count) / 4;
         SetSpawnPoint(_gameManager.MedicalDestinations);
     }
 

@@ -87,6 +87,7 @@ public class Residential : Building
     private new void Awake()
     {
         base.Awake();
+        _capacity = _gameManager.MaxNPCs / _gameManager.ResidentialDestinations.Count;
         SetSpawnPoint(_gameManager.ResidentialDestinations);
     }
 
