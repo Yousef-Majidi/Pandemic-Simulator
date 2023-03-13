@@ -220,9 +220,17 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < _startNpcs; i++)
         {
-            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
-            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            Residential building;
+            GameObject waypoint;
+            do
+            {
+                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                building = waypoint.GetComponentInParent<Residential>();
+                if (building.Occupancy == 0) break;
+            } while (building.Occupancy == building.Capacity);
+            building.Occupancy++;
+            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
         #endregion DEBUG
     }
@@ -237,9 +245,17 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N) && _godMode)
         {
-            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
-            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            Residential building;
+            GameObject waypoint;
+            do
+            {
+                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                building = waypoint.GetComponentInParent<Residential>();
+                if (building.Occupancy == 0) break;
+            } while (building.Occupancy == building.Capacity);
+            building.Occupancy++;
+            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
 
         if (Input.GetKeyDown(KeyCode.V) && _godMode)

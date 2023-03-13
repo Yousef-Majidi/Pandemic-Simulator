@@ -75,13 +75,13 @@ public class Medical : Building
     private new void Awake()
     {
         base.Awake();
-        _capacity = (_gameManager.MaxNPCs / _gameManager.MedicalDestinations.Count) / 4;
+        _capacity = Mathf.CeilToInt((float)_gameManager.MaxNPCs / _gameManager.MedicalDestinations.Count / 4);
         SetSpawnPoint(_gameManager.MedicalDestinations);
     }
 
-    private new void Update()
+    private void Update()
     {
-        base.Update();
+        _occupancy = _visiting.Count;
         CalculateAttributes();
     }
 }
