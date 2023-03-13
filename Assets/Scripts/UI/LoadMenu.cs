@@ -4,10 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
+using UnityEngine.SceneManagement;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class LoadMenu : MonoBehaviour
 {
     private GameManager _gameManager;
+    private SaveManager _saveManager = new();
+
+    [SerializeField]
+    private string _savePath;
+
+    [SerializeField]
+    private string _imagePath;
+
 
     [SerializeField]
     private GameObject _loadMenuUI;
@@ -17,7 +28,6 @@ public class LoadMenu : MonoBehaviour
     {
         _loadMenuUI.SetActive(false);
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
     }
 
     // Update is called once per frame
@@ -30,6 +40,7 @@ public class LoadMenu : MonoBehaviour
     {
         _loadMenuUI.SetActive(true);
         _gameManager.TimeManager.SetTimeScale(0);
+        FillList();
     }
 
     public void Close()
@@ -38,11 +49,14 @@ public class LoadMenu : MonoBehaviour
         _gameManager.TimeManager.SetTimeScale(1);
     }
 
-    public void FillList()
+    void FillList()
     {
-        string[] files = Directory.GetFiles(Application.persistentDataPath +"/saves", "*.dat");
+        if (_savePath == null || _savePath == ""){
+            _savePath = Application.persistentDataPath + "/saves/";
+        }
+        string[] files = Directory.GetFiles(_savePath, "*.dat");
         GameObject content = GameObject.Find("LoadMenuContent");
-        int buffer = 50;
+        int buffer = 200;
         foreach (string file in files)
         {
             string fileName = Path.GetFileName(file);
@@ -53,9 +67,9 @@ public class LoadMenu : MonoBehaviour
             panel.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 1);
             panel.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 1);
             panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            panel.GetComponent<RectTransform>().sizeDelta = new Vector2(2100, 250);
+            panel.GetComponent<RectTransform>().sizeDelta = new Vector2(2100, 350);
             panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, panel.GetComponent<RectTransform>().anchoredPosition.y - buffer);
-            buffer += 200;
+            buffer += 450;
 
             GameObject image = new GameObject("Image", typeof(RectTransform));
             image.transform.SetParent(panel.transform, false);
@@ -63,53 +77,102 @@ public class LoadMenu : MonoBehaviour
             image.GetComponent<Image>().color = Color.white;
             Texture2D texture = new Texture2D(2, 2);
             byte[] fileData;
-            if (File.Exists(Application.persistentDataPath + "/images/Saves/" + fileNameNoExten + ".png"))
+            if (_imagePath == null || _imagePath == "")
+                _imagePath = Application.persistentDataPath + "/images/Saves/";
+            if (File.Exists(_imagePath + fileNameNoExten + ".png"))
             {
-                fileData = File.ReadAllBytes(Application.persistentDataPath + "/images/Saves/" + fileNameNoExten + ".png");
+                fileData = File.ReadAllBytes(_imagePath + fileNameNoExten + ".png");
                 texture.LoadImage(fileData);
             }
             image.GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100);
             image.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f);
             image.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
             image.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            image.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 250);
-            
+            image.GetComponent<RectTransform>().sizeDelta = new Vector2(450, 350);
 
-            GameObject text = new GameObject("Text", typeof(RectTransform));
-            text.transform.SetParent(panel.transform, false);
-            text.AddComponent<TextMeshProUGUI>();
-            text.GetComponent<TextMeshProUGUI>().text = fileNameNoExten;
-            text.GetComponent<TextMeshProUGUI>().fontSize = 40;
-            text.GetComponent<TextMeshProUGUI>().color = Color.black;
-            text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-            text.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
-            text.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-            text.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            text.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 250);
+            SaveManager.GameDisplayData data = _saveManager.LoadDisplay(fileName);
+            GameObject textRow1 = new GameObject("Text", typeof(RectTransform));
+            textRow1.transform.SetParent(panel.transform, false);
+            textRow1.AddComponent<TextMeshProUGUI>();
+            textRow1.GetComponent<TextMeshProUGUI>().text = fileNameNoExten + "\nDay:" + data._inGameDay + "\nTime:" + data._inGameHour.ToString("00") +":" + data._inGameMinute.ToString("00");
+            textRow1.GetComponent<TextMeshProUGUI>().fontSize = 60;
+            textRow1.GetComponent<TextMeshProUGUI>().color = Color.black;
+            textRow1.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;
+            textRow1.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            textRow1.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+            textRow1.GetComponent<RectTransform>().anchoredPosition = new Vector2(-550, 0);
+            textRow1.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 350);
+
+            GameObject textRow2 = new GameObject("Text", typeof(RectTransform));
+            textRow2.transform.SetParent(panel.transform, false);
+            textRow2.AddComponent<TextMeshProUGUI>();
+            //round political power to 0 decimal places
+            data._politicalPower = Mathf.RoundToInt(data._politicalPower);
+            textRow2.GetComponent<TextMeshProUGUI>().text = "P Power:" + data._politicalPower + "\nPopulation:" + data._population + "\nTotal Infected:" + data._totalInfected;
+            textRow2.GetComponent<TextMeshProUGUI>().fontSize = 60;
+            textRow2.GetComponent<TextMeshProUGUI>().color = Color.black;
+            textRow2.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Left;
+            textRow2.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            textRow2.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+            textRow2.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            textRow2.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 350);
 
 
-            GameObject button = new GameObject("LoadButton", typeof(RectTransform));
-            button.transform.SetParent(panel.transform, false);
-            button.AddComponent<Button>();
-            button.AddComponent<Image>();
-            button.GetComponent<Image>().color = Color.white;
-            button.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f);
-            button.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            button.GetComponent<RectTransform>().sizeDelta = new Vector2(350, 250);
-            //button.GetComponent<Button>().onClick.AddListener(() => LoadGame(fileName));
 
-            GameObject buttonText = new GameObject("Text", typeof(RectTransform));
-            buttonText.transform.SetParent(button.transform, false);
-            buttonText.AddComponent<TextMeshProUGUI>();
-            buttonText.GetComponent<TextMeshProUGUI>().text = "Load";
-            buttonText.GetComponent<TextMeshProUGUI>().fontSize = 40;
-            buttonText.GetComponent<TextMeshProUGUI>().color = Color.black;
-            buttonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
-            buttonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
-            buttonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-            buttonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-            buttonText.GetComponent<RectTransform>().sizeDelta = new Vector2(350, 250);
+            GameObject loadButton = new GameObject("LoadButton", typeof(RectTransform));
+            loadButton.transform.SetParent(panel.transform, false);
+            loadButton.AddComponent<Button>();
+            loadButton.AddComponent<Image>();
+            loadButton.GetComponent<Image>().color = Color.green;
+            loadButton.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f);
+            loadButton.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
+            loadButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500,0);
+            loadButton.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
+            loadButton.GetComponent<Button>().onClick.AddListener(() => {
+                _saveManager.LoadGame(_gameManager,fileNameNoExten);
+                _loadMenuUI.SetActive(false);
+                _gameManager.TimeManager.SetTimeScale(0);
+
+            });
+
+            GameObject deleteButton = new GameObject("DeleteButton", typeof(RectTransform));
+            deleteButton.transform.SetParent(panel.transform, false);
+            deleteButton.AddComponent<Button>();
+            deleteButton.AddComponent<Image>();
+            deleteButton.GetComponent<Image>().color = Color.red;
+            deleteButton.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f);
+            deleteButton.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
+            deleteButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-200, 0);
+            deleteButton.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
+            deleteButton.GetComponent<Button>().onClick.AddListener(() =>{
+                _saveManager.RemoveSave(_savePath + fileNameNoExten + ".dat", _imagePath + fileNameNoExten + ".png");
+                Destroy(panel);
+            });
+
+            GameObject deleteButtonText = new GameObject("Text", typeof(RectTransform));
+            deleteButtonText.transform.SetParent(deleteButton.transform, false);
+            deleteButtonText.AddComponent<TextMeshProUGUI>();
+            deleteButtonText.GetComponent<TextMeshProUGUI>().text = "Delete";
+            deleteButtonText.GetComponent<TextMeshProUGUI>().fontSize = 60;
+            deleteButtonText.GetComponent<TextMeshProUGUI>().color = Color.black;
+            deleteButtonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            deleteButtonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            deleteButtonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+            deleteButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            deleteButtonText.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
+
+
+            GameObject loadButtonText = new GameObject("Text", typeof(RectTransform));
+            loadButtonText.transform.SetParent(loadButton.transform, false);
+            loadButtonText.AddComponent<TextMeshProUGUI>();
+            loadButtonText.GetComponent<TextMeshProUGUI>().text = "Load";
+            loadButtonText.GetComponent<TextMeshProUGUI>().fontSize = 60;
+            loadButtonText.GetComponent<TextMeshProUGUI>().color = Color.black;
+            loadButtonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+            loadButtonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+            loadButtonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+            loadButtonText.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            loadButtonText.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
 
         }
     }
