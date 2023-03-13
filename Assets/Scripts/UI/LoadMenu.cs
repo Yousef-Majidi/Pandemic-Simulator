@@ -12,6 +12,7 @@ public class LoadMenu : MonoBehaviour
 {
     private GameManager _gameManager;
     private SaveManager _saveManager = new();
+    private MainMenuScripts _mainMenuScripts;
 
     [SerializeField]
     private string _savePath;
@@ -23,11 +24,24 @@ public class LoadMenu : MonoBehaviour
     [SerializeField]
     private GameObject _loadMenuUI;
 
+    private GameObject _toBeDestroyed;
+
     // Start is called before the first frame update
     void Awake()
     {
-        _loadMenuUI.SetActive(false);
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (SceneManager.GetActiveScene().name == "LoadGameMenu")
+        {
+            _loadMenuUI.SetActive(true);
+            FillList();
+            _mainMenuScripts = GameObject.Find("LevelLoader").GetComponent<MainMenuScripts>();
+            _toBeDestroyed = this.gameObject;
+            DontDestroyOnLoad(_toBeDestroyed);
+        }
+        else
+        {
+            _loadMenuUI.SetActive(false);
+            _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        }
     }
 
     // Update is called once per frame
@@ -49,7 +63,7 @@ public class LoadMenu : MonoBehaviour
         _gameManager.TimeManager.SetTimeScale(1);
     }
 
-    void FillList()
+    public void FillList()
     {
         if (_savePath == null || _savePath == ""){
             _savePath = Application.persistentDataPath + "/saves/";
@@ -129,9 +143,17 @@ public class LoadMenu : MonoBehaviour
             loadButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500,0);
             loadButton.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
             loadButton.GetComponent<Button>().onClick.AddListener(() => {
-                _saveManager.LoadGame(_gameManager,fileNameNoExten);
-                _loadMenuUI.SetActive(false);
-                _gameManager.TimeManager.SetTimeScale(0);
+                if (SceneManager.GetActiveScene().name == "LoadGameMenu"){
+                    _mainMenuScripts.ChangeSceneWTransition("City");
+                    if(SceneManager.GetActiveScene().name != "City"){
+                        StartCoroutine(WaitForSceneLoad("City", fileNameNoExten));
+                    }
+                }
+                else{
+                    _saveManager.LoadGame(_gameManager,fileNameNoExten);
+                    _loadMenuUI.SetActive(false);
+                    _gameManager.TimeManager.SetTimeScale(0);
+                }
 
             });
 
@@ -175,5 +197,21 @@ public class LoadMenu : MonoBehaviour
             loadButtonText.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 150);
 
         }
+    }
+
+    IEnumerator WaitForSceneLoad(string sceneName, string fileName){
+        while (SceneManager.GetActiveScene().name != sceneName){
+            yield return null;
+        }
+        if (SceneManager.GetActiveScene().name == sceneName){
+            _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            _saveManager.LoadGame(_gameManager, fileName);
+            _loadMenuUI.SetActive(false);
+            Destroy(_toBeDestroyed);
+        }
+    }
+
+    public void DestroyOnClick(){
+        Destroy(_toBeDestroyed);
     }
 }
