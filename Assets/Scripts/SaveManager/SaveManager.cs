@@ -16,7 +16,6 @@ public class SaveManager
         public int _inGameHour;
         public int _inGameMinute;
         public int _inGameDay;
-        public float _timeScale;
     }
 
     [Serializable]
@@ -104,7 +103,6 @@ public class SaveManager
         data._timeData._inGameHour = gm.TimeManager.InGameHour;
         data._timeData._inGameMinute = gm.TimeManager.InGameMinute;
         data._timeData._inGameDay = gm.TimeManager.InGameDay;
-        data._timeData._timeScale = gm.TimeManager.TimeScale;
         #endregion TimeManager
 
         #region NpcRegion
@@ -174,7 +172,7 @@ public class SaveManager
             gm.TimeManager.InGameMinute = data._timeData._inGameMinute;
             gm.TimeManager.InGameHour = data._timeData._inGameHour;
             gm.TimeManager.InGameDay = data._timeData._inGameDay;
-            gm.TimeManager.SetTimeScale(data._timeData._timeScale);
+            gm.TimeManager.SetTimeScale(0f);
             #endregion TimeManager
 
             #region NPCs
