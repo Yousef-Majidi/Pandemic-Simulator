@@ -9,6 +9,9 @@ using UnityEngine.SceneManagement;
 
 public class SaveManager
 {
+    private List<string> _autoSaves = new();
+    private int currIndex = 0; 
+
     [Serializable]
     private class TimeData
     {
@@ -252,17 +255,55 @@ public class SaveManager
 
     public void RemoveSave(string savePath, string imagePath)
     {
-        Debug.Log(savePath);
-        Debug.Log(imagePath);
         if (File.Exists(savePath) && File.Exists(imagePath))
         {
-            File.Delete(savePath);
-            File.Delete(imagePath);
             Debug.Log("Save file deleted");
         }
         else
         {
             Debug.LogError("Save file not found");
         }
+    }
+
+    public void AddAutoSave(GameManager gm)
+    {
+        Debug.Log("currIndex: " + currIndex);
+        Debug.Log("autosaves: " + _autoSaves.Count);
+        if (_autoSaves.Count == 0)
+        {
+            FillList();
+        }
+        if(currIndex == 5){
+            currIndex = 0;
+        }
+        if(_autoSaves.Count >= 5)
+        {
+            string rmImagePath = Application.persistentDataPath + "/images/Saves/" + _autoSaves[currIndex].Replace(".dat", ".png");
+            string rmSavePath = Application.persistentDataPath + "/saves/" + _autoSaves[currIndex];
+            RemoveSave(rmSavePath, rmImagePath);
+            _autoSaves.RemoveAt(currIndex);
+        }
+        SaveGame(gm,$"autosave{currIndex}");
+        _autoSaves.Add($"autosave{currIndex}.dat");
+        string imageName = $"autosave{currIndex}.png";
+        string imagePath = Application.persistentDataPath + "/images/Saves/" + imageName;
+        ScreenCapture.CaptureScreenshot(imagePath);
+        currIndex++;
+        
+    }
+
+    void FillList()
+    {
+        _autoSaves = new List<string>();
+        string[] files = Directory.GetFiles(Application.persistentDataPath + "/saves/");
+        foreach (string file in files)
+        {
+            if (file.Contains("autosave") && file.Contains(".dat"))
+            {
+                string fileName = file.Replace(Application.persistentDataPath + "/saves/", "");
+                _autoSaves.Add(fileName);
+            }
+        }
+        currIndex = _autoSaves.Count;
     }
 }

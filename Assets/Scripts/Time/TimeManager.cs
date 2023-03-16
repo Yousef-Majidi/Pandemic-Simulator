@@ -7,6 +7,9 @@ using UnityEngine;
 public class TimeManager : ScriptableObject
 {
     private bool _isPaused = false;
+    SaveManager _saveManager = new();
+    GameManager _gameManager;
+    UIPopUp _uiPopUp;
 
     [SerializeField]
     [Tooltip("In game hour")]
@@ -88,6 +91,10 @@ public class TimeManager : ScriptableObject
             {
                 _inGameHour = 0;
                 _inGameDay++;
+                _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+                _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
+                _saveManager.AddAutoSave(_gameManager);
+                _uiPopUp.SaveLoadPopUp("AutoSaved");
             }
             return;
         }
