@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
                 if (building.Occupancy == 0) break;
             } while (building.Occupancy == building.Capacity);
             building.Occupancy++;
-            GameObject newNpc = SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
+            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
         #endregion DEBUG
     }
