@@ -159,6 +159,7 @@ public class GameManager : MonoBehaviour
             obj.transform.parent = GameObject.Find("NPCs").transform;
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
+            obj.name = $"NPC {_npcs.Count + 1}";
             _npcs.AddFirst(obj);
             return obj;
         }
@@ -236,7 +237,7 @@ public class GameManager : MonoBehaviour
                 if (building.Occupancy == 0) break;
             } while (building.Occupancy == building.Capacity);
             building.Occupancy++;
-            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
+            GameObject newNpc = SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
         #endregion DEBUG
     }

@@ -21,10 +21,12 @@ public abstract class Building : MonoBehaviour
     [Tooltip("The Game Manager")]
     protected GameManager _gameManager;
 
-    protected LinkedList<GameObject> _visiting = new();
+    [SerializeField]
+    [Tooltip("List of visiting NPCs")]
+    protected List<GameObject> _visiting = new();
 
     public GameObject SpawnPoint { get => _spawnPoint; }
-    public LinkedList<GameObject> Visiting { get => _visiting; }
+    public List<GameObject> Visiting { get => _visiting; }
     public int Capacity { get => _capacity; }
     public int Occupancy { get => _occupancy; set => _occupancy = value; }
 
@@ -41,27 +43,30 @@ public abstract class Building : MonoBehaviour
     public void Subscribe(Navigation nav)
     {
         nav.OnReachedDestination += Nav_OnReachedDestination;
+        Debug.Log($"{gameObject} subscribed to {nav.name}");
     }
 
     public void Unsubscribe(Navigation nav)
     {
         nav.OnReachedDestination -= Nav_OnReachedDestination;
+        Debug.Log($"{gameObject} unsubscribed from {nav.name}");
     }
 
     protected void Nav_OnReachedDestination(GameObject obj)
     {
         if (obj.activeSelf)
         {
-            if (this is Residential || _occupancy == 0)
+            if (this is Residential || _occupancy == 0 || _occupancy < _capacity)
             {
                 obj.GetComponent<Navigation>().IsCommuting = false;
                 obj.SetActive(false);
-                _visiting.AddFirst(obj);
+                _visiting.Add(obj);
                 return;
             }
             if (_occupancy == _capacity)
             {
                 obj.GetComponent<Navigation>().IsCommuting = false;
+                return;
             }
         }
     }
