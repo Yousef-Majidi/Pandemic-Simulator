@@ -45,16 +45,13 @@ public class Commercial : Building
     {
         if (!_gameManager.GodMode)
         {
-            if (npc.IsInfected)
+            npc.Happiness -= npc.HappinessDecayRate * Time.deltaTime;
+            if (npc.Happiness < 0)
             {
-                npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
-                if (npc.Happiness < 0)
-                {
-                    npc.Happiness = 0;
-                    return true;
-                }
-                return false;
+                npc.Happiness = 0;
+                return true;
             }
+            return false;
         }
         return false;
     }

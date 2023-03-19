@@ -62,15 +62,12 @@ public class Residential : Building
                 }
                 return false;
             }
-            else
+            npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
+            if (npc.Happiness > 100)
             {
-                npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
-                if (npc.Happiness > 100)
-                {
-                    npc.Happiness = 100;
-                }
-                return false;
+                npc.Happiness = 100;
             }
+            return false;
         }
         return false;
     }

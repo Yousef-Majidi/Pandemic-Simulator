@@ -158,15 +158,12 @@ public class NPC : MonoBehaviour
     {
         if (!_gameManager.GodMode)
         {
-            if (_isInfected)
+            UpdateHappinessDecayRate();
+            float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayRate;
+            _happiness -= decayRate * Time.deltaTime;
+            if (_happiness < 0)
             {
-                UpdateHappinessDecayRate();
-                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
-                _happiness -= decayRate * Time.deltaTime;
-                if (_happiness < 0)
-                {
-                    _happiness = 0;
-                }
+                _happiness = 0;
             }
         }
     }

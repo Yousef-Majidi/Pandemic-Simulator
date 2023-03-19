@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10de12bdaf997b3458afe2cb5121dcde, type: 3}
   m_Name: MaskMandate
   m_EditorClassIdentifier: 
-  _description: Dummy description
+  _description: Citizens will wear masks, reducing the chance of infection.
   _title: Mask Mandate
-  _healthEffect: 0
-  _virusEffect: 0
-  _happyEffect: 0
-  _enacted: 0
+  _maxCost: 100
+  _effects:
+  - {fileID: 11400000, guid: 61c76c65917bf79448382f5667a87121, type: 2}
+  _npcs: []

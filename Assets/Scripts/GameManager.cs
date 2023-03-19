@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("The list of all decisions")]
     private List<Decision> _decisionList = new();
 
-    SaveManager _saveManager = new();
+    readonly SaveManager _saveManager = new();
 
     private LinkedList<GameObject> _commercialDestinations = new();
     private LinkedList<GameObject> _residentialDestinations = new();
@@ -211,6 +211,12 @@ public class GameManager : MonoBehaviour
             _medicalDestinations.AddFirst(waypoint);
         }
 
+        foreach (Decision decision in _decisionList)
+        {
+            decision.OnDecisionEnact += Decision_OnDecisionEnact;
+            decision.OnDecisionRevoke += Decision_OnDecisionRevoke;
+        }
+
         #region DEBUG
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
         foreach (GameObject npc in npcs)
@@ -233,6 +239,21 @@ public class GameManager : MonoBehaviour
             SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
         #endregion DEBUG
+    }
+
+    private void Decision_OnDecisionEnact(Decision decision, float normalizedPoliticalPower)
+    {
+        Debug.Log($"{decision.Title} was enacted");
+        Debug.Log($"Normalized Political Power: {normalizedPoliticalPower}");
+
+        decision.ApplyEffects(_npcs, normalizedPoliticalPower);
+    }
+
+    private void Decision_OnDecisionRevoke(Decision decision, float normalizedPoliticalPower)
+    {
+        Debug.Log($"{decision.Title} was removed");
+
+        decision.RemoveEffects();
     }
 
     void Update()
