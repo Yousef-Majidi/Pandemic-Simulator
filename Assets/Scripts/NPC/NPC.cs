@@ -106,11 +106,13 @@ public class NPC : MonoBehaviour
         _health = source._health;
         _stamina = source._stamina;
         _happiness = source._happiness;
+        name = source.name;
 
         if (source.Virus != null && _isInfected)
         {
             _virus = ScriptableObject.CreateInstance<Virus>();
             _virus.Copy(source._virus);
+            name = source.name + " - Infected";
         }
 
         var currentDestination = source.GetComponent<Navigation>().Destination;

@@ -43,13 +43,13 @@ public abstract class Building : MonoBehaviour
     public void Subscribe(Navigation nav)
     {
         nav.OnReachedDestination += Nav_OnReachedDestination;
-        Debug.Log($"{gameObject} subscribed to {nav.name}");
+        Debug.Log($"{gameObject} subscribed to {nav.gameObject.name}");
     }
 
     public void Unsubscribe(Navigation nav)
     {
         nav.OnReachedDestination -= Nav_OnReachedDestination;
-        Debug.Log($"{gameObject} unsubscribed from {nav.name}");
+        Debug.Log($"{gameObject} unsubscribed from {nav.gameObject.name}");
     }
 
     protected void Nav_OnReachedDestination(GameObject obj)

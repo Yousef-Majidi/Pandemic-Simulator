@@ -14,7 +14,11 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Number of npcs to spawn on start")]
-    private int _startNpcs;
+    private int _spawnAtStart;
+
+    [SerializeField]
+    [Tooltip("Percentage of infected npcs at start: 0 - 100")]
+    private int _spawnInfectedChance;
 
     [Space]
     [Header("NPCs")]
@@ -160,6 +164,12 @@ public class GameManager : MonoBehaviour
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
             obj.name = $"NPC {_npcs.Count + 1}";
+            if (UnityEngine.Random.Range(0, 100) < _spawnInfectedChance)
+            {
+                NPC npc = obj.GetComponent<NPC>();
+                npc.Virus = ScriptableObject.CreateInstance<Virus>();
+                npc.IsInfected = true;
+            }
             _npcs.AddFirst(obj);
             return obj;
         }
@@ -225,7 +235,7 @@ public class GameManager : MonoBehaviour
             _npcs.AddFirst(npc);
         }
 
-        for (int i = 0; i < _startNpcs; i++)
+        for (int i = 0; i < _spawnAtStart; i++)
         {
             Residential building;
             GameObject waypoint;
