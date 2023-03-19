@@ -77,7 +77,7 @@ public class NPC : MonoBehaviour
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+        _assetType = _isInfected ? AssetType.Infected : AssetType.Healthy;
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -115,11 +115,17 @@ public class NPC : MonoBehaviour
             name = source.name + " - Infected";
         }
 
-        var currentDestination = source.GetComponent<Navigation>().Destination;
-        var home = source.GetComponent<Navigation>().Home;
-        GetComponent<Navigation>().Home = home;
-        GetComponent<Navigation>().Destination = currentDestination;
-        GetComponent<Navigation>().IsCommuting = source.GetComponent<Navigation>().IsCommuting;
+        Transform currentDestination = source.GetComponent<Navigation>().Destination;
+        Transform home = source.GetComponent<Navigation>().Home;
+        Navigation nav = GetComponent<Navigation>();
+        Navigation sourceNav = source.GetComponent<Navigation>();
+        nav.Home = home;
+        nav.Destination = currentDestination;
+        nav.IsTravelling = sourceNav.IsTravelling;
+        nav.TravelingTo = sourceNav.TravelingTo;
+        sourceNav.TravelingTo.Unsubscribe(sourceNav);
+        nav.TravelingTo.Subscribe(nav);
+
     }
 
     public void UpdateStamina()

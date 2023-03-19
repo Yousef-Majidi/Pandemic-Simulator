@@ -28,8 +28,12 @@ public class GameManager : MonoBehaviour
     private int _maxNPC = 250;
 
     [SerializeField]
-    [Tooltip("Currently spawned on the scene")]
-    private int _npcCount = 0;
+    [Tooltip("Number of healthy NPCs")]
+    private int _healthyCount = 0;
+
+    [SerializeField]
+    [Tooltip("Number of infected NPCs")]
+    private int _infectedCount = 0;
 
     [SerializeField]
     [Tooltip("Average Happiness of all NPCs")]
@@ -164,11 +168,15 @@ public class GameManager : MonoBehaviour
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
             obj.name = $"NPC {_npcs.Count + 1}";
-            if (UnityEngine.Random.Range(0, 100) < _spawnInfectedChance)
+            _healthyCount++;
+
+            int infectedCount = Mathf.RoundToInt(_spawnInfectedChance / 100f * _spawnAtStart);
+            if (_infectedCount < infectedCount)
             {
                 NPC npc = obj.GetComponent<NPC>();
                 npc.Virus = ScriptableObject.CreateInstance<Virus>();
                 npc.IsInfected = true;
+                _infectedCount++;
             }
             _npcs.AddFirst(obj);
             return obj;
@@ -182,12 +190,16 @@ public class GameManager : MonoBehaviour
         {
             obj = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
             obj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            _infectedCount++;
+            _healthyCount--;
         }
         else
         {
             obj = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
             obj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
             obj.GetComponent<NPC>().Virus = null;
+            _healthyCount++;
+            _infectedCount--;
         }
         obj.transform.parent = npc.transform.parent;
         obj.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
@@ -317,6 +329,6 @@ public class GameManager : MonoBehaviour
         CalculatePoliticalPower();
         _timeManager.OnKeyDown();
         _timeManager.Clock();
-        _npcCount = _npcs.Count;
+        //_healthyCount = _npcs.Count;
     }
 }

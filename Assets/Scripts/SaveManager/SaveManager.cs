@@ -136,7 +136,7 @@ public class SaveManager
             npcData._rotY = obj.transform.rotation.y;
             npcData._rotZ = obj.transform.rotation.z;
             npcData._rotW = obj.transform.rotation.w;
-            npcData._isCommuting = nav.IsCommuting;
+            npcData._isCommuting = nav.IsTravelling;
             npcData._home = new(nav.Home.transform.position.x, nav.Home.transform.position.y, nav.Home.transform.position.z);
             npcData._destination = new(nav.Destination.transform.position.x, nav.Destination.transform.position.y, nav.Destination.transform.position.z);
             data._npcDataList.Add(npcData);
@@ -207,7 +207,7 @@ public class SaveManager
                 npc.HappinessDecayRate = npcData._happinessDecayRate;
                 npc.HappinessDecayBase = npcData._happinessDecayBase;
                 npc.IsHappinessDecayActive = npcData._isHappinessDecayActive;
-                nav.IsCommuting = npcData._isCommuting;
+                nav.IsTravelling = npcData._isCommuting;
                 nav.SetDestination(new Vector3(npcData._destination._posX, npcData._destination._posY, npcData._destination._posZ));
                 nav.SetHome(new Vector3(npcData._home._posX, npcData._home._posY, npcData._home._posZ));
             }

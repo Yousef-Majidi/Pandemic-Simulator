@@ -16,7 +16,11 @@ public class Navigation : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Whether an NPC is commuting to a destination or not")]
-    private bool _isCommuting;
+    private bool _isTravelling;
+
+    [SerializeField]
+    [Tooltip("The building the NPC is currently travelling to")]
+    private Building _travellingTo;
 
     private NavMeshAgent _agent;
     private NPC _npc;
@@ -33,7 +37,8 @@ public class Navigation : MonoBehaviour
 
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
-    public bool IsCommuting { get => _isCommuting; set => _isCommuting = value; }
+    public bool IsTravelling { get => _isTravelling; set => _isTravelling = value; }
+    public Building TravelingTo { get => _travellingTo; set => _travellingTo = value; }
     private void Awake()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -44,7 +49,8 @@ public class Navigation : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _npc = GetComponent<NPC>();
-        UpdateDestination();
+        _isTravelling = false;
+        //UpdateDestination();
     }
 
     private void Update()
@@ -83,23 +89,15 @@ public class Navigation : MonoBehaviour
 
     public void UpdateDestination()
     {
-        if (_isCommuting)
+        if (_isTravelling)
         {
             _agent.destination = _destination.position;
             return;
         }
 
+        _travellingTo.Unsubscribe(this);
         Building building;
         GameObject waypoint;
-        foreach (GameObject dest in _destinations)
-        {
-            if (dest.transform == _destination)
-            {
-                Building oldBuilding = dest.GetComponentInParent<Building>();
-                oldBuilding.Unsubscribe(this);
-                break;
-            }
-        };
 
         if (_npc.Health <= _gameManager.HealthThreshold)
         {
@@ -111,10 +109,11 @@ public class Navigation : MonoBehaviour
                 if (building.Occupancy == 0) break;
             } while (building.Occupancy == building.Capacity);
 
-            building.Subscribe(this);
+            _travellingTo = building;
+            _travellingTo.Subscribe(this);
             _destination = waypoint.transform;
             _agent.destination = _destination.position;
-            _isCommuting = true;
+            _isTravelling = true;
             return;
         }
 
@@ -130,7 +129,7 @@ public class Navigation : MonoBehaviour
                 }
             }
             _agent.destination = _destination.position;
-            _isCommuting = true;
+            _isTravelling = true;
             return;
         }
 
@@ -141,10 +140,11 @@ public class Navigation : MonoBehaviour
             building = waypoint.GetComponentInParent<Commercial>();
             if (building.Occupancy == 0) break;
         } while (building.Occupancy == building.Capacity);
-        building.Subscribe(this);
+        _travellingTo = building;
+        _travellingTo.Subscribe(this);
         _destination = waypoint.transform;
         _agent.destination = _destination.position;
-        _isCommuting = true;
+        _isTravelling = true;
     }
 
     public void SetDestination(Vector3 position)
@@ -153,9 +153,11 @@ public class Navigation : MonoBehaviour
         {
             if (dest.transform.position == position)
             {
+                _travellingTo = dest.GetComponentInParent<Building>();
+                _travellingTo.Subscribe(this);
                 _destination = dest.transform;
                 _agent.destination = _destination.position;
-                _isCommuting = true;
+                _isTravelling = true;
                 break;
             }
         }
@@ -168,8 +170,10 @@ public class Navigation : MonoBehaviour
             if (residential.transform.position == position)
             {
                 _home = residential.transform;
+                _travellingTo = residential.GetComponentInParent<Building>();
+                _travellingTo.Subscribe(this);
+                _destination = _home;
                 _agent.destination = _destination.position;
-                _isCommuting = true;
                 break;
             }
         }

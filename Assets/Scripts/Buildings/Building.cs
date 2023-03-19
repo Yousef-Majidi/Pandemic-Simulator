@@ -43,13 +43,13 @@ public abstract class Building : MonoBehaviour
     public void Subscribe(Navigation nav)
     {
         nav.OnReachedDestination += Nav_OnReachedDestination;
-        Debug.Log($"{gameObject} subscribed to {nav.gameObject.name}");
+        Debug.Log($"{gameObject} <color=green>subscribed</color> to {nav.gameObject.name}");
     }
 
     public void Unsubscribe(Navigation nav)
     {
         nav.OnReachedDestination -= Nav_OnReachedDestination;
-        Debug.Log($"{gameObject} unsubscribed from {nav.gameObject.name}");
+        Debug.Log($"{gameObject} <color=red>unsubscribed</color> from {nav.gameObject.name}");
     }
 
     protected void Nav_OnReachedDestination(GameObject obj)
@@ -58,14 +58,14 @@ public abstract class Building : MonoBehaviour
         {
             if (this is Residential || _occupancy == 0 || _occupancy < _capacity)
             {
-                obj.GetComponent<Navigation>().IsCommuting = false;
+                obj.GetComponent<Navigation>().IsTravelling = false;
                 obj.SetActive(false);
                 _visiting.Add(obj);
                 return;
             }
             if (_occupancy == _capacity)
             {
-                obj.GetComponent<Navigation>().IsCommuting = false;
+                obj.GetComponent<Navigation>().IsTravelling = false;
                 return;
             }
         }

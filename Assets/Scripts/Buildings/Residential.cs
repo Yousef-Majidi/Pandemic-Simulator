@@ -77,7 +77,7 @@ public class Residential : Building
         npc.SetActive(true);
         _visiting.Remove(npc);
         Navigation nav = npc.GetComponent<Navigation>();
-        nav.IsCommuting = false;
+        nav.IsTravelling = false;
         return;
     }
 
