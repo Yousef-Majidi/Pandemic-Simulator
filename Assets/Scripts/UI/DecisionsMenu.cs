@@ -181,7 +181,10 @@ public class DecisionsMenu : MonoBehaviour
         politicalPower.transform.SetParent(panel.transform, false);
         politicalPower.AddComponent<TextMeshProUGUI>();
         politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value;
-        slider.GetComponent<Slider>().onValueChanged.AddListener(delegate { politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value; });
+        slider.GetComponent<Slider>().onValueChanged.AddListener(delegate
+        {
+            politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value;
+        });
         politicalPower.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         politicalPower.GetComponent<TextMeshProUGUI>().fontSize = 80;
         politicalPower.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);

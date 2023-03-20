@@ -17,4 +17,15 @@ MonoBehaviour:
   _maxCost: 100
   _effects:
   - {fileID: 11400000, guid: 61c76c65917bf79448382f5667a87121, type: 2}
-  _npcs: []
+  - {fileID: 11400000, guid: d7200332f64d3af4faaa0b19b3742a88, type: 2}
+  _npcs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
