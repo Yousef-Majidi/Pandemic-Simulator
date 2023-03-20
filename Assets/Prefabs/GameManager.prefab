@@ -45,9 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _godMode: 0
-  _startNpcs: 1
-  _maxNPC: 250
-  _npcCount: 0
+  _spawnHealthyAtStart: 0
+  _spawnInfectedAtStart: 0
+  _maxNPC: 350
+  _healthyCount: 0
+  _infectedCount: 0
   _averageHappiness: 0
   _politicalPower: 50
   _politicalPowerMultiplier: 0.001

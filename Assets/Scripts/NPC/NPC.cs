@@ -125,7 +125,6 @@ public class NPC : MonoBehaviour
         nav.TravelingTo = sourceNav.TravelingTo;
         sourceNav.TravelingTo.Unsubscribe(sourceNav);
         nav.TravelingTo.Subscribe(nav);
-
     }
 
     public void UpdateStamina()
