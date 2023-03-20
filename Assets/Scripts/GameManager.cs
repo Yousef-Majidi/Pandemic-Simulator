@@ -87,9 +87,9 @@ public class GameManager : MonoBehaviour
 
     readonly SaveManager _saveManager = new();
 
-    private LinkedList<GameObject> _commercialDestinations = new();
-    private LinkedList<GameObject> _residentialDestinations = new();
-    private LinkedList<GameObject> _medicalDestinations = new();
+    private List<GameObject> _commercialDestinations = new();
+    private List<GameObject> _residentialDestinations = new();
+    private List<GameObject> _medicalDestinations = new();
     private LinkedList<GameObject> _npcs = new();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
@@ -106,11 +106,11 @@ public class GameManager : MonoBehaviour
     public int HealthThreshold { get => _healthThreshold; set => _healthThreshold = value; }
     public int StaminaThreshold { get => _staminaThreshold; set => _staminaThreshold = value; }
     public TimeManager TimeManager { get => _timeManager; }
-    public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
-    public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
-    public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
-    public LinkedList<GameObject> NPCs { get => _npcs; }
+    public List<GameObject> CommercialDestinations { get => _commercialDestinations; }
+    public List<GameObject> MedicalDestinations { get => _medicalDestinations; }
+    public List<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public List<Decision> DecisionList { get => _decisionList; }
+    public LinkedList<GameObject> NPCs { get => _npcs; }
 
 
     private void ToggleGodMode()
@@ -219,19 +219,19 @@ public class GameManager : MonoBehaviour
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)
         {
-            _commercialDestinations.AddFirst(waypoint);
+            _commercialDestinations.Add(waypoint);
         }
 
         GameObject[] residentialWaypoints = GameObject.FindGameObjectsWithTag("Residential");
         foreach (GameObject waypoint in residentialWaypoints)
         {
-            _residentialDestinations.AddFirst(waypoint);
+            _residentialDestinations.Add(waypoint);
         }
 
         GameObject[] medicalWaypoints = GameObject.FindGameObjectsWithTag("Medical");
         foreach (GameObject waypoint in medicalWaypoints)
         {
-            _medicalDestinations.AddFirst(waypoint);
+            _medicalDestinations.Add(waypoint);
         }
 
         foreach (Decision decision in _decisionList)
@@ -260,10 +260,6 @@ public class GameManager : MonoBehaviour
             } while (building.Occupancy == building.Capacity);
             building.Occupancy++;
             GameObject obj = SpawnNPC(waypoint.transform.position, waypoint.transform.rotation, true);
-            //NPC npc = obj.GetComponent<NPC>();
-            //npc.Virus = ScriptableObject.CreateInstance<Virus>();
-            //npc.IsInfected = true;
-            //UpdateAsset(obj);
         }
         for (int i = 0; i < _spawnHealthyAtStart; i++)
         {

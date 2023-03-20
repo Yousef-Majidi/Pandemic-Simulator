@@ -71,7 +71,7 @@ public abstract class Building : MonoBehaviour
         }
     }
 
-    protected void SetSpawnPoint(LinkedList<GameObject> waypoints)
+    protected void SetSpawnPoint(List<GameObject> waypoints)
     {
         foreach (GameObject waypoint in waypoints.ToList())
         {

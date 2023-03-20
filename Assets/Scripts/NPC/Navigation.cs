@@ -27,9 +27,9 @@ public class Navigation : MonoBehaviour
     private Animator _animator;
     private GameManager _gameManager;
 
-    private LinkedList<GameObject> _residentials;
-    private LinkedList<GameObject> _commercials;
-    private LinkedList<GameObject> _medicals;
+    private List<GameObject> _residentials;
+    private List<GameObject> _commercials;
+    private List<GameObject> _medicals;
     private List<GameObject> _destinations;
 
     public delegate void NavigationEventHandler(GameObject obj);
@@ -50,7 +50,7 @@ public class Navigation : MonoBehaviour
         _animator = GetComponent<Animator>();
         _npc = GetComponent<NPC>();
         _isTravelling = false;
-        //UpdateDestination();
+        _agent.speed = Random.Range(1.0f, 3.0f);
     }
 
     private void Update()
@@ -98,16 +98,13 @@ public class Navigation : MonoBehaviour
         _travellingTo.Unsubscribe(this);
         Building building;
         GameObject waypoint;
+        int randomIndex;
 
         if (_npc.Health <= _gameManager.HealthThreshold)
         {
-            do
-            {
-                int randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
-                waypoint = _medicals.ElementAt(randomIndex);
-                building = waypoint.GetComponentInParent<Medical>();
-                if (building.Occupancy == 0) break;
-            } while (building.Occupancy == building.Capacity);
+            randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
+            waypoint = _medicals.ElementAt(randomIndex);
+            building = waypoint.GetComponentInParent<Medical>();
 
             _travellingTo = building;
             _travellingTo.Subscribe(this);
@@ -133,13 +130,9 @@ public class Navigation : MonoBehaviour
             return;
         }
 
-        do
-        {
-            int randomIndex = UnityEngine.Random.Range(0, _commercials.Count);
-            waypoint = _commercials.ElementAt(randomIndex);
-            building = waypoint.GetComponentInParent<Commercial>();
-            if (building.Occupancy == 0) break;
-        } while (building.Occupancy == building.Capacity);
+        randomIndex = UnityEngine.Random.Range(0, _commercials.Count);
+        waypoint = _commercials.ElementAt(randomIndex);
+        building = waypoint.GetComponentInParent<Commercial>();
         _travellingTo = building;
         _travellingTo.Subscribe(this);
         _destination = waypoint.transform;
