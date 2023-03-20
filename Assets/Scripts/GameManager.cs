@@ -13,12 +13,12 @@ public class GameManager : MonoBehaviour
     private bool _godMode;
 
     [SerializeField]
-    [Tooltip("Number of npcs to spawn on start")]
-    private int _spawnAtStart;
+    [Tooltip("Number of healthy npcs to spawn on start")]
+    private int _spawnHealthyAtStart;
 
     [SerializeField]
-    [Tooltip("Percentage of infected npcs at start: 0 - 100")]
-    private int _spawnInfectedChance;
+    [Tooltip("Number of infected npcs to spawn on start")]
+    private int _spawnInfectedAtStart;
 
     [Space]
     [Header("NPCs")]
@@ -94,6 +94,8 @@ public class GameManager : MonoBehaviour
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
+    public int HealthyCount { get => _healthyCount; }
+    public int InfectedCount { get => _infectedCount; }
     public int NPCCount { get => _npcs.Count; }
     public GameObject HealthyPrefab { get => _healthyPrefab; }
     public GameObject InfectedPrefab { get => _infectedPrefab; }
@@ -159,53 +161,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public GameObject SpawnNPC(Vector3 position, Quaternion rotation)
+    public GameObject SpawnNPC(Vector3 position, Quaternion rotation, bool infected = false)
     {
         if (_npcs.Count < _maxNPC)
         {
-            GameObject obj = Instantiate(_healthyPrefab, position, rotation);
+            GameObject obj;
+            if (infected)
+            {
+                obj = Instantiate(_infectedPrefab, position, rotation);
+            }
+            else
+            {
+                obj = Instantiate(_healthyPrefab, position, rotation);
+            }
             obj.transform.parent = GameObject.Find("NPCs").transform;
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
-            obj.name = $"NPC {_npcs.Count + 1}";
-            _healthyCount++;
-
-            int infectedCount = Mathf.RoundToInt(_spawnInfectedChance / 100f * _spawnAtStart);
-            if (_infectedCount < infectedCount)
-            {
-                NPC npc = obj.GetComponent<NPC>();
-                npc.Virus = ScriptableObject.CreateInstance<Virus>();
-                npc.IsInfected = true;
-                _infectedCount++;
-            }
+            obj.name = infected ? $"NPC {_npcs.Count + 1} - infected" : $"NPC {_npcs.Count + 1}";
             _npcs.AddFirst(obj);
             return obj;
         }
         return null;
     }
-    public void UpdateAsset(GameObject npc)
+    public void UpdateAsset(GameObject obj)
     {
-        GameObject obj;
-        if (npc.GetComponent<NPC>().IsInfected)
+        GameObject newObj;
+        if (obj.GetComponent<NPC>().IsInfected)
         {
-            obj = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
-            obj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            newObj = _assetChanger.UpdateAsset(_infectedPrefab, obj.transform.position, obj.transform.rotation);
+            newObj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
             _infectedCount++;
-            _healthyCount--;
+            _healthyCount = _npcs.Count - _infectedCount;
         }
         else
         {
-            obj = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
-            obj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
-            obj.GetComponent<NPC>().Virus = null;
+            newObj = _assetChanger.UpdateAsset(_healthyPrefab, obj.transform.position, obj.transform.rotation);
+            newObj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
+            newObj.GetComponent<NPC>().Virus = null;
             _healthyCount++;
-            _infectedCount--;
+            _infectedCount = _npcs.Count - _healthyCount;
         }
-        obj.transform.parent = npc.transform.parent;
-        obj.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
-        _npcs.Remove(npc);
-        _npcs.AddFirst(obj);
-        Destroy(npc);
+        newObj.transform.parent = obj.transform.parent;
+        newObj.GetComponent<NPC>().Copy(obj.GetComponent<NPC>());
+        _npcs.Remove(obj);
+        _npcs.AddFirst(newObj);
+        Destroy(obj);
     }
 
     public void CalculatePoliticalPower()
@@ -247,7 +247,25 @@ public class GameManager : MonoBehaviour
             _npcs.AddFirst(npc);
         }
 
-        for (int i = 0; i < _spawnAtStart; i++)
+        for (int i = 0; i < _spawnInfectedAtStart; i++)
+        {
+            Residential building;
+            GameObject waypoint;
+            do
+            {
+                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                building = waypoint.GetComponentInParent<Residential>();
+                if (building.Occupancy == 0) break;
+            } while (building.Occupancy == building.Capacity);
+            building.Occupancy++;
+            GameObject obj = SpawnNPC(waypoint.transform.position, waypoint.transform.rotation, true);
+            //NPC npc = obj.GetComponent<NPC>();
+            //npc.Virus = ScriptableObject.CreateInstance<Virus>();
+            //npc.IsInfected = true;
+            //UpdateAsset(obj);
+        }
+        for (int i = 0; i < _spawnHealthyAtStart; i++)
         {
             Residential building;
             GameObject waypoint;
@@ -260,6 +278,7 @@ public class GameManager : MonoBehaviour
             } while (building.Occupancy == building.Capacity);
             building.Occupancy++;
             SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
+            _healthyCount++;
         }
         #endregion DEBUG
     }
@@ -329,6 +348,5 @@ public class GameManager : MonoBehaviour
         CalculatePoliticalPower();
         _timeManager.OnKeyDown();
         _timeManager.Clock();
-        //_healthyCount = _npcs.Count;
     }
 }

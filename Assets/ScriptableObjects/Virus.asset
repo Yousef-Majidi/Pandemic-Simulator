@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a3dc18ae4fceba4dbfb63be10e68c33, type: 3}
   m_Name: Virus
   m_EditorClassIdentifier: 
-  _coughRate: 0.1
+  _coughRate: 0.01
   _staminaDecayRate: 0.1
   _healthDecayRate: 0.1
-  _mutationChance: 1
+  _mutationChance: 0.01
