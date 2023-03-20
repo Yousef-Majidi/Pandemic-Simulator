@@ -25,16 +25,7 @@ public class InGameUI : MonoBehaviour
 
     void UpdateHealth()
     {
-        int healthyNPCs = 0;
-        foreach (GameObject npc in _gameManager.NPCs.ToList())
-        {
-            if (npc == null) continue;
-
-            if (!npc.GetComponent<NPC>().IsInfected)
-            {
-                healthyNPCs++;
-            }
-        }
+        int healthyNPCs = _gameManager.HealthyCount;
         float percentage = 0;
         if (_gameManager.NPCs.Count > 0)
         {
@@ -48,18 +39,10 @@ public class InGameUI : MonoBehaviour
 
     void UpdateHappiness()
     {
-        float totalHappiness = 0;
-        foreach (GameObject npc in _gameManager.NPCs.ToList())
-        {
-            if (npc == null) continue;
-
-            totalHappiness += npc.GetComponent<NPC>().Happiness;
-        }
-
         float percentage = 0;
         if (_gameManager.NPCs.Count > 0)
         {
-            percentage = totalHappiness / (_gameManager.NPCs.Count * 100);
+            percentage = _gameManager.AverageHappiness / 100;
         }
 
         GameObject.Find("HappinessSlider").GetComponent<UnityEngine.UI.Slider>().value = percentage;
@@ -83,7 +66,6 @@ public class InGameUI : MonoBehaviour
 
     void UpdatePoliticalPower()
     {
-        //make sure political power is a whole number
         int PP = Mathf.RoundToInt(_gameManager.PoliticalPower);
         GameObject.Find("PoliticalPower").GetComponent<TextMeshProUGUI>().text = PP.ToString();
     }
