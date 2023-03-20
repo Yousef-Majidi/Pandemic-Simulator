@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _godMode: 0
-  _spawnHealthyAtStart: 249
+  _spawnHealthyAtStart: 9
   _spawnInfectedAtStart: 1
   _maxNPC: 250
   _healthyCount: 0

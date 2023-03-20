@@ -160,7 +160,7 @@ public class Navigation : MonoBehaviour
     {
         foreach (GameObject residential in _residentials)
         {
-            if (residential.transform.position == position)
+            if (Vector3.Distance(residential.transform.position, position) < 10.1f)
             {
                 _home = residential.transform;
                 _travellingTo = residential.GetComponentInParent<Building>();

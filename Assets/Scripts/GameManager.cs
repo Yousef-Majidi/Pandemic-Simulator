@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
             obj.name = infected ? $"NPC {_npcs.Count + 1} - infected" : $"NPC {_npcs.Count + 1}";
-            _npcs.AddFirst(obj);
+            _npcs.AddLast(obj);
             return obj;
         }
         return null;
@@ -204,7 +204,7 @@ public class GameManager : MonoBehaviour
         newObj.transform.parent = obj.transform.parent;
         newObj.GetComponent<NPC>().Copy(obj.GetComponent<NPC>());
         _npcs.Remove(obj);
-        _npcs.AddFirst(newObj);
+        _npcs.AddLast(newObj);
         Destroy(obj);
     }
 
@@ -214,7 +214,7 @@ public class GameManager : MonoBehaviour
             _politicalPower += _averageHappiness * Time.deltaTime * _politicalPowerMultiplier;
     }
 
-    void Awake()
+    private void Awake()
     {
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)
@@ -239,42 +239,48 @@ public class GameManager : MonoBehaviour
             decision.OnDecisionEnact += Decision_OnDecisionEnact;
             decision.OnDecisionRevoke += Decision_OnDecisionRevoke;
         }
+    }
 
+    private void Start()
+    {
         #region DEBUG
-        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
-        foreach (GameObject npc in npcs)
         {
-            _npcs.AddFirst(npc);
-        }
+            GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
+            foreach (GameObject npc in npcs)
+            {
+                _npcs.AddFirst(npc);
+            }
 
-        for (int i = 0; i < _spawnInfectedAtStart; i++)
-        {
+            List<GameObject> availableBuildings = _residentialDestinations.ToList();
             Residential building;
             GameObject waypoint;
-            do
+            int randomIndex;
+            for (int i = 0; i < _spawnInfectedAtStart; i++)
             {
-                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                randomIndex = UnityEngine.Random.Range(0, availableBuildings.Count);
+                waypoint = availableBuildings[randomIndex];
                 building = waypoint.GetComponentInParent<Residential>();
-                if (building.Occupancy == 0) break;
-            } while (building.Occupancy == building.Capacity);
-            building.Occupancy++;
-            GameObject obj = SpawnNPC(waypoint.transform.position, waypoint.transform.rotation, true);
-        }
-        for (int i = 0; i < _spawnHealthyAtStart; i++)
-        {
-            Residential building;
-            GameObject waypoint;
-            do
+                building.Occupancy++;
+                if (building.Occupancy == building.Capacity)
+                {
+                    availableBuildings.Remove(waypoint);
+                }
+                SpawnNPC(waypoint.transform.position, waypoint.transform.rotation, true);
+                _infectedCount++;
+            }
+            for (int i = 0; i < _spawnHealthyAtStart; i++)
             {
-                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                randomIndex = UnityEngine.Random.Range(0, availableBuildings.Count);
+                waypoint = availableBuildings[randomIndex];
                 building = waypoint.GetComponentInParent<Residential>();
-                if (building.Occupancy == 0) break;
-            } while (building.Occupancy == building.Capacity);
-            building.Occupancy++;
-            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
-            _healthyCount++;
+                building.Occupancy++;
+                if (building.Occupancy == building.Capacity)
+                {
+                    availableBuildings.Remove(waypoint);
+                }
+                SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
+                _healthyCount++;
+            }
         }
         #endregion DEBUG
     }
