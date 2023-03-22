@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class SaveMenu : MonoBehaviour
 {
+
+    public AudioSource audio;
+
     private GameManager _gameManager;
 
     [SerializeField]
@@ -15,6 +18,7 @@ public class SaveMenu : MonoBehaviour
         setImage();
         _saveMenuUI.SetActive(true);
         _gameManager.TimeManager.SetTimeScale(0);
+        audio.Play();
     }
 
     public void close()

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
+    public AudioSource audio;
+
     private GameManager _gameManager;
 
     [SerializeField]
@@ -48,6 +50,7 @@ public class PauseMenu : MonoBehaviour
                 Resume();
             else{
                 TakeScreenshot();
+                audio.Play();
                 Pause();
             }
         }
