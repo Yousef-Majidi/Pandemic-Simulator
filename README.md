@@ -22,3 +22,9 @@ This game will be created using the Unity game engine and written in C#.
 | TBD | Yousef|
 | TBD | Suhail|
 | TBD | Ian|
+
+# Credits
+ Space Jazz by Kevin MacLeod | https://incompetech.com/
+Music promoted by https://www.chosic.com/free-music/all/
+Creative Commons CC BY 3.0
+https://creativecommons.org/licenses/by/3.0/
