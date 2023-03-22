@@ -7,6 +7,7 @@ using System.Linq;
 
 public class InGameUI : MonoBehaviour
 {
+    public new AudioSource audio;
     private GameManager _gameManager;
     void Awake()
     {
@@ -90,6 +91,7 @@ public class InGameUI : MonoBehaviour
 
     public void HandleUIpanel(GameObject panel)
     {
+        audio.Play();
         if (panel.activeSelf)
             panel.SetActive(false);
         else

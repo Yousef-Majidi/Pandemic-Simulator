@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SaveMenu : MonoBehaviour
 {
 
-    public AudioSource audio;
+    public new AudioSource audio;
 
     private GameManager _gameManager;
 

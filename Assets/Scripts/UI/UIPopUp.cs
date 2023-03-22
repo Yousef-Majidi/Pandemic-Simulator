@@ -6,7 +6,7 @@ using TMPro;
 
 public class UIPopUp : MonoBehaviour
 {
-
+    public new AudioSource audio;
     private bool isPopUp = false;
     private GameObject _tempObj;
     void Awake()
@@ -43,6 +43,7 @@ public class UIPopUp : MonoBehaviour
             {
                 if(hit.collider.gameObject.CompareTag("NPC"))
                 {
+                    audio.Play();
                     NpcPopUp(hit.collider.gameObject);
                     isPopUp = true;
                 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    public AudioSource audio;
+    public new AudioSource audio;
 
     private GameManager _gameManager;
 
