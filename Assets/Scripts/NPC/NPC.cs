@@ -11,6 +11,10 @@ public class NPC : MonoBehaviour
     [Header("Health")]
 
     [SerializeField]
+    [Tooltip("Character Name")]
+    private string _name;
+
+    [SerializeField]
     [Tooltip("Current Asset Type")]
     private AssetType _assetType;
 
@@ -54,6 +58,7 @@ public class NPC : MonoBehaviour
 
     private bool _isHappinessDecayActive;
 
+    private string[] names;
     private NavMeshAgent _agent;
     private GameManager _gameManager;
 
@@ -64,6 +69,7 @@ public class NPC : MonoBehaviour
     }
 
     public bool IsInfected { get => _isInfected; set => _isInfected = value; }
+    public string Name { get => _name; set => _name = value; }
     public float Health { get => _health; set => _health = value; }
     public float Stamina { get => _stamina; set => _stamina = value; }
     public float Happiness { get => _happiness; set => _happiness = value; }
@@ -92,6 +98,14 @@ public class NPC : MonoBehaviour
         UpdateHappiness();
     }
 
+    public void setRandomName()
+    {
+        string[] names = _gameManager.Names;
+        int index = Random.Range(0, names.Length - 1);
+        _name = names[index];
+
+    }
+
     private void CheckInfection()
     {
         if ((_isInfected && _assetType == AssetType.Healthy) || (!_isInfected && _assetType == AssetType.Infected))
@@ -102,6 +116,7 @@ public class NPC : MonoBehaviour
 
     public void Copy(NPC source)
     {
+        _name = source._name;
         _isInfected = source._isInfected;
         _health = source._health;
         _stamina = source._stamina;

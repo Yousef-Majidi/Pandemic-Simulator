@@ -77,12 +77,18 @@ public class GameManager : MonoBehaviour
     [Tooltip("The list of all decisions")]
     private List<Decision> _decisionList = new();
 
+    [SerializeField]
+    [Tooltip("File Containing Names of all NPC's")]
+    private TextAsset _npcnames;
+
     SaveManager _saveManager = new();
 
     private LinkedList<GameObject> _commercialDestinations = new();
     private LinkedList<GameObject> _residentialDestinations = new();
     private LinkedList<GameObject> _medicalDestinations = new();
     private LinkedList<GameObject> _npcs = new();
+
+    private string[] _names;
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
@@ -101,6 +107,7 @@ public class GameManager : MonoBehaviour
     public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public LinkedList<GameObject> NPCs { get => _npcs; }
     public List<Decision> DecisionList { get => _decisionList; }
+    public string[] Names { get => _names; }
 
 
     private void ToggleGodMode()
@@ -158,6 +165,7 @@ public class GameManager : MonoBehaviour
             GameObject obj = Instantiate(_healthyPrefab, position, rotation);
             obj.transform.parent = GameObject.Find("NPCs").transform;
             obj.GetComponent<Navigation>().SetHome(position);
+            obj.GetComponent<NPC>().setRandomName();
             obj.tag = "NPC";
             _npcs.AddFirst(obj);
             return obj;
@@ -191,8 +199,14 @@ public class GameManager : MonoBehaviour
             _politicalPower += _averageHappiness * Time.deltaTime * _politicalPowerMultiplier;
     }
 
+    private void readCSV()
+    {
+        _names = _npcnames.text.Split(new string[] { ",", "\n" }, StringSplitOptions.None);
+    }
+
     void Awake()
     {
+        readCSV();
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)
         {
