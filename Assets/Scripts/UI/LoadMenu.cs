@@ -13,6 +13,7 @@ public class LoadMenu : MonoBehaviour
     private GameManager _gameManager;
     private SaveManager _saveManager = new();
     private MainMenuScripts _mainMenuScripts;
+    UIPopUp _uiPopUp;
 
     [SerializeField]
     private string _savePath;
@@ -41,6 +42,7 @@ public class LoadMenu : MonoBehaviour
         {
             _loadMenuUI.SetActive(false);
             _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
         }
     }
 
@@ -152,6 +154,7 @@ public class LoadMenu : MonoBehaviour
                 else{
                     _saveManager.LoadGame(_gameManager,fileNameNoExten);
                     _loadMenuUI.SetActive(false);
+                    _uiPopUp.SaveLoadPopUp(fileNameNoExten+" Loaded");
                     _gameManager.TimeManager.SetTimeScale(0);
                 }
 
@@ -205,6 +208,7 @@ public class LoadMenu : MonoBehaviour
         }
         if (SceneManager.GetActiveScene().name == sceneName){
             _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
             _saveManager.LoadGame(_gameManager, fileName);
             _loadMenuUI.SetActive(false);
             Destroy(_toBeDestroyed);
