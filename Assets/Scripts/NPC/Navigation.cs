@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 public class Navigation : MonoBehaviour
 {
@@ -15,33 +16,41 @@ public class Navigation : MonoBehaviour
 
     [SerializeField]
     [Tooltip("Whether an NPC is commuting to a destination or not")]
-    private bool _isCommuting;
+    private bool _isTravelling;
+
+    [SerializeField]
+    [Tooltip("The building the NPC is currently travelling to")]
+    private Building _travellingTo;
 
     private NavMeshAgent _agent;
     private NPC _npc;
     private Animator _animator;
     private GameManager _gameManager;
 
-    private LinkedList<GameObject> _residentials;
-    private LinkedList<GameObject> _commercials;
-    private LinkedList<GameObject> _medicals;
+    private List<GameObject> _residentials;
+    private List<GameObject> _commercials;
+    private List<GameObject> _medicals;
+    private List<GameObject> _destinations;
 
     public delegate void NavigationEventHandler(GameObject obj);
     public event NavigationEventHandler OnReachedDestination;
 
     public Transform Destination { get => _destination; set => _destination = value; }
     public Transform Home { get => _home; set => _home = value; }
-    public bool IsCommuting { get => _isCommuting; set => _isCommuting = value; }
+    public bool IsTravelling { get => _isTravelling; set => _isTravelling = value; }
+    public Building TravelingTo { get => _travellingTo; set => _travellingTo = value; }
     private void Awake()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _residentials = _gameManager.ResidentialDestinations;
         _commercials = _gameManager.CommercialDestinations;
         _medicals = _gameManager.MedicalDestinations;
+        _destinations = _residentials.Concat(_commercials).Concat(_medicals).Concat(_residentials).ToList();
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _npc = GetComponent<NPC>();
-        UpdateDestination();
+        _isTravelling = false;
+        _agent.speed = Random.Range(1.0f, 3.0f);
     }
 
     private void Update()
@@ -80,44 +89,68 @@ public class Navigation : MonoBehaviour
 
     public void UpdateDestination()
     {
-        if (_isCommuting)
+        if (_isTravelling)
         {
             _agent.destination = _destination.position;
             return;
         }
 
+        _travellingTo.Unsubscribe(this);
+        Building building;
+        GameObject waypoint;
+        int randomIndex;
+
         if (_npc.Health <= _gameManager.HealthThreshold)
         {
-            _destination = _medicals.ElementAt(Random.Range(0, _medicals.Count)).transform;
+            randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
+            waypoint = _medicals.ElementAt(randomIndex);
+            building = waypoint.GetComponentInParent<Medical>();
+
+            _travellingTo = building;
+            _travellingTo.Subscribe(this);
+            _destination = waypoint.transform;
             _agent.destination = _destination.position;
-            _isCommuting = true;
+            _isTravelling = true;
             return;
         }
 
         if (_npc.Stamina <= _gameManager.StaminaThreshold)
         {
             _destination = _home;
+            foreach (GameObject residential in _residentials)
+            {
+                if (residential.transform == _destination)
+                {
+                    building = residential.GetComponentInParent<Residential>();
+                    building.Subscribe(this);
+                }
+            }
             _agent.destination = _destination.position;
-            _isCommuting = true;
+            _isTravelling = true;
             return;
         }
 
-        int randomIndex = Random.Range(0, _medicals.Count);
-        _destination = _commercials.ElementAt(randomIndex).transform;
+        randomIndex = UnityEngine.Random.Range(0, _commercials.Count);
+        waypoint = _commercials.ElementAt(randomIndex);
+        building = waypoint.GetComponentInParent<Commercial>();
+        _travellingTo = building;
+        _travellingTo.Subscribe(this);
+        _destination = waypoint.transform;
         _agent.destination = _destination.position;
-        _isCommuting = true;
+        _isTravelling = true;
     }
 
     public void SetDestination(Vector3 position)
     {
-        List<GameObject> destinations = _residentials.Concat(_commercials).Concat(_medicals).Concat(_residentials).ToList();
-        foreach (GameObject dest in destinations)
+        foreach (GameObject dest in _destinations)
         {
             if (dest.transform.position == position)
             {
+                _travellingTo = dest.GetComponentInParent<Building>();
+                _travellingTo.Subscribe(this);
                 _destination = dest.transform;
                 _agent.destination = _destination.position;
-                _isCommuting = true;
+                _isTravelling = true;
                 break;
             }
         }
@@ -127,11 +160,13 @@ public class Navigation : MonoBehaviour
     {
         foreach (GameObject residential in _residentials)
         {
-            if (residential.transform.position == position)
+            if (Vector3.Distance(residential.transform.position, position) < 10.1f)
             {
                 _home = residential.transform;
+                _travellingTo = residential.GetComponentInParent<Building>();
+                _travellingTo.Subscribe(this);
+                _destination = _home;
                 _agent.destination = _destination.position;
-                _isCommuting = true;
                 break;
             }
         }

@@ -8,19 +8,19 @@ public class Virus : ScriptableObject
 {
     [SerializeField]
     [Tooltip("The chance of spreading infection by being near another NPC")]
-    private float _coughRate = 0.5f;
+    private float _coughRate;
 
     [SerializeField]
     [Tooltip("The rate at which the NPC's stamina decays")]
-    private float _staminaDecayRate = 0.5f;
+    private float _staminaDecayRate;
 
     [SerializeField]
     [Tooltip("The rate at which the NPC's health decays")]
-    private float _healthDecayRate = 0.5f;
+    private float _healthDecayRate;
 
     [SerializeField]
     [Tooltip("The chance of mutation when infecting another NPC")]
-    private float _mutationChance = 0.5f;
+    private float _mutationChance;
 
     public float CoughRate { get => _coughRate; set => _coughRate = value; }
     public float StaminaDecayRate { get => _staminaDecayRate; set => _staminaDecayRate = value; }
@@ -30,9 +30,9 @@ public class Virus : ScriptableObject
     public void Mutate()
     {
         _coughRate = Random.Range(0.01f, 0.1f);
-        _staminaDecayRate = Random.Range(1f, 5f);
-        _healthDecayRate = Random.Range(1f, 5f);
-        _mutationChance = Random.Range(0.01f, 0.1f);
+        _staminaDecayRate = Random.Range(0.1f, 5f);
+        _healthDecayRate = Random.Range(0.1f, 5f);
+        _mutationChance = Random.Range(0.01f, 0.2f);
     }
 
     public void Copy(Virus source)

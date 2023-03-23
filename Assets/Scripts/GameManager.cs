@@ -13,8 +13,12 @@ public class GameManager : MonoBehaviour
     private bool _godMode;
 
     [SerializeField]
-    [Tooltip("Number of npcs to spawn on start")]
-    private int _startNpcs;
+    [Tooltip("Number of healthy npcs to spawn on start")]
+    private int _spawnHealthyAtStart;
+
+    [SerializeField]
+    [Tooltip("Number of infected npcs to spawn on start")]
+    private int _spawnInfectedAtStart;
 
     [Space]
     [Header("NPCs")]
@@ -24,8 +28,12 @@ public class GameManager : MonoBehaviour
     private int _maxNPC = 250;
 
     [SerializeField]
-    [Tooltip("Currently spawned on the scene")]
-    private int _npcCount = 0;
+    [Tooltip("Number of healthy NPCs")]
+    private int _healthyCount = 0;
+
+    [SerializeField]
+    [Tooltip("Number of infected NPCs")]
+    private int _infectedCount = 0;
 
     [SerializeField]
     [Tooltip("Average Happiness of all NPCs")]
@@ -77,15 +85,17 @@ public class GameManager : MonoBehaviour
     [Tooltip("The list of all decisions")]
     private List<Decision> _decisionList = new();
 
-    SaveManager _saveManager = new();
+    readonly SaveManager _saveManager = new();
 
-    private LinkedList<GameObject> _commercialDestinations = new();
-    private LinkedList<GameObject> _residentialDestinations = new();
-    private LinkedList<GameObject> _medicalDestinations = new();
+    private List<GameObject> _commercialDestinations = new();
+    private List<GameObject> _residentialDestinations = new();
+    private List<GameObject> _medicalDestinations = new();
     private LinkedList<GameObject> _npcs = new();
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
+    public int HealthyCount { get => _healthyCount; }
+    public int InfectedCount { get => _infectedCount; }
     public int NPCCount { get => _npcs.Count; }
     public GameObject HealthyPrefab { get => _healthyPrefab; }
     public GameObject InfectedPrefab { get => _infectedPrefab; }
@@ -96,11 +106,11 @@ public class GameManager : MonoBehaviour
     public int HealthThreshold { get => _healthThreshold; set => _healthThreshold = value; }
     public int StaminaThreshold { get => _staminaThreshold; set => _staminaThreshold = value; }
     public TimeManager TimeManager { get => _timeManager; }
-    public LinkedList<GameObject> CommercialDestinations { get => _commercialDestinations; }
-    public LinkedList<GameObject> MedicalDestinations { get => _medicalDestinations; }
-    public LinkedList<GameObject> ResidentialDestinations { get => _residentialDestinations; }
-    public LinkedList<GameObject> NPCs { get => _npcs; }
+    public List<GameObject> CommercialDestinations { get => _commercialDestinations; }
+    public List<GameObject> MedicalDestinations { get => _medicalDestinations; }
+    public List<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public List<Decision> DecisionList { get => _decisionList; }
+    public LinkedList<GameObject> NPCs { get => _npcs; }
 
 
     private void ToggleGodMode()
@@ -151,38 +161,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public GameObject SpawnNPC(Vector3 position, Quaternion rotation)
+    public GameObject SpawnNPC(Vector3 position, Quaternion rotation, bool infected = false)
     {
         if (_npcs.Count < _maxNPC)
         {
-            GameObject obj = Instantiate(_healthyPrefab, position, rotation);
+            GameObject obj;
+            if (infected)
+            {
+                obj = Instantiate(_infectedPrefab, position, rotation);
+            }
+            else
+            {
+                obj = Instantiate(_healthyPrefab, position, rotation);
+            }
             obj.transform.parent = GameObject.Find("NPCs").transform;
             obj.GetComponent<Navigation>().SetHome(position);
             obj.tag = "NPC";
-            _npcs.AddFirst(obj);
+            obj.name = infected ? $"NPC {_npcs.Count + 1} - infected" : $"NPC {_npcs.Count + 1}";
+            _npcs.AddLast(obj);
             return obj;
         }
         return null;
     }
-    public void UpdateAsset(GameObject npc)
+    public void UpdateAsset(GameObject obj)
     {
-        GameObject obj;
-        if (npc.GetComponent<NPC>().IsInfected)
+        GameObject newObj;
+        if (obj.GetComponent<NPC>().IsInfected)
         {
-            obj = _assetChanger.UpdateAsset(_infectedPrefab, npc.transform.position, npc.transform.rotation);
-            obj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            newObj = _assetChanger.UpdateAsset(_infectedPrefab, obj.transform.position, obj.transform.rotation);
+            newObj.GetComponent<NPC>().Asset = NPC.AssetType.Infected;
+            _infectedCount++;
+            _healthyCount = _npcs.Count - _infectedCount;
         }
         else
         {
-            obj = _assetChanger.UpdateAsset(_healthyPrefab, npc.transform.position, npc.transform.rotation);
-            obj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
-            obj.GetComponent<NPC>().Virus = null;
+            newObj = _assetChanger.UpdateAsset(_healthyPrefab, obj.transform.position, obj.transform.rotation);
+            newObj.GetComponent<NPC>().Asset = NPC.AssetType.Healthy;
+            newObj.GetComponent<NPC>().Virus = null;
+            _healthyCount++;
+            _infectedCount = _npcs.Count - _healthyCount;
         }
-        obj.transform.parent = npc.transform.parent;
-        obj.GetComponent<NPC>().Copy(npc.GetComponent<NPC>());
-        _npcs.Remove(npc);
-        _npcs.AddFirst(obj);
-        Destroy(npc);
+        newObj.transform.parent = obj.transform.parent;
+        newObj.GetComponent<NPC>().Copy(obj.GetComponent<NPC>());
+        _npcs.Remove(obj);
+        _npcs.AddLast(newObj);
+        Destroy(obj);
     }
 
     public void CalculatePoliticalPower()
@@ -191,40 +214,90 @@ public class GameManager : MonoBehaviour
             _politicalPower += _averageHappiness * Time.deltaTime * _politicalPowerMultiplier;
     }
 
-    void Awake()
+    private void Awake()
     {
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)
         {
-            _commercialDestinations.AddFirst(waypoint);
+            _commercialDestinations.Add(waypoint);
         }
 
         GameObject[] residentialWaypoints = GameObject.FindGameObjectsWithTag("Residential");
         foreach (GameObject waypoint in residentialWaypoints)
         {
-            _residentialDestinations.AddFirst(waypoint);
+            _residentialDestinations.Add(waypoint);
         }
 
         GameObject[] medicalWaypoints = GameObject.FindGameObjectsWithTag("Medical");
         foreach (GameObject waypoint in medicalWaypoints)
         {
-            _medicalDestinations.AddFirst(waypoint);
+            _medicalDestinations.Add(waypoint);
         }
 
+        foreach (Decision decision in _decisionList)
+        {
+            decision.OnDecisionEnact += Decision_OnDecisionEnact;
+            decision.OnDecisionRevoke += Decision_OnDecisionRevoke;
+        }
+    }
+
+    private void Start()
+    {
         #region DEBUG
-        GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
-        foreach (GameObject npc in npcs)
         {
-            _npcs.AddFirst(npc);
-        }
+            GameObject[] npcs = GameObject.FindGameObjectsWithTag("NPC");
+            foreach (GameObject npc in npcs)
+            {
+                _npcs.AddFirst(npc);
+            }
 
-        for (int i = 0; i < _startNpcs; i++)
-        {
-            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
-            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            List<GameObject> availableBuildings = _residentialDestinations.ToList();
+            Residential building;
+            GameObject waypoint;
+            int randomIndex;
+            for (int i = 0; i < _spawnInfectedAtStart; i++)
+            {
+                randomIndex = UnityEngine.Random.Range(0, availableBuildings.Count);
+                waypoint = availableBuildings[randomIndex];
+                building = waypoint.GetComponentInParent<Residential>();
+                building.Occupancy++;
+                if (building.Occupancy == building.Capacity)
+                {
+                    availableBuildings.Remove(waypoint);
+                }
+                SpawnNPC(waypoint.transform.position, waypoint.transform.rotation, true);
+                _infectedCount++;
+            }
+            for (int i = 0; i < _spawnHealthyAtStart; i++)
+            {
+                randomIndex = UnityEngine.Random.Range(0, availableBuildings.Count);
+                waypoint = availableBuildings[randomIndex];
+                building = waypoint.GetComponentInParent<Residential>();
+                building.Occupancy++;
+                if (building.Occupancy == building.Capacity)
+                {
+                    availableBuildings.Remove(waypoint);
+                }
+                SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
+                _healthyCount++;
+            }
         }
         #endregion DEBUG
+    }
+
+    private void Decision_OnDecisionEnact(Decision decision, float normalizedPoliticalPower)
+    {
+        Debug.Log($"{decision.Title} was enacted");
+        Debug.Log($"Normalized Political Power: {normalizedPoliticalPower}");
+
+        decision.ApplyEffects(_npcs, normalizedPoliticalPower);
+    }
+
+    private void Decision_OnDecisionRevoke(Decision decision, float normalizedPoliticalPower)
+    {
+        Debug.Log($"{decision.Title} was removed");
+
+        decision.RemoveEffects();
     }
 
     void Update()
@@ -237,9 +310,17 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N) && _godMode)
         {
-            int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
-            GameObject spawnPoint = _residentialDestinations.ElementAt(randomIndex);
-            SpawnNPC(spawnPoint.transform.position, spawnPoint.transform.rotation);
+            Residential building;
+            GameObject waypoint;
+            do
+            {
+                int randomIndex = UnityEngine.Random.Range(0, _residentialDestinations.Count);
+                waypoint = _residentialDestinations.ElementAt(randomIndex);
+                building = waypoint.GetComponentInParent<Residential>();
+                if (building.Occupancy == 0) break;
+            } while (building.Occupancy == building.Capacity);
+            building.Occupancy++;
+            SpawnNPC(waypoint.transform.position, waypoint.transform.rotation);
         }
 
         if (Input.GetKeyDown(KeyCode.V) && _godMode)
@@ -269,6 +350,5 @@ public class GameManager : MonoBehaviour
         CalculatePoliticalPower();
         _timeManager.OnKeyDown();
         _timeManager.Clock();
-        _npcCount = _npcs.Count;
     }
 }

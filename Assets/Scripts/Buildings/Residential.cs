@@ -62,15 +62,12 @@ public class Residential : Building
                 }
                 return false;
             }
-            else
+            npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
+            if (npc.Happiness > 100)
             {
-                npc.Happiness += _happinessRecoveryRate * Time.deltaTime;
-                if (npc.Happiness > 100)
-                {
-                    npc.Happiness = 100;
-                }
-                return false;
+                npc.Happiness = 100;
             }
+            return false;
         }
         return false;
     }
@@ -80,19 +77,19 @@ public class Residential : Building
         npc.SetActive(true);
         _visiting.Remove(npc);
         Navigation nav = npc.GetComponent<Navigation>();
-        nav.IsCommuting = false;
+        nav.IsTravelling = false;
         return;
     }
 
     private new void Awake()
     {
         base.Awake();
+        _capacity = Mathf.CeilToInt((float)_gameManager.MaxNPCs / _gameManager.ResidentialDestinations.Count);
         SetSpawnPoint(_gameManager.ResidentialDestinations);
     }
 
-    private new void Update()
+    private void Update()
     {
-        base.Update();
         CalculateAttributes();
     }
 }

@@ -10,17 +10,14 @@ public class DecisionsMenu : MonoBehaviour
     private GameManager _gameManager;
     private List<Decision> _decisionList;
 
-
-
     void Awake()
     {
         gameObject.SetActive(false);
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         _decisionList = _gameManager.DecisionList;
-
     }
 
-    public void close()
+    public void Close()
     {
         gameObject.SetActive(false);
         if (GameObject.Find("DecisionCanvas") != null)
@@ -82,7 +79,7 @@ public class DecisionsMenu : MonoBehaviour
         slider.GetComponent<RectTransform>().sizeDelta = new Vector2(600, 50);
         slider.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -200);
         slider.GetComponent<Slider>().minValue = 0;
-        slider.GetComponent<Slider>().maxValue = _gameManager.PoliticalPower;
+        slider.GetComponent<Slider>().maxValue = decision.MaxCost;
         slider.GetComponent<Slider>().value = 0;
         slider.GetComponent<Slider>().interactable = true;
         slider.GetComponent<Slider>().direction = Slider.Direction.LeftToRight;
@@ -156,7 +153,7 @@ public class DecisionsMenu : MonoBehaviour
         GameObject healthEffect = new GameObject("HealthEffect", typeof(RectTransform));
         healthEffect.transform.SetParent(panel.transform, false);
         healthEffect.AddComponent<TextMeshProUGUI>();
-        healthEffect.GetComponent<TextMeshProUGUI>().text = "Health Effect: " + decision.HealthEffect;
+        //healthEffect.GetComponent<TextMeshProUGUI>().text = "Health Effect: " + decision.HealthEffect;
         healthEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         healthEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
         healthEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -170,7 +167,7 @@ public class DecisionsMenu : MonoBehaviour
         GameObject happinessEffect = new GameObject("HappinessEffect", typeof(RectTransform));
         happinessEffect.transform.SetParent(panel.transform, false);
         happinessEffect.AddComponent<TextMeshProUGUI>();
-        happinessEffect.GetComponent<TextMeshProUGUI>().text = "Happiness Effect: " + decision.HappyEffect;
+        //happinessEffect.GetComponent<TextMeshProUGUI>().text = "Happiness Effect: " + decision.HappyEffect;
         happinessEffect.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         happinessEffect.GetComponent<TextMeshProUGUI>().fontSize = 80;
         happinessEffect.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -184,7 +181,10 @@ public class DecisionsMenu : MonoBehaviour
         politicalPower.transform.SetParent(panel.transform, false);
         politicalPower.AddComponent<TextMeshProUGUI>();
         politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value;
-        slider.GetComponent<Slider>().onValueChanged.AddListener(delegate { politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value; });
+        slider.GetComponent<Slider>().onValueChanged.AddListener(delegate
+        {
+            politicalPower.GetComponent<TextMeshProUGUI>().text = "Political Power Cost: " + slider.GetComponent<Slider>().value;
+        });
         politicalPower.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
         politicalPower.GetComponent<TextMeshProUGUI>().fontSize = 80;
         politicalPower.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
@@ -209,6 +209,7 @@ public class DecisionsMenu : MonoBehaviour
         }
         button.GetComponent<Button>().onClick.AddListener(delegate
         {
+            decision.NotifyDecisionStatusChange(decision, slider.GetComponent<Slider>().normalizedValue);
             if (decision.IsEnacted)
             {
                 decision.IsEnacted = false;
@@ -361,13 +362,6 @@ public class DecisionsMenu : MonoBehaviour
             buttonText.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
             buttonText.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
             buttonText.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 100);
-
-
-
-
-
         }
     }
-
-
 }

@@ -45,16 +45,13 @@ public class Commercial : Building
     {
         if (!_gameManager.GodMode)
         {
-            if (npc.IsInfected)
+            npc.Happiness -= npc.HappinessDecayRate * Time.deltaTime;
+            if (npc.Happiness < 0)
             {
-                npc.Happiness -= npc.HappinessDecayBase * Time.deltaTime;
-                if (npc.Happiness < 0)
-                {
-                    npc.Happiness = 0;
-                    return true;
-                }
-                return false;
+                npc.Happiness = 0;
+                return true;
             }
+            return false;
         }
         return false;
     }
@@ -64,7 +61,7 @@ public class Commercial : Building
         npc.SetActive(true);
         _visiting.Remove(npc);
         Navigation nav = npc.GetComponent<Navigation>();
-        nav.IsCommuting = false;
+        nav.IsTravelling = false;
         return;
     }
     private void ElapsedTime()
@@ -103,12 +100,13 @@ public class Commercial : Building
     private new void Awake()
     {
         base.Awake();
+        _capacity = Mathf.CeilToInt((float)_gameManager.MaxNPCs / _gameManager.CommercialDestinations.Count);
         SetSpawnPoint(_gameManager.CommercialDestinations);
     }
 
-    private new void Update()
+    private void Update()
     {
-        base.Update();
+        _occupancy = _visiting.Count;
         ElapsedTime();
         CalculateAttributes();
     }

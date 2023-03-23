@@ -45,9 +45,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _godMode: 0
-  _startNpcs: 1
+  _spawnHealthyAtStart: 9
+  _spawnInfectedAtStart: 1
   _maxNPC: 250
-  _npcCount: 0
+  _healthyCount: 0
+  _infectedCount: 0
   _averageHappiness: 0
   _politicalPower: 50
   _politicalPowerMultiplier: 0.001
@@ -60,8 +62,8 @@ MonoBehaviour:
   _decisionList:
   - {fileID: 11400000, guid: 7f4fcdd6634720243b0f9904366d9f20, type: 2}
   - {fileID: 11400000, guid: a0f363977c408094ba67661170b37e39, type: 2}
-  - {fileID: 11400000, guid: 98752339347dd89488ba6768873418a0, type: 2}
   - {fileID: 11400000, guid: 04f2b77fd85f2cd4a829424cab142e9c, type: 2}
   - {fileID: 11400000, guid: 71c053a1d0b6d324b8cd6dd3b0544298, type: 2}
+  - {fileID: 11400000, guid: 98752339347dd89488ba6768873418a0, type: 2}
   - {fileID: 11400000, guid: cae58776cbd849149993adc3c16744cf, type: 2}
   - {fileID: 11400000, guid: 3a9e9f03f1f5cee468ae88f4deef8999, type: 2}

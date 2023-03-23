@@ -74,14 +74,14 @@ public class NPC : MonoBehaviour
     public AssetType Asset { get => _assetType; set => _assetType = value; }
     public Virus Virus { get => _virus; set => _virus = value; }
 
-    void Awake()
+    private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _assetType = IsInfected ? AssetType.Infected : AssetType.Healthy;
+        _assetType = _isInfected ? AssetType.Infected : AssetType.Healthy;
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    void Update()
+    private void Update()
     {
         if (_agent.velocity.magnitude > 0 && !_gameManager.GodMode)
         {
@@ -106,18 +106,25 @@ public class NPC : MonoBehaviour
         _health = source._health;
         _stamina = source._stamina;
         _happiness = source._happiness;
+        name = source.name;
 
         if (source.Virus != null && _isInfected)
         {
             _virus = ScriptableObject.CreateInstance<Virus>();
             _virus.Copy(source._virus);
+            name = source.name + " - Infected";
         }
 
-        var currentDestination = source.GetComponent<Navigation>().Destination;
-        var home = source.GetComponent<Navigation>().Home;
-        GetComponent<Navigation>().Home = home;
-        GetComponent<Navigation>().Destination = currentDestination;
-        GetComponent<Navigation>().IsCommuting = source.GetComponent<Navigation>().IsCommuting;
+        Transform currentDestination = source.GetComponent<Navigation>().Destination;
+        Transform home = source.GetComponent<Navigation>().Home;
+        Navigation nav = GetComponent<Navigation>();
+        Navigation sourceNav = source.GetComponent<Navigation>();
+        nav.Home = home;
+        nav.Destination = currentDestination;
+        nav.IsTravelling = sourceNav.IsTravelling;
+        nav.TravelingTo = sourceNav.TravelingTo;
+        sourceNav.TravelingTo.Unsubscribe(sourceNav);
+        nav.TravelingTo.Subscribe(nav);
     }
 
     public void UpdateStamina()
@@ -158,15 +165,12 @@ public class NPC : MonoBehaviour
     {
         if (!_gameManager.GodMode)
         {
-            if (_isInfected)
+            UpdateHappinessDecayRate();
+            float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayRate;
+            _happiness -= decayRate * Time.deltaTime;
+            if (_happiness < 0)
             {
-                UpdateHappinessDecayRate();
-                float decayRate = _virus ? _happinessDecayBase + _happinessDecayRate : _happinessDecayBase;
-                _happiness -= decayRate * Time.deltaTime;
-                if (_happiness < 0)
-                {
-                    _happiness = 0;
-                }
+                _happiness = 0;
             }
         }
     }

@@ -6,8 +6,12 @@ using UnityEngine;
 public abstract class Building : MonoBehaviour
 {
     [SerializeField]
+    [Tooltip("Building capacity")]
+    protected int _capacity;
+
+    [SerializeField]
     [Tooltip("Currently inside the building")]
-    protected int _currentOccopancy;
+    protected int _occupancy;
 
     [SerializeField]
     [Tooltip("The location that the NPC spawns at")]
@@ -17,12 +21,14 @@ public abstract class Building : MonoBehaviour
     [Tooltip("The Game Manager")]
     protected GameManager _gameManager;
 
-    protected LinkedList<GameObject> _visiting = new();
+    [SerializeField]
+    [Tooltip("List of visiting NPCs")]
+    protected List<GameObject> _visiting = new();
 
     public GameObject SpawnPoint { get => _spawnPoint; }
-    public LinkedList<GameObject> Visiting { get => _visiting; }
-
-
+    public List<GameObject> Visiting { get => _visiting; }
+    public int Capacity { get => _capacity; }
+    public int Occupancy { get => _occupancy; set => _occupancy = value; }
 
     protected abstract bool UpdateStamina(NPC npc);
     protected abstract bool UpdateHealth(NPC npc);
@@ -34,28 +40,38 @@ public abstract class Building : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    protected void Update()
+    public void Subscribe(Navigation nav)
     {
-        _currentOccopancy = _visiting.Count;
-        foreach (GameObject obj in _gameManager.NPCs.ToList())
-        {
-            if (obj.TryGetComponent<Navigation>(out var nav) && obj != null && nav.Destination.name == name)
-            {
-                nav.OnReachedDestination += Nav_OnReachedDestination;
-            }
-        }
+        nav.OnReachedDestination += Nav_OnReachedDestination;
+        Debug.Log($"{gameObject} <color=green>subscribed</color> to {nav.gameObject.name}");
     }
+
+    public void Unsubscribe(Navigation nav)
+    {
+        nav.OnReachedDestination -= Nav_OnReachedDestination;
+        Debug.Log($"{gameObject} <color=red>unsubscribed</color> from {nav.gameObject.name}");
+    }
+
     protected void Nav_OnReachedDestination(GameObject obj)
     {
         if (obj.activeSelf)
         {
-            obj.GetComponent<Navigation>().IsCommuting = false;
-            obj.SetActive(false);
-            _visiting.AddFirst(obj);
+            if (this is Residential || _occupancy == 0 || _occupancy < _capacity)
+            {
+                obj.GetComponent<Navigation>().IsTravelling = false;
+                obj.SetActive(false);
+                _visiting.Add(obj);
+                return;
+            }
+            if (_occupancy == _capacity)
+            {
+                obj.GetComponent<Navigation>().IsTravelling = false;
+                return;
+            }
         }
     }
 
-    protected void SetSpawnPoint(LinkedList<GameObject> waypoints)
+    protected void SetSpawnPoint(List<GameObject> waypoints)
     {
         foreach (GameObject waypoint in waypoints.ToList())
         {
