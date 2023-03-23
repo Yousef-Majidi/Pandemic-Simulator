@@ -218,4 +218,49 @@ public class SaveManager
             Debug.LogError("Save file not found");
         }
     }
+
+    public struct GameDisplayData
+    {
+        public float _politicalPower;
+        public int _population;
+        public int _totalInfected;
+        public int _inGameMinute;
+        public int _inGameHour;
+        public int _inGameDay;
+    }
+
+    public GameDisplayData LoadDisplay(string fileName){
+        BinaryFormatter formatter = new();
+        string filePath = Application.persistentDataPath + "/saves/" + fileName;
+        FileStream stream = new(filePath, FileMode.Open);
+        GameData data = formatter.Deserialize(stream) as GameData;
+        stream.Close();
+
+        GameDisplayData displayData = new()
+        {
+            _politicalPower = data._politicalPower,
+            _population = data._npcDataList.Count,
+            _totalInfected = data._npcDataList.Count(npc => npc._isInfected),
+            _inGameMinute = data._timeData._inGameMinute,
+            _inGameHour = data._timeData._inGameHour,
+            _inGameDay = data._timeData._inGameDay
+        };
+        return displayData;
+    }
+
+    public void RemoveSave(string savePath, string imagePath)
+    {
+        Debug.Log(savePath);
+        Debug.Log(imagePath);
+        if (File.Exists(savePath) && File.Exists(imagePath))
+        {
+            File.Delete(savePath);
+            File.Delete(imagePath);
+            Debug.Log("Save file deleted");
+        }
+        else
+        {
+            Debug.LogError("Save file not found");
+        }
+    }
 }
