@@ -6,6 +6,10 @@ using UnityEngine.UI;
 public class SaveMenu : MonoBehaviour
 {
     private GameManager _gameManager;
+    SaveManager _saveManager = new();
+    private string _saveName;
+    private GameObject _saveButton;
+    UIPopUp _uiPopUp;
 
     [SerializeField]
     private GameObject _saveMenuUI;
@@ -26,12 +30,20 @@ public class SaveMenu : MonoBehaviour
     void Awake()
     {
         _saveMenuUI.SetActive(false);
+        _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _saveButton = transform.GetChild(1).GetChild(2).gameObject;
 
     }
 
     void Update()
     {
+        if(_saveName == null || _saveName == ""){
+            _saveButton.GetComponent<Button>().interactable = false;
+        }
+        else{
+            _saveButton.GetComponent<Button>().interactable = true;
+        }
         if (Input.GetKeyDown(KeyCode.Escape))
             if (_saveMenuUI.activeSelf)
                 close();
@@ -66,6 +78,18 @@ public class SaveMenu : MonoBehaviour
 
         Sprite mysprite = loadSprite(Application.dataPath + "/images/Screenshots/" + "temp" + ".png");
         image.sprite = mysprite;
+    }
+
+    public void setSaveName(string name)
+    {
+        _saveName = name;
+    }
+
+    public void Save(){
+        _saveManager.SaveGame(_gameManager, _saveName);
+        File.Move(Application.dataPath + "/images/Screenshots/" + "temp" + ".png", Application.dataPath + "/Resources/SaveImages/" + _saveName + ".png");
+        _uiPopUp.SaveLoadPopUp(_saveName +" Saved");
+        close();
     }
 
 }

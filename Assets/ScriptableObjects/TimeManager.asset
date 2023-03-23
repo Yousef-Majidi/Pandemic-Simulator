@@ -12,3 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d69534d7a0b547d2b40f284f0775ca3, type: 3}
   m_Name: TimeManager
   m_EditorClassIdentifier: 
+  _inGameHour: 1
+  _inGameMinute: 30
+  _inGameDay: 1
+  _elapsedTime: 0.9261895
+  _timeScale: 0
