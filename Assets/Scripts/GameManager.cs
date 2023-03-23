@@ -24,6 +24,10 @@ public class GameManager : MonoBehaviour
     [Header("NPCs")]
 
     [SerializeField]
+    [Tooltip("File Containing Names of all NPCs")]
+    private TextAsset _npcnames;
+
+    [SerializeField]
     [Tooltip("Sets the max number of NPCs allowed to be spawned")]
     private int _maxNPC = 250;
 
@@ -86,13 +90,14 @@ public class GameManager : MonoBehaviour
     private List<Decision> _decisionList = new();
 
     readonly SaveManager _saveManager = new();
-
     UIPopUp _uiPopUp;
 
     private List<GameObject> _commercialDestinations = new();
     private List<GameObject> _residentialDestinations = new();
     private List<GameObject> _medicalDestinations = new();
     private LinkedList<GameObject> _npcs = new();
+
+    private string[] _names;
 
     public bool GodMode { get => _godMode; set => _godMode = value; }
     public int MaxNPCs { get => _maxNPC; set => _maxNPC = value; }
@@ -112,6 +117,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject> MedicalDestinations { get => _medicalDestinations; }
     public List<GameObject> ResidentialDestinations { get => _residentialDestinations; }
     public List<Decision> DecisionList { get => _decisionList; }
+    public string[] Names { get => _names; }
     public LinkedList<GameObject> NPCs { get => _npcs; }
 
     private void ToggleGodMode()
@@ -177,6 +183,7 @@ public class GameManager : MonoBehaviour
             }
             obj.transform.parent = GameObject.Find("NPCs").transform;
             obj.GetComponent<Navigation>().SetHome(position);
+            obj.GetComponent<NPC>().setRandomName();
             obj.tag = "NPC";
             obj.name = infected ? $"NPC {_npcs.Count + 1} - infected" : $"NPC {_npcs.Count + 1}";
             _npcs.AddLast(obj);
@@ -214,9 +221,14 @@ public class GameManager : MonoBehaviour
         if (!float.IsNaN(_averageHappiness))
             _politicalPower += _averageHappiness * Time.deltaTime * _politicalPowerMultiplier;
     }
+    private void readCSV()
+    {
+        _names = _npcnames.text.Split(new string[] { ",", "\n" }, StringSplitOptions.None);
+    }
 
     private void Awake()
     {
+        readCSV();
         _uiPopUp = GameObject.Find("NPCs").GetComponent<UIPopUp>();
         GameObject[] commercialWaypoints = GameObject.FindGameObjectsWithTag("Commercial");
         foreach (GameObject waypoint in commercialWaypoints)

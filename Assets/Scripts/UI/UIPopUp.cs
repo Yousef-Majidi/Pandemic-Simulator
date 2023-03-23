@@ -6,7 +6,7 @@ using TMPro;
 
 public class UIPopUp : MonoBehaviour
 {
-
+    public new AudioSource audio;
     private bool isPopUp = false;
     private GameObject _tempObj;
     private GameManager _gameManager;
@@ -56,6 +56,7 @@ public class UIPopUp : MonoBehaviour
             {
                 if(hit.collider.gameObject.CompareTag("NPC"))
                 {
+                    audio.Play();
                     NpcPopUp(hit.collider.gameObject);
                     isPopUp = true;
                 }
@@ -158,7 +159,7 @@ public class UIPopUp : MonoBehaviour
             text.transform.SetParent(panel.transform, false);
             text.AddComponent<TextMeshProUGUI>();
             text.GetComponent<RectTransform>().sizeDelta = new Vector2(900, 900);
-            text.GetComponent<TextMeshProUGUI>().text = "Name: " + _tempObj.name + "\nHealth: " + _tempObj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + _tempObj.GetComponent<NPC>().Stamina.ToString("F2") + "\n Happiness: " + _tempObj.GetComponent<NPC>().Happiness.ToString("F2") + "\nInfected: " + _tempObj.GetComponent<NPC>().IsInfected;
+            text.GetComponent<TextMeshProUGUI>().text = "Name: " + _tempObj.GetComponent<NPC>().Name + "\nHealth: " + _tempObj.GetComponent<NPC>().Health.ToString("F2") + "\nStamina: " + _tempObj.GetComponent<NPC>().Stamina.ToString("F2") + "\n Happiness: " + _tempObj.GetComponent<NPC>().Happiness.ToString("F2") + "\nInfected: " + _tempObj.GetComponent<NPC>().IsInfected;
             text.GetComponent<TextMeshProUGUI>().color = Color.black;
             text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
             text.GetComponent<TextMeshProUGUI>().fontSize = 75;

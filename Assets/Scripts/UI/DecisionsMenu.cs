@@ -10,6 +10,8 @@ public class DecisionsMenu : MonoBehaviour
     private GameManager _gameManager;
     private List<Decision> _decisionList;
 
+
+
     void Awake()
     {
         gameObject.SetActive(false);
@@ -28,6 +30,8 @@ public class DecisionsMenu : MonoBehaviour
 
     public void ShowMenu()
     {
+        audio.Play();
+
         if (gameObject.activeSelf)
         {
             gameObject.SetActive(false);

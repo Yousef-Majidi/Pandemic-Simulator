@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class OptionsMenu : MonoBehaviour
 {
+    public new AudioSource audio;
+
     private GameManager _gameManager;
 
     [SerializeField]
@@ -10,6 +12,7 @@ public class OptionsMenu : MonoBehaviour
     public void open()
     {
         OptionsMenuUI.SetActive(true);
+        audio.Play();
         _gameManager.TimeManager.SetTimeScale(0);
     }
 
