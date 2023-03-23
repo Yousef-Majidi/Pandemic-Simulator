@@ -9,7 +9,7 @@ public class DecisionsMenu : MonoBehaviour
     //get the decisions from the game manager
     private GameManager _gameManager;
     private List<Decision> _decisionList;
-
+    public new AudioSource audio;
 
 
     void Awake()
