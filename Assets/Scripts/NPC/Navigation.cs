@@ -121,8 +121,8 @@ public class Navigation : MonoBehaviour
             {
                 if (residential.transform == _destination)
                 {
-                    building = residential.GetComponentInParent<Residential>();
-                    building.Subscribe(this);
+                    _travellingTo = residential.GetComponentInParent<Residential>();
+                    _travellingTo.Subscribe(this);
                 }
             }
             _agent.destination = _destination.position;
