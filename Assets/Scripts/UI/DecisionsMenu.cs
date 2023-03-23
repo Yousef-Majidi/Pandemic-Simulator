@@ -30,7 +30,7 @@ public class DecisionsMenu : MonoBehaviour
 
     public void ShowMenu()
     {
-        audio.Play();
+        GetComponent<AudioSource>().Play();
 
         if (gameObject.activeSelf)
         {
