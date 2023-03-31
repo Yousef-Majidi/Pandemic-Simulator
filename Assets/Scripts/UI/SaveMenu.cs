@@ -28,7 +28,7 @@ public class SaveMenu : MonoBehaviour
     public void close()
     {
         _saveMenuUI.SetActive(false);
-        _gameManager.TimeManager.SetTimeScale(1);
+        _gameManager.TimeManager.SetTimeScale(0);
     }
 
     void Awake()

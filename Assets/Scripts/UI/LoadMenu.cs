@@ -49,6 +49,10 @@ public class LoadMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+         if (Input.GetKeyDown(KeyCode.Escape))
+            if (_loadMenuUI.activeSelf)
+                Close();
+                
         
     }
 
@@ -62,7 +66,7 @@ public class LoadMenu : MonoBehaviour
     public void Close()
     {
         _loadMenuUI.SetActive(false);
-        _gameManager.TimeManager.SetTimeScale(1);
+        _gameManager.TimeManager.SetTimeScale(0);
     }
 
     public void FillList()
