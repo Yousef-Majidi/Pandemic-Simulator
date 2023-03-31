@@ -24,7 +24,7 @@ public class UIPopUp : MonoBehaviour
         OnMouseDown();
         // add text if there is a canvas
         GameObject canvasTemp = GameObject.Find("CanvasPop");
-        if (canvasTemp != null)
+        if (canvasTemp != null && _gameManager.TimeManager.TimeScale != 0)
         {
             // get rid of old text
             GameObject text = GameObject.Find("PopUpText");
@@ -110,11 +110,6 @@ public class UIPopUp : MonoBehaviour
         buttonText.transform.SetParent(exitButton.transform, false);
         buttonText.AddComponent<TextMeshProUGUI>();
 
-        //create text
-        GameObject text = new GameObject("Text", typeof(RectTransform));
-        text.transform.SetParent(panel.transform, false);
-        text.AddComponent<TextMeshProUGUI>();
-
         // set canvas to only take up the bottom left corner of the display 
         canvas.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
         canvas.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
@@ -151,6 +146,8 @@ public class UIPopUp : MonoBehaviour
         buttonText.GetComponent<TextMeshProUGUI>().color = Color.black;
         buttonText.GetComponent<TextMeshProUGUI>().fontSize = 44;
         buttonText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
+
+        addText();
     }
 
     void addText(){
