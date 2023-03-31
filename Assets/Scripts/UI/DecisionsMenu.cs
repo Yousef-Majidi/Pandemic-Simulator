@@ -75,7 +75,6 @@ public class DecisionsMenu : MonoBehaviour
         panel.GetComponent<RectTransform>().anchoredPosition = new Vector2(50, 0);
         panel.GetComponent<Image>().color = 0.75f * Color.white;
 
-
         GameObject slider = new GameObject("Slider", typeof(RectTransform));
         slider.transform.SetParent(panel.transform, false);
         slider.AddComponent<Slider>();
@@ -208,10 +207,17 @@ public class DecisionsMenu : MonoBehaviour
         if (decision.IsEnacted)
         {
             button.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+            slider.GetComponent<Slider>().interactable = false;
+            slider.GetComponent<Slider>().gameObject.SetActive(false);
+
         }
         else
         {
             button.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+            slider.GetComponent<Slider>().interactable = true;
+            slider.GetComponent<Slider>().gameObject.SetActive(true);
+
+
         }
         button.GetComponent<Button>().onClick.AddListener(delegate
         {
@@ -319,7 +325,7 @@ public class DecisionsMenu : MonoBehaviour
             description.AddComponent<TextMeshProUGUI>();
             description.GetComponent<TextMeshProUGUI>().text = decision.Description;
             description.GetComponent<TextMeshProUGUI>().fontSize = 12;
-            description.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);  
+            description.GetComponent<TextMeshProUGUI>().color = new Color32(0, 0, 0, 255);
 
             GameObject button = new GameObject("DButton" + decision.Title, typeof(RectTransform));
             button.transform.SetParent(panel.transform, false);
