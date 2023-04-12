@@ -149,12 +149,17 @@ public class NPC : MonoBehaviour
             float decayRate = _virus ? _virus.StaminaDecayRate + _staminaDecayBase : _staminaDecayBase;
             if (_stamina > 0)
             {
+                _agent.speed = 2.5F;
                 _stamina -= decayRate * Time.deltaTime;
                 return;
             }
             if (_stamina < 0)
             {
                 _stamina = 0;
+            }
+            if(_stamina <= 0)
+            {
+                _agent.speed = 1.5F;
             }
         }
     }
