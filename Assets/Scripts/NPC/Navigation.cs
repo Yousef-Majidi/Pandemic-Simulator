@@ -102,16 +102,33 @@ public class Navigation : MonoBehaviour
 
         if (_npc.Health <= _gameManager.HealthThreshold)
         {
-            randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
-            waypoint = _medicals.ElementAt(randomIndex);
-            building = waypoint.GetComponentInParent<Medical>();
-
-            _travellingTo = building;
-            _travellingTo.Subscribe(this);
-            _destination = waypoint.transform;
-            _agent.destination = _destination.position;
-            _isTravelling = true;
+            // find the closest hospital
+            float minDistance = float.MaxValue;
+            foreach (GameObject medical in _medicals)
+            {
+                float distance = Vector3.Distance(transform.position, medical.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    building = medical.GetComponentInParent<Medical>();
+                    _travellingTo = building;
+                    _travellingTo.Subscribe(this);
+                    _destination = medical.transform;
+                    _agent.destination = _destination.position;
+                    _isTravelling = true;
+                }
+            }
             return;
+            //randomIndex = UnityEngine.Random.Range(0, _medicals.Count);
+            //waypoint = _medicals.ElementAt(randomIndex);
+            //building = waypoint.GetComponentInParent<Medical>();
+
+            //_travellingTo = building;
+            //_travellingTo.Subscribe(this);
+            //_destination = waypoint.transform;
+            //_agent.destination = _destination.position;
+            //_isTravelling = true;
+            //return;
         }
 
         if (_npc.Stamina <= _gameManager.StaminaThreshold)
