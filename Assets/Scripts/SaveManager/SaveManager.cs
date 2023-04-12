@@ -47,6 +47,7 @@ public class SaveManager
     [Serializable]
     private class NpcData
     {
+        public string _name;
         public bool _isInfected;
         public float _health;
         public VirusData _virus;
@@ -128,6 +129,7 @@ public class SaveManager
                     _mutationChance = npc.Virus.MutationChance
                 };
             }
+            npcData._name = npc.Name;
             npcData._stamina = npc.Stamina;
             npcData._staminaDecayBase = npc.StaminaDecayBase;
             npcData._happiness = npc.Happiness;
@@ -204,6 +206,7 @@ public class SaveManager
                     npc.Virus.HealthDecayRate = npcData._virus._healthDecayRate;
                     npc.Virus.MutationChance = npcData._virus._mutationChance;
                 }
+                npc.Name = npcData._name;
                 npc.Stamina = npcData._stamina;
                 npc.StaminaDecayBase = npcData._staminaDecayBase;
                 npc.Happiness = npcData._happiness;
