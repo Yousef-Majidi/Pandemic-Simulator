@@ -67,7 +67,7 @@ public class InGameUI : MonoBehaviour
 
     void UpdatePoliticalPower()
     {
-        int PP = Mathf.RoundToInt(_gameManager.PoliticalPower);
+        int PP = Mathf.FloorToInt(_gameManager.PoliticalPower);
         GameObject.Find("PoliticalPower").GetComponent<TextMeshProUGUI>().text = PP.ToString();
     }
 

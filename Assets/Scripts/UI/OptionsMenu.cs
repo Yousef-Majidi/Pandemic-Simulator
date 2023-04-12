@@ -26,7 +26,7 @@ public class OptionsMenu : MonoBehaviour
     public void close()
     {
         OptionsMenuUI.SetActive(false);
-        _gameManager.TimeManager.SetTimeScale(1);
+        _gameManager.TimeManager.SetTimeScale(0);
     }
 
     void Awake()
