@@ -154,7 +154,7 @@ public class SaveManager
 
     public void LoadGame(GameManager gm, string fileName)
     {
-        string filePath = Application.persistentDataPath + $"/saves/{fileName}.dat";
+        string filePath = Application.persistentDataPath + $"/saves/{fileName}";
         if (File.Exists(filePath))
         {
             BinaryFormatter formatter = new();
@@ -291,6 +291,15 @@ public class SaveManager
         ScreenCapture.CaptureScreenshot(imagePath);
         currIndex++;
         
+    }
+
+    public void loadRecentSave(GameManager gm)
+    {
+        string pattern = "*.dat";
+        var dirInfo = new DirectoryInfo(Application.persistentDataPath + "/saves");
+        var file = (from f in dirInfo.GetFiles(pattern) orderby f.LastWriteTime descending select f).First();
+        string fileName = file.Name;
+        LoadGame(gm, fileName);
     }
 
     void FillList()

@@ -358,8 +358,12 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
-            _saveManager.LoadGame(this, "QuickSave");
+            _saveManager.LoadGame(this, "QuickSave.dat");
             _uiPopUp.SaveLoadPopUp("Quick Loaded");
+        }
+        if(Input.GetKeyDown(KeyCode.F9))
+        {
+            _saveManager.loadRecentSave(this);
         }
         #endregion Save_Load
 
