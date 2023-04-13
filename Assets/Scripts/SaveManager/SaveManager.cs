@@ -154,7 +154,7 @@ public class SaveManager
 
     public void LoadGame(GameManager gm, string fileName)
     {
-        string filePath = Application.persistentDataPath + $"/saves/{fileName}";
+        string filePath = Application.persistentDataPath + $"/saves/{fileName}.dat";
         if (File.Exists(filePath))
         {
             BinaryFormatter formatter = new();
