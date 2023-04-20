@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class SaveManager
 {
     private List<string> _autoSaves = new();
-    private int currIndex = 0; 
+    private int currIndex = 0;
 
     [Serializable]
     private class TimeData
@@ -235,7 +235,8 @@ public class SaveManager
         public int _inGameDay;
     }
 
-    public GameDisplayData LoadDisplay(string fileName){
+    public GameDisplayData LoadDisplay(string fileName)
+    {
         BinaryFormatter formatter = new();
         string filePath = Application.persistentDataPath + "/saves/" + fileName;
         FileStream stream = new(filePath, FileMode.Open);
@@ -274,23 +275,24 @@ public class SaveManager
         {
             FillList();
         }
-        if(currIndex == 5){
+        if (currIndex == 5)
+        {
             currIndex = 0;
         }
-        if(_autoSaves.Count >= 5)
+        if (_autoSaves.Count >= 5)
         {
             string rmImagePath = Application.persistentDataPath + "/images/Saves/" + _autoSaves[currIndex].Replace(".dat", ".png");
             string rmSavePath = Application.persistentDataPath + "/saves/" + _autoSaves[currIndex];
             RemoveSave(rmSavePath, rmImagePath);
             _autoSaves.RemoveAt(currIndex);
         }
-        SaveGame(gm,$"autosave{currIndex}");
+        SaveGame(gm, $"autosave{currIndex}");
         _autoSaves.Add($"autosave{currIndex}.dat");
         string imageName = $"autosave{currIndex}.png";
         string imagePath = Application.persistentDataPath + "/images/Saves/" + imageName;
         ScreenCapture.CaptureScreenshot(imagePath);
         currIndex++;
-        
+
     }
 
     public void loadRecentSave(GameManager gm)
@@ -304,6 +306,7 @@ public class SaveManager
 
     void FillList()
     {
+        Debug.Log(Application.persistentDataPath);
         _autoSaves = new List<string>();
         string[] files = Directory.GetFiles(Application.persistentDataPath + "/saves/");
         foreach (string file in files)
