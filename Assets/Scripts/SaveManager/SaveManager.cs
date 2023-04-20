@@ -306,7 +306,6 @@ public class SaveManager
 
     void FillList()
     {
-        Debug.Log(Application.persistentDataPath);
         _autoSaves = new List<string>();
         string[] files = Directory.GetFiles(Application.persistentDataPath + "/saves/");
         foreach (string file in files)
