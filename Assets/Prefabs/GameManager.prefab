@@ -45,8 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _godMode: 0
-  _spawnHealthyAtStart: 9
-  _spawnInfectedAtStart: 1
+  _spawnHealthyAtStart: 70
+  _spawnInfectedAtStart: 10
+  _npcnames: {fileID: 4900000, guid: 049dd55b92fa14d43bb0b46ae24aedf2, type: 3}
   _maxNPC: 250
   _healthyCount: 0
   _infectedCount: 0
